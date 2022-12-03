@@ -1,3 +1,10 @@
+### 3 Changelog ref 3
+- Upgraded loading message
+    - DOM \<h1> element
+    - Uses sin to oscillate opacity
+    - Hides itself when allProducts becomes truthy/filled
+    - Removed alert
+
 ### 2 Changelog ref 2
 - Pushed changelog
 

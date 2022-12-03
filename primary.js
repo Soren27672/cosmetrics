@@ -1,7 +1,11 @@
 
+let allProducts = false;
+let atId1 = false;
+
 const init = () => {
     const test = q('#test');
-    let allProducts = false;
+    const loader = q('#loader');
+
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
     .then(res => res.json())
     .then(json => allProducts = json);
@@ -12,8 +16,17 @@ const init = () => {
             for(let i = 0; i < 10; ++i) {
                 test.appendChild(buildElement('li',allProducts[i].name));
             }
-        } else window.alert('Loading');
+        }
     })
+
+    let counter = 0;
+    const loadingIv = setInterval(() => {
+        loader.style.color = `rgb(${(0.5*Math.sin(++counter/2)+0.5)*255},${(0.5*Math.sin(counter/2)+0.5)*255},${(0.5*Math.sin(counter/2)+0.5)*255})`;
+        if (allProducts) {
+            clearInterval(loadingIv);
+            loader.style.display = 'none';
+        };
+    },50)
 }
 
 document.addEventListener('DOMContentLoaded',init);
@@ -44,3 +57,5 @@ function buildElement(type,text = undefined,classes = [],id = undefined) {
 }
 
 // Random # of products feature
+
+// Just have loading sign
