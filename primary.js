@@ -1,19 +1,18 @@
 
-
-const test = q('#test');
-
 const init = () => {
-    const allProducts = false;
+    const test = q('#test');
+    let allProducts = false;
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
     .then(res => res.json())
     .then(json => allProducts = json);
 
-    a('keydown',e => {
+    ael('keydown',e => {
         if(allProducts) {
+            test.textContent = '';
             for(let i = 0; i < 10; ++i) {
-                const
+                test.appendChild(buildElement('li',allProducts[i].name));
             }
-        }
+        } else window.alert('Loading');
     })
 }
 
@@ -25,7 +24,7 @@ function s(...message) {
     };
 };
 
-function a(event,cb,target = document) {
+function ael(event,cb,target = document) {
     return target.addEventListener(event,cb);
 }
 
@@ -34,12 +33,13 @@ function q(selector,all = false) {
     else return document.querySelector(selector);
 }
 
-function buildElement(type,classes = [],id = undefined) {
+function buildElement(type,text = undefined,classes = [],id = undefined) {
     const returnElement = document.createElement(type);
     for(el of classes) {
         returnElement.classList.add(el);
     }
     returnElement.id = id;
+    returnElement.textContent = text;
     return returnElement;
 }
 
