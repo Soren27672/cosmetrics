@@ -8,6 +8,8 @@ const init = () => {
     const displayArea = q('#displayArea');
     const random = q('#random');
     const brandFilter = q('#brandFilter');
+    const typeFilter = q('#typeFilter');
+    const tagFilter = q('#tagFilter');
     const filters = [];
 
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
@@ -16,16 +18,15 @@ const init = () => {
         allProducts = json;
 
         // CREATE FILTERS
-        let brands = {};
-
-        for(const product in allProducts) {
-            brands[allProducts[product].brand] = true;
-        }
-
-        brands = [...Object.keys(brands)];
-        brands.sort();
-
+        
+        const brands = createArrayOfValuesStoredInKey(allProducts,'brand');
         populateDropdown(brandFilter,brands,'brand');
+
+        const types = createArrayOfValuesStoredInKey(allProducts,'product_type');
+        populateDropdown(typeFilter,types,'type');
+
+        const tags = createArrayOfValuesStoredInKey(allProducts,'tag_list');
+        populateDropdown(tagFilter,tags,'tag'); 
 
     });
 
@@ -126,6 +127,24 @@ function populateDropdown(dropdown,array,value) {
         option.value = value
         dropdown.appendChild(option);
     }
+}
+
+function createArrayOfValuesStoredInKey(obj,key) {
+    let values = {};
+
+        for(const pair in obj) {
+            if(Array.isArray(obj[pair][key])) {
+                s('ran')
+                for(el of obj[pair][key]) {
+                    values[el] = true;
+                }
+            }
+            else values[obj[pair][key]] = true;
+        }
+
+        returnArray = [...Object.keys(values)];
+        returnArray.sort();
+    return returnArray;
 }
 
 // Random # of products feature

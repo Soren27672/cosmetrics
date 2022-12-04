@@ -1,3 +1,8 @@
+### 8 Changelog ref 8
+- Abstracted code that gets array of all brands into function <createArrayOfValuesStoredInKey()>
+- Added ability to detect arrays and add their elements into the return array
+- Temporarily created tag dropdown: To be replaced with checkboxes to select multiple tags
+
 ### 7 Changelog ref 7
 - Added populateDropdown function that adds items from an array into a provided \<select> element
 - Created brands array that stores all brands
