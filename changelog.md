@@ -1,3 +1,9 @@
+### 5 Changelog ref 5
+- Function that creates cell&image moved to its own reference (buildCell())
+- Cell now displays product name, brand and price
+    - Clicking brand links to brand's site
+    - Elements for name, brand and price have css classes for mass editing
+
 ### 4 Changelog ref 4
 - Added display area to house product cells
 - Randomize button creates a cell and appends an image into it

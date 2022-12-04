@@ -1,4 +1,9 @@
-.cell {
+.prodCell {
     border: grey solid 2px;
-    color: rgb(255,255,255);
+}
+
+.prodBrand {
+    color: dimgray;
+    font-style: italic;
+    text-decoration: none;
 }

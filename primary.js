@@ -23,17 +23,7 @@ const init = () => {
     })
 
     // LOAD RANDOM PRODUCT
-    ael('click',e => {
-
-        const cell = buildElement('div',undefined,['productCell']);
-
-        const img = buildElement('img');
-        img.src = `https:${allProducts[8].api_featured_image}`;
-        cell.appendChild(img);
-
-        displayArea.appendChild(cell);
-
-    },random)
+    ael('click',e => displayArea.appendChild(buildCell(5)),random);
 
     // LOADING DIALOG
     // (Color changing)
@@ -72,6 +62,26 @@ function buildElement(type,text = undefined,classes = [],id = undefined) {
     returnElement.id = id;
     returnElement.textContent = text;
     return returnElement;
+}
+
+function buildCell(n) {
+    const cell = buildElement('div',undefined,['prodCell',n]);
+
+    const img = buildElement('img',['prodImg',n]);
+    img.src = `https:${allProducts[n].api_featured_image}`;
+    cell.appendChild(img);
+
+    const name = buildElement('p',allProducts[n]['name'],['prodName',n]);
+    cell.appendChild(name);
+
+    const brand = buildElement('a',`by ${allProducts[n].brand}`,['prodBrand',n]);
+    brand.href = allProducts[n].website_link;
+    cell.appendChild(brand);
+
+    const price = buildElement('p',`${allProducts[n].price_sign}${allProducts[n].price}`,['prodPrice',n]);
+    cell.appendChild(price);
+
+    return cell;
 }
 
 // Random # of products feature
