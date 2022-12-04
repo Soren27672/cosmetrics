@@ -5,11 +5,14 @@ let atId1 = false;
 const init = () => {
     const test = q('#test');
     const loader = q('#loader');
+    const displayArea = q('#displayArea');
+    const random = q('#random');
 
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
     .then(res => res.json())
     .then(json => allProducts = json);
 
+    // TEST ALLPRODUCTS
     ael('keydown',e => {
         if(allProducts) {
             test.textContent = '';
@@ -19,6 +22,21 @@ const init = () => {
         }
     })
 
+    // LOAD RANDOM PRODUCT
+    ael('click',e => {
+
+        const cell = buildElement('div',undefined,['productCell']);
+
+        const img = buildElement('img');
+        img.src = `https:${allProducts[8].api_featured_image}`;
+        cell.appendChild(img);
+
+        displayArea.appendChild(cell);
+
+    },random)
+
+    // LOADING DIALOG
+    // (Color changing)
     let counter = 0;
     const loadingIv = setInterval(() => {
         loader.style.color = `rgb(${(0.5*Math.sin(++counter/2)+0.5)*255},${(0.5*Math.sin(counter/2)+0.5)*255},${(0.5*Math.sin(counter/2)+0.5)*255})`;
@@ -59,3 +77,5 @@ function buildElement(type,text = undefined,classes = [],id = undefined) {
 // Random # of products feature
 
 // Just have loading sign
+
+// Upon clicking randomize, a dom element with some product info is created

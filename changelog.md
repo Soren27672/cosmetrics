@@ -1,3 +1,7 @@
+### 4 Changelog ref 4
+- Added display area to house product cells
+- Randomize button creates a cell and appends an image into it
+
 ### 3 Changelog ref 3
 - Upgraded loading message
     - DOM \<h1> element
