@@ -78,7 +78,17 @@ function buildCell(n) {
     brand.href = allProducts[n].website_link;
     cell.appendChild(brand);
 
-    const price = buildElement('p',`${allProducts[n].price_sign}${allProducts[n].price}`,['prodPrice',n]);
+    let formattedPrice = allProducts[n].price;
+    switch (formattedPrice.length) {
+        case 1:
+            formattedPrice += '.00';
+            break;
+        case 3:
+            formattedPrice += '0';
+            break;
+    }
+    
+    const price = buildElement('p',`${allProducts[n].price_sign}${formattedPrice}`,['prodPrice',n]);
     cell.appendChild(price);
 
     return cell;
@@ -89,3 +99,7 @@ function buildCell(n) {
 // Just have loading sign
 
 // Upon clicking randomize, a dom element with some product info is created
+
+// Super Filter function that's passed an array of filter function callbacks
+// *For each* function in Super filter function, modify returnProducts
+// Then generate first 10

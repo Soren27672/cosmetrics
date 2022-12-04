@@ -1,3 +1,6 @@
+### 6 Changelog ref 6
+- Added code to format the price into 3 digits
+
 ### 5 Changelog ref 5
 - Function that creates cell&image moved to its own reference (buildCell())
 - Cell now displays product name, brand and price
