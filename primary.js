@@ -9,7 +9,8 @@ const init = () => {
     const random = q('#random');
     const brandFilter = q('#brandFilter');
     const typeFilter = q('#typeFilter');
-    const tagFilter = q('#tagFilter');
+    const tagsDiv = q('#tagsDiv');
+    const categoryFilter = q('#categoryFilter');
     const filters = [];
 
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
@@ -20,13 +21,29 @@ const init = () => {
         // CREATE FILTERS
         
         const brands = createArrayOfValuesStoredInKey(allProducts,'brand');
-        populateDropdown(brandFilter,brands,'brand');
+        populateDropdown(brandFilter,brands[1],'brand');
 
         const types = createArrayOfValuesStoredInKey(allProducts,'product_type');
-        populateDropdown(typeFilter,types,'type');
+        populateDropdown(typeFilter,types[1],'type');
+
+        const categories = createArrayOfValuesStoredInKey(allProducts,'category');
+        populateDropdown(categoryFilter,categories[1],'category'); 
 
         const tags = createArrayOfValuesStoredInKey(allProducts,'tag_list');
-        populateDropdown(tagFilter,tags,'tag'); 
+        for(const tag in tags[0]) {
+            s(tags,tags[0],tag,tags[0][tag]);
+            const box = buildElement('input',false,[false],tags[0].tag);
+            box.type = 'checkbox';
+            box.name = 'tags';
+            box.value = tags[0].tag;
+
+            const label = buildElement('label',tags[1][tag]);
+            label.for = tags[0].tag;
+            
+            tagsDiv.appendChild(box);
+            tagsDiv.appendChild(label);
+            tagsDiv.appendChild(buildElement('br'));
+        }
 
     });
 
@@ -78,8 +95,8 @@ function buildElement(type,text = undefined,classes = [],id = undefined) {
     for(el of classes) {
         returnElement.classList.add(el);
     }
-    returnElement.id = id;
-    returnElement.textContent = text;
+    if(id) returnElement.id = id;
+    if(text) returnElement.textContent = text;
     return returnElement;
 }
 
@@ -142,8 +159,11 @@ function createArrayOfValuesStoredInKey(obj,key) {
             else values[obj[pair][key]] = true;
         }
 
-        returnArray = [...Object.keys(values)];
-        returnArray.sort();
+        const returnArray = [];
+
+        returnArray[0] = [...Object.keys(values)].sort();
+        returnArray[1] = returnArray[0].map(cv => cv.replace('_',' '));
+        returnArray[0] = returnArray[1].map(cv => cv.replace(' ','_'))
     return returnArray;
 }
 
