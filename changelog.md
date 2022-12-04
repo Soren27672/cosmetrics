@@ -1,3 +1,8 @@
+### 7 Changelog ref 7
+- Added populateDropdown function that adds items from an array into a provided \<select> element
+- Created brands array that stores all brands
+    - Created by iterating thru allProducts and adding the brand to an object
+
 ### 6 Changelog ref 6
 - Added code to format the price into 3 digits
 

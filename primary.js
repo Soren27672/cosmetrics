@@ -7,11 +7,29 @@ const init = () => {
     const loader = q('#loader');
     const displayArea = q('#displayArea');
     const random = q('#random');
+    const brandFilter = q('#brandFilter');
+    const filters = [];
 
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
     .then(res => res.json())
-    .then(json => allProducts = json);
+    .then(json => {
+        allProducts = json;
 
+        // CREATE FILTERS
+        let brands = {};
+
+        for(const product in allProducts) {
+            brands[allProducts[product].brand] = true;
+        }
+
+        brands = [...Object.keys(brands)];
+        brands.sort();
+
+        populateDropdown(brandFilter,brands,'brand');
+
+    });
+
+    
     // TEST ALLPRODUCTS
     ael('keydown',e => {
         if(allProducts) {
@@ -94,6 +112,22 @@ function buildCell(n) {
     return cell;
 }
 
+function returnFiltered() {
+    const returnProducts = [...allProducts.filter(filters[0])];
+    for(let i = 1; i < filters.length; ++i) {
+        returnProducts = [...returnProducts.filter(filters[i])];
+    }
+    return returnProducts;
+}
+
+function populateDropdown(dropdown,array,value) {
+    for(el of array) {
+        const option = buildElement('option',el);
+        option.value = value
+        dropdown.appendChild(option);
+    }
+}
+
 // Random # of products feature
 
 // Just have loading sign
@@ -103,3 +137,21 @@ function buildCell(n) {
 // Super Filter function that's passed an array of filter function callbacks
 // *For each* function in Super filter function, modify returnProducts
 // Then generate first 10
+
+/*  take a dropdown element
+    add option for each item meant to be in dropdown
+    need: array of all items ^^
+    how get?
+
+    api doesn't provide list of brands within api
+    gonna have to iterate thru each product and store brand in an object
+    then Object.keys(brands)
+    then run that thru the dropdownpopulator
+
+
+    Dropdown Populator:
+    for each element of provided array, add <option>
+    element into provided element
+    set .value to provided value
+
+*/
