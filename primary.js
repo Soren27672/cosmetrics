@@ -6,7 +6,7 @@ const init = () => {
     const test = q('#test');
     const loader = q('#loader');
     const displayArea = q('#displayArea');
-    const random = q('#random');
+    const filterButton = q('#filterButton');
     const brandFilter = q('#brandFilter');
     const typeFilter = q('#typeFilter');
     const tagsDiv = q('#tagsDiv');
@@ -18,7 +18,7 @@ const init = () => {
     .then(json => {
         allProducts = json;
 
-        // CREATE FILTERS
+        // CREATE DROPDOWNS FROM RESPONSE
         
         const brands = createArrayOfValuesStoredInKey(allProducts,'brand');
         populateDropdown(brandFilter,brands[1]);
@@ -48,15 +48,6 @@ const init = () => {
     });
 
     
-    // TEST ALLPRODUCTS
-    ael('keydown',e => {
-        if(allProducts) {
-            test.textContent = '';
-            for(let i = 0; i < 10; ++i) {
-                test.appendChild(buildElement('li',allProducts[i].name));
-            }
-        }
-    })
 
     // LOAD RANDOM PRODUCT
     ael('click',e => displayArea.appendChild(buildCell(5)),random);
