@@ -1,3 +1,9 @@
+### 13 Changelog ref 13
+- Changed method of filtering functionality
+    - Previously planned on invoking each element of an array of filtration functions using a for block
+    - Previous plan didn't mesh well with ```buildCell()``` function, which builds a cell based on its index value in ```allProducts``` (running ```.filter()``` on ```allProducts``` would return an array of the objects, themselves, not their ids)
+    - Created new function ```filterByKeyValue()``` that returns an array of indexes at which there is an object that has a key value pair that matches the key and value arguments provided to the function
+
 ### 12 Changelog ref 12
 - Site now loads first 10 cells upon loading completion
 

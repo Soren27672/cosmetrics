@@ -3,7 +3,6 @@ let allProducts = false;
 let atId1 = false;
 
 const init = () => {
-    const test = q('#test');
     const loader = q('#loader');
     const displayArea = q('#displayArea');
     const filterButton = q('#filterButton');
@@ -12,6 +11,7 @@ const init = () => {
     const tagsDiv = q('#tagsDiv');
     const categoryFilter = q('#categoryFilter');
     const filters = [];
+    const filteredProducts = [];
 
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
     .then(res => res.json())
@@ -48,6 +48,17 @@ const init = () => {
         for(let i = 0; i < 10; ++i) {
             displayArea.appendChild(buildCell(i));
         };
+
+        ael(filterButton,e => {
+            if (brandFilter.value !== "brand") filters.append(filterByBrand);
+            if (typeFilter.value !== "type") filters.append(filterByType);
+            if (categoryFilter.value !== "category") filters.append(filterByCategory);
+
+            
+
+            displayArea.innerHTML = '';
+            
+        })
     });
 
 
@@ -121,14 +132,6 @@ function buildCell(n) {
     return cell;
 }
 
-function returnFiltered() {
-    const returnProducts = [...allProducts.filter(filters[0])];
-    for(let i = 1; i < filters.length; ++i) {
-        returnProducts = [...returnProducts.filter(filters[i])];
-    }
-    return returnProducts;
-}
-
 function populateDropdown(dropdown,array) {
     for(index in array) {
         const option = buildElement('option',array[index]);
@@ -156,6 +159,19 @@ function createArrayOfValuesStoredInKey(obj,key) {
         returnArray[1] = returnArray[0].map(cv => cv.replace('_',' '));
         returnArray[0] = returnArray[1].map(cv => cv.replace(' ','_'))
     return returnArray;
+}
+
+function filterByKeyValue(array,key,value) {
+    const indexes = [];
+    for(const index in array) {
+        if (Array.isArray(array[index][key])) {
+            for(const el of subArray) {
+                if (el === value) ids[index] = true;
+            }
+        } else if (array[index][key] === value) ids[index] = true;
+    }
+
+    return indexes;
 }
 
 // Random # of products feature
