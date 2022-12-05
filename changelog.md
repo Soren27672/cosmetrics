@@ -1,3 +1,6 @@
+### 12 Changelog ref 12
+- Site now loads first 10 cells upon loading completion
+
 ### 11 Changelog ref 11
 - Randomize button changed to Apply Filter
 - Test keydown event removed

@@ -45,12 +45,12 @@ const init = () => {
             tagsDiv.appendChild(buildElement('br'));
         }
 
+        for(let i = 0; i < 10; ++i) {
+            displayArea.appendChild(buildCell(i));
+        };
     });
 
-    
 
-    // LOAD RANDOM PRODUCT
-    ael('click',e => displayArea.appendChild(buildCell(5)),random);
 
     // LOADING DIALOG
     // (Color changing)
