@@ -46,15 +46,18 @@ const init = () => {
         }
 
         for(let i = 0; i < 10; ++i) {
-            displayArea.appendChild(buildCell(i));
+            displayArea.appendChild(buildCell(allProducts[i],i));
         };
 
         ael(filterButton,e => {
-            if (brandFilter.value !== "brand") filters.append(filterByBrand);
-            if (typeFilter.value !== "type") filters.append(filterByType);
-            if (categoryFilter.value !== "category") filters.append(filterByCategory);
+            if (brandFilter.value !== "brand") filters.append(['brand',brandFilter.value]);
+            if (typeFilter.value !== "type") filters.append(['product_type',typeFilter.value]);
+            if (categoryFilter.value !== "category") filters.append(['catgory',categoryFilter.value]);
 
-            
+            for(let i = 0; i < filters.length; ++i) {
+                if (i === 0) filteredProducts = filterByKeyValue(allProducts,...filters[i])
+                else filteredProducts = filterByKeyValue(allProducts.filter())
+            }
 
             displayArea.innerHTML = '';
             
@@ -102,21 +105,21 @@ function buildElement(type,text = undefined,classes = [],id = undefined) {
     return returnElement;
 }
 
-function buildCell(n) {
-    const cell = buildElement('div',undefined,['prodCell',n]);
+function buildCell(product,id) {
+    const cell = buildElement('div',undefined,['prodCell',`${id}`]);
 
-    const img = buildElement('img',['prodImg',n]);
-    img.src = `https:${allProducts[n].api_featured_image}`;
+    const img = buildElement('img',['prodImg',`${id}`]);
+    img.src = `https:${product.api_featured_image}`;
     cell.appendChild(img);
 
-    const name = buildElement('p',allProducts[n]['name'],['prodName',n]);
+    const name = buildElement('p',product.name,['prodName',`${id}`]);
     cell.appendChild(name);
 
-    const brand = buildElement('a',`by ${allProducts[n].brand}`,['prodBrand',n]);
-    brand.href = allProducts[n].website_link;
+    const brand = buildElement('a',`by ${product.brand}`,['prodBrand',`${id}`]);
+    brand.href = product.website_link;
     cell.appendChild(brand);
 
-    let formattedPrice = allProducts[n].price;
+    let formattedPrice = product.price;
     switch (formattedPrice.length) {
         case 1:
             formattedPrice += '.00';
@@ -126,7 +129,7 @@ function buildCell(n) {
             break;
     }
     
-    const price = buildElement('p',`${allProducts[n].price_sign}${formattedPrice}`,['prodPrice',n]);
+    const price = buildElement('p',`${product.price_sign}${formattedPrice}`,['prodPrice',`${id}`]);
     cell.appendChild(price);
 
     return cell;

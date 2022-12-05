@@ -1,3 +1,6 @@
+### 14 Changelog ref 14
+- Updated ```buildCell()``` function to take a product object and id instead of an index to be retrieved
+
 ### 13 Changelog ref 13
 - Changed method of filtering functionality
     - Previously planned on invoking each element of an array of filtration functions using a for block
