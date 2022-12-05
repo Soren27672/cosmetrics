@@ -1,3 +1,7 @@
+### 10 Changelog ref 10
+- ```populateDropdown()``` no longer asks for a ```value``` parameter
+    - ```option.value``` is now set to the ```value``` parameter with underscores instead of spaces to allow it to be used as a value attribute
+
 ### 9 Changelog ref 9
 - Added default values to dropdowns
 - Updated ```createArrayOfValuesStoredInKeys()```

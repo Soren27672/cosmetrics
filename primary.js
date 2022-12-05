@@ -21,13 +21,13 @@ const init = () => {
         // CREATE FILTERS
         
         const brands = createArrayOfValuesStoredInKey(allProducts,'brand');
-        populateDropdown(brandFilter,brands[1],'brand');
+        populateDropdown(brandFilter,brands[1]);
 
         const types = createArrayOfValuesStoredInKey(allProducts,'product_type');
-        populateDropdown(typeFilter,types[1],'type');
+        populateDropdown(typeFilter,types[1]);
 
         const categories = createArrayOfValuesStoredInKey(allProducts,'category');
-        populateDropdown(categoryFilter,categories[1],'category'); 
+        populateDropdown(categoryFilter,categories[1]); 
 
         const tags = createArrayOfValuesStoredInKey(allProducts,'tag_list');
         for(const tag in tags[0]) {
@@ -138,10 +138,10 @@ function returnFiltered() {
     return returnProducts;
 }
 
-function populateDropdown(dropdown,array,value) {
-    for(el of array) {
-        const option = buildElement('option',el);
-        option.value = value
+function populateDropdown(dropdown,array) {
+    for(index in array) {
+        const option = buildElement('option',array[index]);
+        option.value = array[index].replace(' ','_');
         dropdown.appendChild(option);
     }
 }
