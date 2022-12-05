@@ -119,15 +119,9 @@ function buildCell(product,id) {
     brand.href = product.website_link;
     cell.appendChild(brand);
 
-    let formattedPrice = product.price;
-    switch (formattedPrice.length) {
-        case 1:
-            formattedPrice += '.00';
-            break;
-        case 3:
-            formattedPrice += '0';
-            break;
-    }
+    let formattedPrice = parseFloat(product.price);
+    if (formattedPrice === Math.floor(formattedPrice)) formattedPrice += '.00';
+    else if (formattedPrice * 10 === Math.floor(formattedPrice * 10)) formattedPrice += '0';
     
     const price = buildElement('p',`${product.price_sign}${formattedPrice}`,['prodPrice',`${id}`]);
     cell.appendChild(price);

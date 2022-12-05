@@ -1,3 +1,6 @@
+### 15 Changelog ref 15
+- Updated price formatting to account for numbers with digits in the 10s place and higher
+
 ### 14 Changelog ref 14
 - Updated ```buildCell()``` function to take a product object and id instead of an index to be retrieved
 
