@@ -10,7 +10,7 @@ const init = () => {
     const typeFilter = q('#typeFilter');
     const tagsDiv = q('#tagsDiv');
     const categoryFilter = q('#categoryFilter');
-    const filters = [];
+    let filteredProducts = [];
 
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
     .then(res => res.json())
@@ -49,14 +49,16 @@ const init = () => {
         };
 
         ael('click',e => {
-            let filteredProducts = [...allProducts];
+            filteredProducts = [...allProducts];
             if (brandFilter.value !== "brand") filteredProducts = filteredProducts.filter(cv => cv.brand === (brandFilter.value).replace('_',' '));
             if (typeFilter.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === (typeFilter.value).replace('_',' '));
             if (categoryFilter.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === (categoryFilter.value).replace('_',' '));
 
-            s(filteredProducts);
-
             displayArea.innerHTML = '';
+
+            for(let i = 0; i < filteredProducts.length; ++i) {
+                displayArea.appendChild(buildCell(filteredProducts[i],i));
+            };
             
         },filterButton);
     });

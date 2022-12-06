@@ -1,3 +1,6 @@
+### 17 Changelog ref 17
+- Added for loop that creates cells for each product in ```filteredProducts```
+
 ### 16 Changelog ref 16
 - Deprecated ```filterByKeyValue()``` because ```buildCell()``` now takes product objects, an array of which can be produced by using ```.filter()``` on ```allProducts```
 - Implemented if statements that detect which filters are active, and then apply them
