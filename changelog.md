@@ -1,3 +1,7 @@
+### 16 Changelog ref 16
+- Deprecated ```filterByKeyValue()``` because ```buildCell()``` now takes product objects, an array of which can be produced by using ```.filter()``` on ```allProducts```
+- Implemented if statements that detect which filters are active, and then apply them
+
 ### 15 Changelog ref 15
 - Updated price formatting to account for numbers with digits in the 10s place and higher
 

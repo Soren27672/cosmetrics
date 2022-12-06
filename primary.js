@@ -11,7 +11,6 @@ const init = () => {
     const tagsDiv = q('#tagsDiv');
     const categoryFilter = q('#categoryFilter');
     const filters = [];
-    const filteredProducts = [];
 
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
     .then(res => res.json())
@@ -49,19 +48,17 @@ const init = () => {
             displayArea.appendChild(buildCell(allProducts[i],i));
         };
 
-        ael(filterButton,e => {
-            if (brandFilter.value !== "brand") filters.append(['brand',brandFilter.value]);
-            if (typeFilter.value !== "type") filters.append(['product_type',typeFilter.value]);
-            if (categoryFilter.value !== "category") filters.append(['catgory',categoryFilter.value]);
+        ael('click',e => {
+            let filteredProducts = [...allProducts];
+            if (brandFilter.value !== "brand") filteredProducts = filteredProducts.filter(cv => cv.brand === (brandFilter.value).replace('_',' '));
+            if (typeFilter.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === (typeFilter.value).replace('_',' '));
+            if (categoryFilter.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === (categoryFilter.value).replace('_',' '));
 
-            for(let i = 0; i < filters.length; ++i) {
-                if (i === 0) filteredProducts = filterByKeyValue(allProducts,...filters[i])
-                else filteredProducts = filterByKeyValue(allProducts.filter())
-            }
+            s(filteredProducts);
 
             displayArea.innerHTML = '';
             
-        })
+        },filterButton);
     });
 
 
