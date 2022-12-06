@@ -1,5 +1,10 @@
+### 18 Changelog ref 18
+- Fixed bug that caused checkboxes' ```.value``` properties to be ```undefined```
+- Fixed bug that gave checkboxes a class of "false" 
+
 ### 17 Changelog ref 17
 - Added for loop that creates cells for each product in ```filteredProducts```
+- Gives all elements of a cell a matching class value so that one element may be used to identify its product
 
 ### 16 Changelog ref 16
 - Deprecated ```filterByKeyValue()``` because ```buildCell()``` now takes product objects, an array of which can be produced by using ```.filter()``` on ```allProducts```

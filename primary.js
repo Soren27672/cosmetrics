@@ -11,6 +11,7 @@ const init = () => {
     const tagsDiv = q('#tagsDiv');
     const categoryFilter = q('#categoryFilter');
     let filteredProducts = [];
+    let checkedTags = [];
 
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
     .then(res => res.json())
@@ -30,14 +31,13 @@ const init = () => {
 
         const tags = createArrayOfValuesStoredInKey(allProducts,'tag_list');
         for(const tag in tags[0]) {
-            s(tags,tags[0],tag,tags[0][tag]);
-            const box = buildElement('input',false,[false],tags[0].tag);
+            const box = buildElement('input',false,[],tags[0][tag]);
             box.type = 'checkbox';
             box.name = 'tags';
-            box.value = tags[0].tag;
+            box.value = tags[0][tag];
 
             const label = buildElement('label',tags[1][tag]);
-            label.for = tags[0].tag;
+            label.for = tags[0][tag];
             
             tagsDiv.appendChild(box);
             tagsDiv.appendChild(label);
@@ -53,6 +53,9 @@ const init = () => {
             if (brandFilter.value !== "brand") filteredProducts = filteredProducts.filter(cv => cv.brand === (brandFilter.value).replace('_',' '));
             if (typeFilter.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === (typeFilter.value).replace('_',' '));
             if (categoryFilter.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === (categoryFilter.value).replace('_',' '));
+
+            checkedTags = [...tagsDiv.children].filter(cv => cv.checked === true);
+            s(checkedTags);
 
             displayArea.innerHTML = '';
 
@@ -141,7 +144,6 @@ function createArrayOfValuesStoredInKey(obj,key) {
 
         for(const pair in obj) {
             if(Array.isArray(obj[pair][key])) {
-                s('ran')
                 for(el of obj[pair][key]) {
                     values[el] = true;
                 }
