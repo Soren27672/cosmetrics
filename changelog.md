@@ -1,6 +1,11 @@
+### 19 Changelog ref 19
+- Added code that sets ```checkedTags``` to an array of the checked elements' values as opposed to the elements themselves
+- Filters ```filteredProducts``` by each tag in ```checkedTags```
+
 ### 18 Changelog ref 18
 - Fixed bug that caused checkboxes' ```.value``` properties to be ```undefined```
-- Fixed bug that gave checkboxes a class of "false" 
+- Fixed bug that gave checkboxes a class of "false"
+- Added code that identifies checked tag boxes and creates an array of them
 
 ### 17 Changelog ref 17
 - Added for loop that creates cells for each product in ```filteredProducts```

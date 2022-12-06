@@ -54,8 +54,11 @@ const init = () => {
             if (typeFilter.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === (typeFilter.value).replace('_',' '));
             if (categoryFilter.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === (categoryFilter.value).replace('_',' '));
 
-            checkedTags = [...tagsDiv.children].filter(cv => cv.checked === true);
-            s(checkedTags);
+            checkedTags = [...tagsDiv.children].filter(cv => cv.checked === true).map(cv => cv.value);
+
+            for(const tag of checkedTags) {
+                filteredProducts = filteredProducts.filter(cv => cv.tag_list.includes(tag.replace('_',' ')));
+            };
 
             displayArea.innerHTML = '';
 
