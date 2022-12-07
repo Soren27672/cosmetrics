@@ -1,3 +1,6 @@
+### 29 Changelog ref 29
+- Applied new css to "Apply Filter" button as well
+
 ### 28 Changelog ref 28
 - Fixed bug that caused catgory list to contain an empty ```<option>``` and null
 
