@@ -1,3 +1,6 @@
+### 25 Changelog ref 25
+- Rename html file to index
+
 ### 24 Changelog ref 24
 - Fixed bug where filtering with "any" and no tags selected gave no results
 
