@@ -174,9 +174,11 @@ function buildCell(product,id) {
 
 function populateDropdown(dropdown,array) {
     for(index in array[0]) {
-        const option = buildElement('option',array[1][index]);
-        option.value = index;
-        dropdown.appendChild(option);
+        if ((array[1][index] !== 'null') && (array[1][index] !== '')) {
+            const option = buildElement('option',array[1][index]);
+            option.value = index;
+            dropdown.appendChild(option);
+        }
     }
 }
 
