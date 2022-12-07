@@ -1,3 +1,6 @@
+### 24 Changelog ref 24
+- Fixed bug where filtering with "any" and no tags selected gave no results
+
 ### 23 Changelog ref 23
 - all/any functionality implemented!
 

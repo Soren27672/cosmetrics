@@ -70,7 +70,7 @@ const init = () => {
                 for(const tag of checkedTags) {
                     filteredProducts = filteredProducts.filter(cv => cv.tag_list.includes(tag.replace('_',' ')));
                 };
-            } else {
+            } else if (checkedTags.length !== 0) {
                 filteredProducts = filteredProducts.filter(cv => {
                     for(const tag of checkedTags) {
                         if (cv.tag_list.includes(tag.replace('_',' '))) return true;
