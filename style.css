@@ -17,3 +17,13 @@
     color: hotpink;
     cursor: pointer;
 }
+
+.prodPrice {
+    width: fit-content;
+    display: inline;
+}
+
+.prodCurrency {
+    width: fit-content;
+    display: inline;
+}

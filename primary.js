@@ -1,6 +1,7 @@
 
 let allProducts = false;
 let atId1 = false;
+let signs = [];
 
 const init = () => {
     const loader = q('#loader');
@@ -33,6 +34,10 @@ const init = () => {
 
         const categories = createArrayOfValuesStoredInKey(allProducts,'category');
         populateDropdown(categoryFilter,categories[1]); 
+
+        signs = allProducts.filter(cv => {
+            if ((cv.price_sign === null) && (cv.price !== null)) return true;
+        });
 
         const tags = createArrayOfValuesStoredInKey(allProducts,'tag_list');
         for(const tag in tags[0]) {
@@ -84,6 +89,7 @@ const init = () => {
         if (allProducts) {
             clearInterval(loadingIv);
             loader.style.display = 'none';
+            document.querySelectorAll('.default').forEach(cv => cv.textContent = 'select');
         };
     },50)
 
@@ -133,12 +139,25 @@ function buildCell(product,id) {
     const brand = buildElement('a',`by ${product.brand}`,['prodBrand',`${id}`]);
     brand.href = product.website_link;
     cell.appendChild(brand);
+    cell.appendChild(buildElement('br'));
 
     let formattedPrice = parseFloat(product.price);
-    if (formattedPrice === Math.floor(formattedPrice)) formattedPrice += '.00';
-    else if (formattedPrice * 10 === Math.floor(formattedPrice * 10)) formattedPrice += '0';
+    if ((product.price === null) || (product.price === '0.0')) formattedPrice = "Price unlisted, check the merchant's website"
+    else {
+        // Price formatting
+        if (formattedPrice === Math.floor(formattedPrice)) formattedPrice += '.00';
+        else if (formattedPrice * 10 === Math.floor(formattedPrice * 10)) formattedPrice += '0';
+
+        // Currency formatting
+        const currency = buildElement('p','',['prodCurrency',`${id}`]);
+        if (product.price_sign === null) {
+            currency.textContent = '$';
+            currency.style.color = '#800000';
+        } else currency.textContent = product.price_sign;
+        cell.appendChild(currency);
+    }
     
-    const price = buildElement('p',`${product.price_sign}${formattedPrice}`,['prodPrice',`${id}`]);
+    const price = buildElement('p',`${formattedPrice}`,['prodPrice',`${id}`]);
     cell.appendChild(price);
 
     return cell;

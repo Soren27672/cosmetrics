@@ -1,3 +1,10 @@
+### 22 Changelog ref 22
+- When product.price is 0 or null, the price element states "price unlisted"
+- When product.price_sign is null, the price element shows the currency as USD, but the "$" is red, and hovering over it explains that no currency type was provided
+    - Split price into two elements, one for the sign and one for the number
+    - Edited dispay properties and added more line breaks
+- Changed default dropdowns to say "loading..." while loading and "select" afterward
+
 ### 21 Changelog ref 21
 - Updated checkboxed to be checkable by clicking the label
     - Had to use ```label.setAttrbute('for',id)``` instead of ```label.for = id```
