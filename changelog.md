@@ -1,3 +1,6 @@
+### 30 Changelog ref 30
+- Implemented ```capitalizeFirsts()``` function that capitalizes the first letter of each word of a string
+
 ### 29 Changelog ref 29
 - Applied new css to "Apply Filter" button as well
 

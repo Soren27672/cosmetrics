@@ -151,7 +151,7 @@ function buildCell(product,id) {
     cell.appendChild(buildElement('br'));
 
     let formattedPrice = parseFloat(product.price);
-    if ((product.price === null) || (product.price === '0.0')) formattedPrice = "Price unlisted, check the merchant's website"
+    if ((product.price === null) || (product.price === '0.0')) formattedPrice = "Price unlisted, visit the merchant's website"
     else {
         // Price formatting
         if (formattedPrice === Math.floor(formattedPrice)) formattedPrice += '.00';
@@ -213,6 +213,19 @@ function filterByKeyValue(array,key,value) {
     }
 
     return indexes;
+}
+
+function capitalizeFirsts(string) {
+    const returnString = [];
+    let capsNext = true;
+    for(let i = 0; i < string.length; ++i) {
+        if (capsNext) {
+            returnString.push(string[i].toUpperCase());
+            capsNext = false;
+        } else returnString.push(string[i]);
+        if (string[i] === ' ') capsNext = true;
+        };
+    return returnString.join('');
 }
 
 // Random # of products feature
