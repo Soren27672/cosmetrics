@@ -1,3 +1,8 @@
+### 21 Changelog ref 21
+- Updated checkboxed to be checkable by clicking the label
+    - Had to use ```label.setAttrbute('for',id)``` instead of ```label.for = id```
+    - Not sure why
+
 ### 20 Changelog ref 20
 - Text introducing tags now states "Show products that are tagged with all of the following"
     - "all" may be clicked on to change it to "any", which communicates the intent of the filtration to the script

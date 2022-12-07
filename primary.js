@@ -42,7 +42,7 @@ const init = () => {
             box.value = tags[0][tag];
 
             const label = buildElement('label',tags[1][tag]);
-            label.for = tags[0][tag];
+            label.setAttribute('for',`${tags[0][tag]}`);
             
             tagsDiv.appendChild(box);
             tagsDiv.appendChild(label);
