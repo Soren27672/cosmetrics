@@ -10,6 +10,11 @@ const init = () => {
     const typeFilter = q('#typeFilter');
     const tagsDiv = q('#tagsDiv');
     const categoryFilter = q('#categoryFilter');
+    const allAny = q('#allAny');
+    const allAnyBinarium = {
+        'all': 'any',
+        'any': 'all'
+    }
     let filteredProducts = [];
     let checkedTags = [];
 
@@ -81,6 +86,11 @@ const init = () => {
             loader.style.display = 'none';
         };
     },50)
+
+    // SET UP ALL/ANY SWAPPER
+    ael('click',e => {
+        allAny.textContent = allAnyBinarium[allAny.textContent];
+    },allAny)
 }
 
 document.addEventListener('DOMContentLoaded',init);

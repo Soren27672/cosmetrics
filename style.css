@@ -7,3 +7,13 @@
     font-style: italic;
     text-decoration: none;
 }
+
+#allAny:hover {
+    color: purple;
+    cursor: pointer;
+}
+
+#allAny {
+    color: hotpink;
+    cursor: pointer;
+}

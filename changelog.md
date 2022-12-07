@@ -1,3 +1,8 @@
+### 20 Changelog ref 20
+- Text introducing tags now states "Show products that are tagged with all of the following"
+    - "all" may be clicked on to change it to "any", which communicates the intent of the filtration to the script
+    - "all" changes color and the cursor type when hovered over to emphasize its interactability
+
 ### 19 Changelog ref 19
 - Added code that sets ```checkedTags``` to an array of the checked elements' values as opposed to the elements themselves
 - Filters ```filteredProducts``` by each tag in ```checkedTags```
