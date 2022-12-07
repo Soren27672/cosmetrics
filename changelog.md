@@ -1,3 +1,7 @@
+### 26 Changelog ref 26
+- Set a font family
+- Upgraded css for interactables
+
 ### 25 Changelog ref 25
 - Rename html file to index
 
