@@ -66,8 +66,17 @@ const init = () => {
 
             checkedTags = [...tagsDiv.children].filter(cv => cv.checked === true).map(cv => cv.value);
 
-            for(const tag of checkedTags) {
-                filteredProducts = filteredProducts.filter(cv => cv.tag_list.includes(tag.replace('_',' ')));
+            if (allAny.textContent === "all") {
+                for(const tag of checkedTags) {
+                    filteredProducts = filteredProducts.filter(cv => cv.tag_list.includes(tag.replace('_',' ')));
+                };
+            } else {
+                filteredProducts = filteredProducts.filter(cv => {
+                    for(const tag of checkedTags) {
+                        if (cv.tag_list.includes(tag.replace('_',' '))) return true;
+                    }
+                    return false;
+                });
             };
 
             displayArea.innerHTML = '';
