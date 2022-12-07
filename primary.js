@@ -27,13 +27,13 @@ const init = () => {
         // CREATE DROPDOWNS FROM RESPONSE
         
         const brands = createArrayOfValuesStoredInKey(allProducts,'brand');
-        populateDropdown(brandFilter,brands[1]);
+        populateDropdown(brandFilter,brands);
 
         const types = createArrayOfValuesStoredInKey(allProducts,'product_type');
-        populateDropdown(typeFilter,types[1]);
+        populateDropdown(typeFilter,types);
 
         const categories = createArrayOfValuesStoredInKey(allProducts,'category');
-        populateDropdown(categoryFilter,categories[1]); 
+        populateDropdown(categoryFilter,categories); 
 
         signs = allProducts.filter(cv => {
             if ((cv.price_sign === null) && (cv.price !== null)) return true;
@@ -60,9 +60,9 @@ const init = () => {
 
         ael('click',e => {
             filteredProducts = [...allProducts];
-            if (brandFilter.value !== "brand") filteredProducts = filteredProducts.filter(cv => cv.brand === (brandFilter.value).replace('_',' '));
-            if (typeFilter.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === (typeFilter.value).replace('_',' '));
-            if (categoryFilter.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === (categoryFilter.value).replace('_',' '));
+            if (brandFilter.value !== "brand") filteredProducts = filteredProducts.filter(cv => cv.brand === brands[1][brandFilter.value]);
+            if (typeFilter.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === types[1][typeFilter.value]);
+            if (categoryFilter.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === (categories[0][categoryFilter.value]));
 
             checkedTags = [...tagsDiv.children].filter(cv => cv.checked === true).map(cv => cv.value);
 
@@ -173,9 +173,9 @@ function buildCell(product,id) {
 }
 
 function populateDropdown(dropdown,array) {
-    for(index in array) {
-        const option = buildElement('option',array[index]);
-        option.value = array[index].replace(' ','_');
+    for(index in array[0]) {
+        const option = buildElement('option',array[1][index]);
+        option.value = index;
         dropdown.appendChild(option);
     }
 }
