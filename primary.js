@@ -22,13 +22,10 @@ const init = () => {
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
     .then(res => res.json())
     .then(json => {
-        allProducts = [];
-        for(const index in json) {
-            allProducts.push({
-                index: index,
-                object: json[index]
-            })
-        }
+        allProducts = json;
+        for(let i = 0; i < allProducts.length; ++i) {
+            allProducts[i].index = i;
+            }
 
         // CREATE DROPDOWNS FROM RESPONSE
         
@@ -46,14 +43,14 @@ const init = () => {
         });
 
         const tags = createArrayOfValuesStoredInKey(allProducts,'tag_list');
-        for(const tag in tags[0]) {
-            const box = buildElement('input',false,[],tags[0][tag]);
+        for(const tag in tags) {
+            const box = buildElement('input',false,[],tags[tag].scored);
             box.type = 'checkbox';
             box.name = 'tags';
-            box.value = tags[0][tag];
+            box.value = tags[tag].scored;
 
-            const label = buildElement('label',capitalizeFirsts(tags[1][tag]));
-            label.setAttribute('for',`${tags[0][tag]}`);
+            const label = buildElement('label',capitalizeFirsts(tags[tag].spaced));
+            label.setAttribute('for',`${tags[tag].scored}`);
             
             tagsDiv.appendChild(box);
             tagsDiv.appendChild(label);
@@ -64,14 +61,17 @@ const init = () => {
             displayArea.appendChild(buildCell(allProducts[i],i));
         };
 
+        // DRY UP
         ael('click',e => {
             filteredProducts = [...allProducts];
-            if (brandFilter.value !== "brand") filteredProducts = filteredProducts.filter(cv => cv.brand === brands[1][brandFilter.value]);
-            if (typeFilter.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === types[1][typeFilter.value]);
-            if (categoryFilter.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === (categories[0][categoryFilter.value]));
+            if (brandFilter.value !== "brand") filteredProducts = filteredProducts.filter(cv => cv.brand === brands[brandFilter.value].spaced);
+            if (typeFilter.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === types[typeFilter.value].scored);
+            if (categoryFilter.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === categories[categoryFilter.value].scored);
 
             checkedTags = [...tagsDiv.children].filter(cv => cv.checked === true).map(cv => cv.value);
 
+
+            // ANYALL FUNCTIONALITY
             if (allAny.textContent === "all") {
                 for(const tag of checkedTags) {
                     filteredProducts = filteredProducts.filter(cv => cv.tag_list.includes(tag.replace('_',' ')));
@@ -179,33 +179,35 @@ function buildCell(product,id) {
 }
 
 function populateDropdown(dropdown,array) {
-    for(index in array[0]) {
-        if ((array[1][index] !== 'null') && (array[1][index] !== '')) {
-            const option = buildElement('option',capitalizeFirsts(array[1][index]));
-            option.value = index;
+    for(let i = 0; i < array.length; ++i) {
+        if ((array[i].spaced !== 'null') && (array[i].spaced !== '')) {
+            const option = buildElement('option',capitalizeFirsts(array[i].spaced));
+            option.value = i;
             dropdown.appendChild(option);
         }
     }
 }
 
-function createArrayOfValuesStoredInKey(objsArr,key) {
-    let values = {};
+function createArrayOfValuesStoredInKey(arr,key) {
+    const values = {};
 
-        for(const pair in objsArr) {
-            if(Array.isArray(objsArr[pair].object[key])) {
-                for(el of objsArr[pair].object[key]) {
+        for(const pair in arr) {
+            if(Array.isArray(arr[pair][key])) {
+                for(const el of arr[pair][key]) {
                     values[el] = true;
+                    }
                 }
+            else if (arr[pair][key]) {
+                values[arr[pair][key]] = true
             }
-            else values[objsArr[pair].object[key]] = true;
         }
-
-        const returnArray = [];
-
-        returnArray[0] = [...Object.keys(values)].sort();
-        returnArray[1] = returnArray[0].map(cv => cv.replace('_',' '));
-        returnArray[0] = returnArray[1].map(cv => cv.replace(' ','_'))
-    return returnArray;
+    
+        return (Object.keys(values)).map(cv => {
+            return {
+                scored: cv.replace(' ','_'),
+                spaced: cv.replace('_',' ')
+            }
+        })
 }
 
 function filterByKeyValue(array,key,value) {

@@ -1,8 +1,13 @@
+### 32 Changelog ref 32
+- Deprecated previous storage of index and object separately, now index is simply another value within the object
+    - The index key/value is added after loading the json
+- Deprecated previous storage of spaced and underscored names, now spaced and underscored names are two values within an option object stored in an array of all option objects
+
 ### 31 Changelog ref 31
 - Implemented ```capitalizeFirsts()```
 - Reworked ```allProducts``` to instead be an array of objects that at ```allProducts.index``` contains its index within ```allProducts``` and at ```allProducts.object``` contains the actual product object itself
 - Any functions that previously used simply an index of ```allProducts``` will be updated to use instead the ```.objcet``` key at that index
-- With this data structure, a product's index in the database can be accessed by the product itself
+- With this data structure, a product can provide an absolute reference to its place in the database anywhere it is referenced
 
 ### 30 Changelog ref 30
 - Created ```capitalizeFirsts()``` function that capitalizes the first letter of each word of a string
