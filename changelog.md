@@ -1,5 +1,11 @@
+### 31 Changelog ref 31
+- Implemented ```capitalizeFirsts()```
+- Reworked ```allProducts``` to instead be an array of objects that at ```allProducts.index``` contains its index within ```allProducts``` and at ```allProducts.object``` contains the actual product object itself
+- Any functions that previously used simply an index of ```allProducts``` will be updated to use instead the ```.objcet``` key at that index
+- With this data structure, a product's index in the database can be accessed by the product itself
+
 ### 30 Changelog ref 30
-- Implemented ```capitalizeFirsts()``` function that capitalizes the first letter of each word of a string
+- Created ```capitalizeFirsts()``` function that capitalizes the first letter of each word of a string
 
 ### 29 Changelog ref 29
 - Applied new css to "Apply Filter" button as well

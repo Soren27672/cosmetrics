@@ -22,7 +22,13 @@ const init = () => {
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
     .then(res => res.json())
     .then(json => {
-        allProducts = json;
+        allProducts = [];
+        for(const index in json) {
+            allProducts.push({
+                index: index,
+                object: json[index]
+            })
+        }
 
         // CREATE DROPDOWNS FROM RESPONSE
         
@@ -46,7 +52,7 @@ const init = () => {
             box.name = 'tags';
             box.value = tags[0][tag];
 
-            const label = buildElement('label',tags[1][tag]);
+            const label = buildElement('label',capitalizeFirsts(tags[1][tag]));
             label.setAttribute('for',`${tags[0][tag]}`);
             
             tagsDiv.appendChild(box);
@@ -175,23 +181,23 @@ function buildCell(product,id) {
 function populateDropdown(dropdown,array) {
     for(index in array[0]) {
         if ((array[1][index] !== 'null') && (array[1][index] !== '')) {
-            const option = buildElement('option',array[1][index]);
+            const option = buildElement('option',capitalizeFirsts(array[1][index]));
             option.value = index;
             dropdown.appendChild(option);
         }
     }
 }
 
-function createArrayOfValuesStoredInKey(obj,key) {
+function createArrayOfValuesStoredInKey(objsArr,key) {
     let values = {};
 
-        for(const pair in obj) {
-            if(Array.isArray(obj[pair][key])) {
-                for(el of obj[pair][key]) {
+        for(const pair in objsArr) {
+            if(Array.isArray(objsArr[pair].object[key])) {
+                for(el of objsArr[pair].object[key]) {
                     values[el] = true;
                 }
             }
-            else values[obj[pair][key]] = true;
+            else values[objsArr[pair].object[key]] = true;
         }
 
         const returnArray = [];
