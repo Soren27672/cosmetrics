@@ -1,3 +1,6 @@
+### 33 Changelog ref 33
+- Added unlisted currency message to the red dollar sign on hover
+
 ### 32 Changelog ref 32
 - Deprecated previous storage of index and object separately, now index is simply another value within the object
     - The index key/value is added after loading the json

@@ -156,23 +156,35 @@ function buildCell(product,id) {
     cell.appendChild(brand);
     cell.appendChild(buildElement('br'));
 
+    const currency = buildElement('p','',['prodCurrency',`${id}`]);
+    
     let formattedPrice = parseFloat(product.price);
-    if ((product.price === null) || (product.price === '0.0')) formattedPrice = "Price unlisted, visit the merchant's website"
+    if ((product.price === null) || (product.price === '0.0')) {
+        formattedPrice = "Price unlisted, visit the merchant's website"
+        
+
+    }
     else {
         // Price formatting
         if (formattedPrice === Math.floor(formattedPrice)) formattedPrice += '.00';
         else if (formattedPrice * 10 === Math.floor(formattedPrice * 10)) formattedPrice += '0';
 
         // Currency formatting
-        const currency = buildElement('p','',['prodCurrency',`${id}`]);
         if (product.price_sign === null) {
             currency.textContent = '$';
             currency.style.color = '#800000';
+
+            const div = buildElement('div',undefined,['currencyDiv',`${id}`])
+            currency.appendChild(div)
+            const message = buildElement('p',"No currency was provided for this product, visit the merchant's website for more information",['currencyMessage',`${id}`])
+            div.appendChild(message);
+
         } else currency.textContent = product.price_sign;
         cell.appendChild(currency);
     }
     
     const price = buildElement('p',`${formattedPrice}`,['prodPrice',`${id}`]);
+
     cell.appendChild(price);
 
     return cell;
