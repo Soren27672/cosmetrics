@@ -1,3 +1,11 @@
+### 35 Changelog ref 35
+- Created db.json to store user information
+- Added username and password fields
+- Added event to fetch user data and compare it to what was provided
+    - Sets ```user``` to the provided username when data matches
+    - Sends "Incorrect password" alert when username exists in the json but the password does not match
+    - Send "User not found" when the username is not in the json
+
 ### 34 Changelog ref 34
 - Made message box for currency hover message
 - Made class ```.popOutDiv``` to use on all message boxes that pop out on hover

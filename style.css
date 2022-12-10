@@ -122,3 +122,7 @@ select:hover,#allAny:hover,button:hover {
 .prodCurrency:hover .popOutDiv {
     visibility: visible;
 }
+
+#greeting {
+    display: none;
+}
