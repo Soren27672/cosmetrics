@@ -174,9 +174,9 @@ function buildCell(product,id) {
             currency.textContent = '$';
             currency.style.color = '#800000';
 
-            const div = buildElement('div',undefined,['currencyDiv',`${id}`])
+            const div = buildElement('div',undefined,['popOutDiv',`${id}`])
             currency.appendChild(div)
-            const message = buildElement('p',"No currency was provided for this product, visit the merchant's website for more information",['currencyMessage',`${id}`])
+            const message = buildElement('p',"No currency was provided for this product, visit the merchant's website for more information",['popOutText',`${id}`])
             div.appendChild(message);
 
         } else currency.textContent = product.price_sign;

@@ -94,3 +94,31 @@ select:hover,#allAny:hover,button:hover {
     background-color: lightgray;
     box-shadow: none;
 }
+
+.popOutDiv {
+    border-radius: 3px;
+    box-shadow: 2px 2px darkgray;
+    background-color: white;
+    position: absolute;
+    width: 160px;
+    bottom: 30px;
+    padding: 10px;
+    visibility: hidden;
+}
+
+.popOutText {
+    font-size: 12px;
+    text-align: justify;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin: 0px;
+    visibility: inherit;
+}
+
+.prodCurrency {
+    position: relative;
+}
+
+.prodCurrency:hover .popOutDiv {
+    visibility: visible;
+}

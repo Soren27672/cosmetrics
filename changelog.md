@@ -1,3 +1,7 @@
+### 34 Changelog ref 34
+- Made message box for currency hover message
+- Made class ```.popOutDiv``` to use on all message boxes that pop out on hover
+
 ### 33 Changelog ref 33
 - Added unlisted currency message to the red dollar sign on hover
 
