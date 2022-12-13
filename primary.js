@@ -102,20 +102,25 @@ const init = () => {
     // SETUP LOGGING IN
     ael('click',e => {
         e.preventDefault();
+        let ok;
+        let status;
         fetch(`http://localhost:3000/users/${logInForm.username.value}`)
         .then(res => {
-            if (res.status === 404) alert('Our records show no account registered under the provided username');
+            ok = res.ok;
+            status = res.status;
             return res.json();
         })
         .then(json => {
-            s(json.status);
-            if ((json.password === logInForm.password.value) && json.ok) {
+            s(json,json.password,logInForm,logInForm.password.value,json.ok);
+            if (status === 404) {
+                alert('Our records show no account registered under the provided username');
+            } else if ((json.password === logInForm.password.value) && ok) {
                 user = logInForm.username.value;
                 logInForm.username.value = '';
                 logInForm.password.value = '';
                 greeting.textContent = `Hello, ${user}!`
                 greeting.style.display = 'block';
-            } else if(json.ok) alert('Incorrect password');    
+            } else if(ok) alert('Incorrect password');    
         });
     },logIn)
 
