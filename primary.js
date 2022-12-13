@@ -13,6 +13,7 @@ const init = () => {
     const categoryFilter = q('#categoryFilter');
     const allAny = q('#allAny');
     const logIn = q('#logIn');
+    const register = q('#register');
     const logInForm = q('#logInForm');
     const greeting = q('#greeting');
 
@@ -111,11 +112,10 @@ const init = () => {
             return res.json();
         })
         .then(json => {
-            s(json,json.password,logInForm,logInForm.password.value,json.ok);
             if (status === 404) {
                 alert('Our records show no account registered under the provided username');
             } else if ((json.password === logInForm.password.value) && ok) {
-                user = logInForm.username.value;
+                user = json.id;
                 logInForm.username.value = '';
                 logInForm.password.value = '';
                 greeting.textContent = `Hello, ${user}!`
@@ -123,6 +123,35 @@ const init = () => {
             } else if(ok) alert('Incorrect password');    
         });
     },logIn)
+
+    /// REGISTERING NEW ACCOUNT
+    ael('click',e => {
+        e.preventDefault();
+        fetch(`http://localhost:3000/users/${logInForm.username.value}`)
+        .then(res => {
+            if (res.status === 404) {
+                fetch(`http://localhost:3000/users`,{
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        id: logInForm.username.value,
+                        password: logInForm.password.value
+                    })
+                })
+                .then(res => res.json())
+                .then(json => {
+                    user = json.id;
+                    logInForm.username.value = '';
+                    logInForm.password.value = '';
+                    greeting.textContent = `Hello, ${user}!`
+                    greeting.style.display = 'block';
+                });
+                } else if (res.ok) alert(`The account ${logInForm.username.value} is already taken.`)
+            });
+    },register)
 
     // LOADING DIALOG
     // (Color changing)

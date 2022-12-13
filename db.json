@@ -1,12 +1,16 @@
 {
-    "users": [
-        {
-            "id": "Maxwell",
-            "password": "password"
-        },
-        {
-            "id": "Anastasia",
-            "password": "password2"
-        }
-    ]
+  "users": [
+    {
+      "id": "Maxwell",
+      "password": "password"
+    },
+    {
+      "id": "Anastasia",
+      "password": "password2"
+    },
+    {
+      "id": "Newton",
+      "password": "apple"
+    }
+  ]
 }

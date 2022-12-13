@@ -1,3 +1,8 @@
+### 37 Changelog ref 37
+- Created registration functionality
+    - Upon clicking register, the text in the username field is sent as a get request, and if it returns with status 404, it sends a POST request to that same resource containing a username and password object
+    - This is to first check that no user with that id exists before writing in data at that resource
+
 ### 36 Changelog ref 36
 - Created variables ```ok``` and ```status``` within the click event on the log in button that are declared before the fetch so that the response's ```.ok``` and ```.status``` properties may be stored in them within the first .then() and then read in the second .then()
 - Created a ```<div>``` for the login area
