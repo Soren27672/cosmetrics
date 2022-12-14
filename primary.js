@@ -105,7 +105,7 @@ const init = () => {
         e.preventDefault();
         let ok;
         let status;
-        fetch(`http://localhost:3000/users/${logInForm.username.value}`)
+        fetch(`http://localhost:3000/users/${encodeURI(logInForm.username.value)}`)
         .then(res => {
             ok = res.ok;
             status = res.status;
@@ -127,7 +127,7 @@ const init = () => {
     /// REGISTERING NEW ACCOUNT
     ael('click',e => {
         e.preventDefault();
-        fetch(`http://localhost:3000/users/${logInForm.username.value}`)
+        fetch(`http://localhost:3000/users/${encodeURI(logInForm.username.value)}`)
         .then(res => {
             if (res.status === 404) {
                 fetch(`http://localhost:3000/users`,{

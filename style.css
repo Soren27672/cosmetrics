@@ -74,7 +74,7 @@ select:hover {
     background-color: lightgray; */
 }
 
-button {
+button,[type=image] {
     border: none;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-size: 16px;
@@ -89,9 +89,8 @@ button {
     cursor: pointer; 
 }
 
-select:hover,#allAny:hover,button:hover {
-    color: purple;
-    background-color: lightgray;
+select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inactive),[type=image]:hover:not(.inactive) {
+    filter: brightness(0.8) hue-rotate(-20deg);
     box-shadow: none;
 }
 
@@ -125,4 +124,15 @@ select:hover,#allAny:hover,button:hover {
 
 #greeting {
     display: none;
+}
+
+#openLogIn {
+    padding-top: 3px;
+}
+
+.inactive {
+    filter: none;
+    filter: grayscale(1);
+    box-shadow: none;
+    background-color: lightgray;
 }

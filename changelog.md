@@ -1,3 +1,10 @@
+### 38 Changelog ref 38
+- Added ```encodeURI()``` to the fetch request so that usernames may include special characters
+- Added user button which will eventually collapse and expand registration/login functionality
+- Updated button hover pseudoclasses to apply a filter rather than just changing the color
+    - This applies the color change to images as well and is more forwards compatible
+- Created ```inactive``` class for elements, which grays out buttons when their functionality is unavailable
+
 ### 37 Changelog ref 37
 - Created registration functionality
     - Upon clicking register, the text in the username field is sent as a get request, and if it returns with status 404, it sends a POST request to that same resource containing a username and password object
