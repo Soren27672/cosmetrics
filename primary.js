@@ -5,17 +5,29 @@ let signs = [];
 
 const init = () => {
     const loader = q('#loader');
-    const displayArea = q('#displayArea');
-    const filterButton = q('#filterButton');
+    
     const brandFilter = q('#brandFilter');
     const typeFilter = q('#typeFilter');
-    const tagsDiv = q('#tagsDiv');
     const categoryFilter = q('#categoryFilter');
+    const logInForm = q('#logInForm');
+    const greeting = q('#greeting');
+    
+    
+    /// BUTTONS
+    const openUser = q('#openUser');
+    const logOut = q('#logOut');
     const allAny = q('#allAny');
     const logIn = q('#logIn');
     const register = q('#register');
-    const logInForm = q('#logInForm');
-    const greeting = q('#greeting');
+    const filterButton = q('#filterButton');
+
+    /// DIVS
+    const userDiv = q('#userDiv');
+    const logInDiv = q('#logInDiv');
+    let userOpenST = false;
+    const userOptionsDiv = q('#userOptionsDiv');
+    const tagsDiv = q('#tagsDiv');
+    const displayArea = q('#displayArea');
 
     const allAnyBinarium = {
         'all': 'any',
@@ -119,7 +131,8 @@ const init = () => {
                 logInForm.username.value = '';
                 logInForm.password.value = '';
                 greeting.textContent = `Hello, ${user}!`
-                greeting.style.display = 'block';
+                logInDiv.style.display = 'none';
+                userOptionsDiv.style.display = 'block';
             } else if(ok) alert('Incorrect password');    
         });
     },logIn)
@@ -147,11 +160,27 @@ const init = () => {
                     logInForm.username.value = '';
                     logInForm.password.value = '';
                     greeting.textContent = `Hello, ${user}!`
-                    greeting.style.display = 'block';
                 });
                 } else if (res.ok) alert(`The account ${logInForm.username.value} is already taken.`)
             });
     },register)
+
+    /// LOGGING OUT
+    ael('click',e => {
+        e.preventDefault();
+        logOutUser();
+    },logOut)
+
+    /// CLOSING USER DIV
+    ael('click', e => {
+        e.preventDefault();
+        if (!userOpenST) {
+            userDiv.style.display = 'block';
+        } else if (userOpenST) {
+            userDiv.style.display = 'none';
+        }
+        userOpenST = !userOpenST;
+    },openUser)
 
     // LOADING DIALOG
     // (Color changing)
@@ -303,6 +332,13 @@ function capitalizeFirsts(string) {
         if (string[i] === ' ') capsNext = true;
         };
     return returnString.join('');
+}
+
+function logOutUser() {
+    user = null;
+    logInDiv.style.display = 'block';
+    userOptionsDiv.style.display = 'none';
+    greeting.innerHTML = `No user currently signed in<br>Sign in below!`;
 }
 
 // Random # of products feature

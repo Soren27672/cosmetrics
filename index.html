@@ -7,17 +7,23 @@
         <link rel="stylesheet" href="./style.css">
     </head>
     <body>
-        <div id="logInDiv">
-            <input type="image" src="./icons8-user-31.png" id="openLogIn">
-            <h1 id="greeting">This should NOT be seen >:(</h1>
-            <form id="logInForm">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="username"><br>
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="password"><br>
-                <button id="logIn" class="inactive">Log in</button>
-                <button id="register">Register</button>
-            </form>
+        <input type="image" src="./icons8-user-31.png" id="openUser">
+        <div id="userDiv">
+            <p id="greeting">No user currently signed in<br>Sign in below!</p>
+            <div id="logInDiv">
+                <form id="logInForm">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="username"><br>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="password"><br>
+                    <button id="logIn" >Log in</button>
+                    <button id="register">Register</button>
+                </form>
+            </div>
+            <div id="userOptionsDiv">
+                <button id="favorites">Favorites</button><br>
+                <button id="logOut">Log out</button>
+            </div>
         </div>
         <h1 id="loader">Loading!</h1>
 
@@ -25,15 +31,15 @@
             <label for="brandFilter">Brand</label>
             <select id="brandFilter">
                 <option class="default" value="brand">loading...</option>
-            </select>
+            </select><br>
             <label for="typeFilter">Type</label>
             <select id="typeFilter">
                 <option class="default" value="type">loading...</option>
-            </select>
+            </select><br>
             <label for="categoryFilter">Category</label>
             <select id="categoryFilter">
                 <option class="default" value="category">loading...</option>
-            </select>
+            </select><br>
             <div id="tagsDiv">
                 <p>Show products that are tagged with <strong id="allAny">all</strong> of the following:</p>
             </div>

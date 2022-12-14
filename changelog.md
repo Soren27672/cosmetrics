@@ -1,3 +1,9 @@
+### 39 Changelog ref 39
+- Moved user icon outside of the ```logInDiv```
+- Added code that hides/shows the user div
+- Hides the login form when signed in
+- Added log out functionality
+
 ### 38 Changelog ref 38
 - Added ```encodeURI()``` to the fetch request so that usernames may include special characters
 - Added user button which will eventually collapse and expand registration/login functionality

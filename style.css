@@ -122,11 +122,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     visibility: visible;
 }
 
-#greeting {
-    display: none;
-}
-
-#openLogIn {
+#openUser {
     padding-top: 3px;
 }
 
@@ -135,4 +131,9 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     filter: grayscale(1);
     box-shadow: none;
     background-color: lightgray;
+}
+
+/* Starts out hidden */
+#userDiv, #userOptionsDiv {
+    display: none;
 }
