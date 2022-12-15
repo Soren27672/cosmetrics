@@ -6,14 +6,14 @@ let signs = [];
 const init = () => {
     const loader = q('#loader');
     
-    const brandFilter = q('#brandFilter');
-    const typeFilter = q('#typeFilter');
-    const categoryFilter = q('#categoryFilter');
     const logInForm = q('#logInForm');
     const greeting = q('#greeting');
     
     
-    /// BUTTONS
+    /// INTERACTS
+    const brandFilter = q('#brandFilter');
+    const typeFilter = q('#typeFilter');
+    const categoryFilter = q('#categoryFilter');
     const openUser = q('#openUser');
     const logOut = q('#logOut');
     const allAny = q('#allAny');
@@ -30,6 +30,7 @@ const init = () => {
     const userOptionsDiv = q('#userOptionsDiv');
     const tagsDiv = q('#tagsDiv');
     const displayArea = q('#displayArea');
+    const topBarDiv = q('#topBarDiv');
 
     const allAnyBinarium = {
         'all': 'any',
@@ -171,13 +172,16 @@ const init = () => {
 
     /// DEACTIVATE LOGIN/REGI BUTTONS WHEN FIELDS ARE EMPTY
     ael('keydown',e => {
-        if ((logInForm.password.value === '') || (logInForm.username.value === '')) {
-            logIn.classList.add('inactive');
-            register.classList.add('inactive');
-        } else {
-            logIn.classList.remove('inactive');
-            register.classList.remove('inactive');
-        }
+        setTimeout(() => {
+            if ((logInForm.password.value === '') || (logInForm.username.value === '')) {
+                logIn.classList.add('inactive');
+                register.classList.add('inactive');
+            } else {
+                logIn.classList.remove('inactive');
+                register.classList.remove('inactive');
+            }
+        },1)
+
     })
 
     /// LOGGING OUT
@@ -354,6 +358,32 @@ function logOutUser() {
     logInDiv.style.display = 'block';
     userOptionsDiv.style.display = 'none';
     greeting.innerHTML = `No user currently signed in<br>Sign in below!`;
+}
+
+function sendTopBar(message) {
+    topBarDiv.style.display = 'block';
+    topBarDiv.style.top = '-72px';
+    topBarDiv.querySelector('p').textContent = message;
+    let y = -72;
+    const inIv = setInterval(() => {
+        y /= 1.25;
+        s(y);
+        topBarDiv.style.top = `${0+y}px`;
+        if(y > -1) {
+            topBarDiv.style.top = 0;
+            clearInterval(inIv);
+            y = -0.5
+            setTimeout(() => {
+                const outIv = setInterval(() => {
+                    y *= 1.25;
+                    s(y);
+                    topBarDiv.style.top = `${0+y}px`;
+                    if (y < -72) clearInterval(outIv);
+                },50)
+            },2000)
+        }
+    },50)
+
 }
 
 // Random # of products feature

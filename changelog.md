@@ -1,3 +1,10 @@
+### 41 Changelog ref 41
+- Created message topbar that displays messages about various triggers
+- Changed cursor for inactive buttons
+- Login and register buttons now de/activate when the fields go empty or full (fixed timing bug)
+    - The check for whether or not the fields were empty was happening in the space between the key being pressed and the field filling
+    - Added a millisecond of wait so that the field could fill before the check ran
+
 ### 40 Changelog ref 40
 - While the username/password fields are empty, the login and register buttons display as inactive and don't run their code
 
