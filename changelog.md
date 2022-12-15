@@ -1,3 +1,6 @@
+### 40 Changelog ref 40
+- While the username/password fields are empty, the login and register buttons display as inactive and don't run their code
+
 ### 39 Changelog ref 39
 - Moved user icon outside of the ```logInDiv```
 - Added code that hides/shows the user div

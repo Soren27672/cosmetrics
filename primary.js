@@ -18,7 +18,9 @@ const init = () => {
     const logOut = q('#logOut');
     const allAny = q('#allAny');
     const logIn = q('#logIn');
+    logIn.classList.add('inactive');
     const register = q('#register');
+    register.classList.add('inactive');
     const filterButton = q('#filterButton');
 
     /// DIVS
@@ -115,6 +117,7 @@ const init = () => {
     // SETUP LOGGING IN
     ael('click',e => {
         e.preventDefault();
+        if (logIn.classList.contains('inactive')) return;
         let ok;
         let status;
         fetch(`http://localhost:3000/users/${encodeURI(logInForm.username.value)}`)
@@ -140,6 +143,7 @@ const init = () => {
     /// REGISTERING NEW ACCOUNT
     ael('click',e => {
         e.preventDefault();
+        if (register.classList.contains('inactive')) return;
         fetch(`http://localhost:3000/users/${encodeURI(logInForm.username.value)}`)
         .then(res => {
             if (res.status === 404) {
@@ -164,6 +168,17 @@ const init = () => {
                 } else if (res.ok) alert(`The account ${logInForm.username.value} is already taken.`)
             });
     },register)
+
+    /// DEACTIVATE LOGIN/REGI BUTTONS WHEN FIELDS ARE EMPTY
+    ael('keydown',e => {
+        if ((logInForm.password.value === '') || (logInForm.username.value === '')) {
+            logIn.classList.add('inactive');
+            register.classList.add('inactive');
+        } else {
+            logIn.classList.remove('inactive');
+            register.classList.remove('inactive');
+        }
+    })
 
     /// LOGGING OUT
     ael('click',e => {

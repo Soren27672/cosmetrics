@@ -86,7 +86,8 @@ button,[type=image] {
     font-weight: bold;
     color: hotpink;
     background-color: white;
-    cursor: pointer; 
+    cursor: pointer;
+    margin: 3px;
 }
 
 select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inactive),[type=image]:hover:not(.inactive) {
@@ -136,4 +137,18 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
 /* Starts out hidden */
 #userDiv, #userOptionsDiv {
     display: none;
+}
+
+#userDiv {
+    padding: 8px;
+    background-image: white;
+    border-radius: 7px;
+    border: 3px solid hotpink;
+    box-shadow: 2px 2px darkgray;
+    width: fit-content;
+    margin: 5px;
+}
+
+#greeting {
+    margin: 0px;
 }
