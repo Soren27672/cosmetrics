@@ -370,53 +370,52 @@ function logOutUser() {
 function sendTopBar(message,easeSec = 1,duration = 3,refresh = 50) {
     const topBar = buildElement('div',null,['topBarDiv']);
     topBar.style.display = 'block';
-    topBar.style.top = '-72px';
+    topBar.style.top = '-76px';
     topBarDiv.appendChild(topBar);
     
     const p = buildElement('p',message,['topBarMessage']);
     topBar.appendChild(p);
 
-    const steps = (easeSec * 1000) / refresh;
-    const easeIn = easeArray(72,steps);
-    let i = 0;
-    const inIV = setInterval(() => {
-        if (i <= steps) {
-            topBar.style.top = `${0 - easeIn[(easeIn.length - 1) - i]}px`;
-            ++i;
-        }
+    const easeIn = createGeometricSeq(76,easeSec,refresh);
 
-        /// If we're at the end of the array
-        if (i === steps) {
-            /// Wait 4 seconds
-            setTimeout(() => {
+    moveAlongArray(easeIn,topBar,'top',0,true);
+    setTimeout(() => {
+        moveAlongArray(easeIn,topBar,'top',0);
+        setTimeout(() => topBar.remove(),(easeIn.length * refresh));
 
-                clearInterval(inIV);
-                i = 0;
-                const outIV = setInterval(() => {
-                    if (i <= steps) {
-                        topBar.style.top = `${0 - easeIn[i]}px`;
-                        ++i
-                    }
-
-                    if (i === steps) {
-                        topBar.remove();
-                        clearInterval(outIV);
-                    }
-                },refresh)
-            },duration * 1000);
-        }
-    },refresh);
-
+    },(easeIn.length * refresh) + (duration * 1000));
 
 }
 
-function easeArray(span,steps) {
+function createGeometricSeq(span,seconds,refresh = 50) {
+    const steps = (seconds * 1000) / refresh;
     const returnArray = [];
     const multiplier = (span + 1) ** (1/steps);
     for(let i = 0; i <= steps; ++i) {
         returnArray.push((multiplier ** i) - 1)
     }
     return returnArray;
+}
+
+function moveAlongArray(array,element,property,subtractFrom = null,reverse = false) {
+    element.style[property] = `${produceFinal(array,0,subtractFrom,reverse)}px`;
+    let i = 1;
+    const IV = setInterval(() => {
+        if (i < array.length) {
+            s('tempotanklmao')
+            element.style[property] = `${produceFinal(array,i,subtractFrom,reverse)}px`;
+            ++i;
+        }
+
+        if (i === array.length) clearInterval(IV);
+    },50)
+}
+
+
+function produceFinal(array,i,subSubtractFrom,subReverse) {
+    let final = subReverse ? array[array.length - i] : array[i];
+    if (typeof subSubtractFrom === 'number') final = subSubtractFrom - final;
+    return final;
 }
 
 // Random # of products feature

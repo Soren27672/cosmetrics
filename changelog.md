@@ -1,3 +1,9 @@
+### 43 Changelog ref 43
+- Modified ```easeArray()``` to take an amount of time in seconds (and framerate) over which the ease is meant to cover and then determine how many points should be in the returned geometric sequence
+    - Renamed it to ```createGeometricSeq()``` to provide more meaning
+- Created ```moveAlongArray()``` which sets a given property of a given node to each value of a given array in sequence every frame
+- Created ```produceFinal()``` which creates the final value to set the element's property to based on conditions such as 'reverse the array' and 'subtract the number from 0'
+
 ### 42 Changelog ref 42
 - Created ```easeArray()``` function that returns a geometric sequence of n points starting at zero and ending at the provided distance
 - Modified ```sendTopBar()``` to create new elements for each call so that triggering a message rapidly will not result in buggy behavior
