@@ -8,6 +8,9 @@ const init = () => {
     
     const logInForm = q('#logInForm');
     const greeting = q('#greeting');
+
+    let refreshRate = 50;
+    s(refreshRate);
     
     
     /// INTERACTS
@@ -211,12 +214,16 @@ const init = () => {
             loader.style.display = 'none';
             document.querySelectorAll('.default').forEach(cv => cv.textContent = 'select');
         };
-    },50)
+    },refreshRate)
 
     // SET UP ALL/ANY SWAPPER
     ael('click',e => {
         allAny.textContent = allAnyBinarium[allAny.textContent];
     },allAny)
+
+    ael('keydown',e => {
+        if(e.key === 'k') sendTopBar('Funcionale!',1,3,50);
+    })
 }
 
 document.addEventListener('DOMContentLoaded',init);
@@ -360,30 +367,56 @@ function logOutUser() {
     greeting.innerHTML = `No user currently signed in<br>Sign in below!`;
 }
 
-function sendTopBar(message) {
-    topBarDiv.style.display = 'block';
-    topBarDiv.style.top = '-72px';
-    topBarDiv.querySelector('p').textContent = message;
-    let y = -72;
-    const inIv = setInterval(() => {
-        y /= 1.25;
-        s(y);
-        topBarDiv.style.top = `${0+y}px`;
-        if(y > -1) {
-            topBarDiv.style.top = 0;
-            clearInterval(inIv);
-            y = -0.5
-            setTimeout(() => {
-                const outIv = setInterval(() => {
-                    y *= 1.25;
-                    s(y);
-                    topBarDiv.style.top = `${0+y}px`;
-                    if (y < -72) clearInterval(outIv);
-                },50)
-            },2000)
-        }
-    },50)
+function sendTopBar(message,easeSec = 1,duration = 3,refresh = 50) {
+    const topBar = buildElement('div',null,['topBarDiv']);
+    topBar.style.display = 'block';
+    topBar.style.top = '-72px';
+    topBarDiv.appendChild(topBar);
+    
+    const p = buildElement('p',message,['topBarMessage']);
+    topBar.appendChild(p);
 
+    const steps = (easeSec * 1000) / refresh;
+    const easeIn = easeArray(72,steps);
+    let i = 0;
+    const inIV = setInterval(() => {
+        if (i <= steps) {
+            topBar.style.top = `${0 - easeIn[(easeIn.length - 1) - i]}px`;
+            ++i;
+        }
+
+        /// If we're at the end of the array
+        if (i === steps) {
+            /// Wait 4 seconds
+            setTimeout(() => {
+
+                clearInterval(inIV);
+                i = 0;
+                const outIV = setInterval(() => {
+                    if (i <= steps) {
+                        topBar.style.top = `${0 - easeIn[i]}px`;
+                        ++i
+                    }
+
+                    if (i === steps) {
+                        topBar.remove();
+                        clearInterval(outIV);
+                    }
+                },refresh)
+            },duration * 1000);
+        }
+    },refresh);
+
+
+}
+
+function easeArray(span,steps) {
+    const returnArray = [];
+    const multiplier = (span + 1) ** (1/steps);
+    for(let i = 0; i <= steps; ++i) {
+        returnArray.push((multiplier ** i) - 1)
+    }
+    return returnArray;
 }
 
 // Random # of products feature

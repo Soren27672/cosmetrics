@@ -154,7 +154,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     margin: 0px;
 }
 
-#topBarDiv {
+.topBarDiv {
     position: fixed;
     top: 0px;
     left: 0px;
@@ -164,7 +164,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     background-color: hotpink;
 }
 
-#topBarMessage {
+.topBarMessage {
     width: 100%;
     text-align: center;
     font-size: 1.5rem;

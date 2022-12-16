@@ -1,3 +1,7 @@
+### 42 Changelog ref 42
+- Created ```easeArray()``` function that returns a geometric sequence of n points starting at zero and ending at the provided distance
+- Modified ```sendTopBar()``` to create new elements for each call so that triggering a message rapidly will not result in buggy behavior
+
 ### 41 Changelog ref 41
 - Created message topbar that displays messages about various triggers
 - Changed cursor for inactive buttons
