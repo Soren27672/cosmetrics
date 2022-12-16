@@ -1,3 +1,8 @@
+### 44 Changelog ref 44
+- Set login and register functionality to set the buttons to inactive after successfully firing
+    - Previously, changing states to inactive was triggered by a keydown event that checked for empty text inputs, so even though logging in/registering cleared the text input, it didn't trigger the keydown event that changed the buttons to inactive
+- Added messages for errors and successes in logging in/registering
+
 ### 43 Changelog ref 43
 - Modified ```easeArray()``` to take an amount of time in seconds (and framerate) over which the ease is meant to cover and then determine how many points should be in the returned geometric sequence
     - Renamed it to ```createGeometricSeq()``` to provide more meaning

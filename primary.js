@@ -131,16 +131,21 @@ const init = () => {
             return res.json();
         })
         .then(json => {
-            if (status === 404) {
-                alert('Our records show no account registered under the provided username');
-            } else if ((json.password === logInForm.password.value) && ok) {
+            if (!ok) {
+                if (status === 404) {
+                    sendTopBar(`Our records show no account registered under ${logInForm.username.value}`)
+                } else sendTopBar('Unexpected Error, try again');
+            } else if ((json.password === logInForm.password.value)) {
                 user = json.id;
                 logInForm.username.value = '';
                 logInForm.password.value = '';
+                logIn.classList.add('inactive');
+                register.classList.add('inactive');
                 greeting.textContent = `Hello, ${user}!`
                 logInDiv.style.display = 'none';
                 userOptionsDiv.style.display = 'block';
-            } else if(ok) alert('Incorrect password');    
+                sendTopBar(`Welcome back, ${user}!`);
+            } else if (json.password !== logInForm.password.value) sendTopBar('Incorrect password'); else sendTopBar('Unexpected Error, try again');
         });
     },logIn)
 
@@ -167,7 +172,10 @@ const init = () => {
                     user = json.id;
                     logInForm.username.value = '';
                     logInForm.password.value = '';
+                    logIn.classList.add('inactive');
+                    register.classList.add('inactive');
                     greeting.textContent = `Hello, ${user}!`
+                    sendTopBar(`Registration Success! Welcome to Cosmetrics, ${user}!`);
                 });
                 } else if (res.ok) alert(`The account ${logInForm.username.value} is already taken.`)
             });
@@ -365,6 +373,11 @@ function logOutUser() {
     logInDiv.style.display = 'block';
     userOptionsDiv.style.display = 'none';
     greeting.innerHTML = `No user currently signed in<br>Sign in below!`;
+    sendTopBar('Logged out!');
+}
+
+function logInUser(user) {
+
 }
 
 function sendTopBar(message,easeSec = 1,duration = 3,refresh = 50) {
