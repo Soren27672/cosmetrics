@@ -10,7 +10,6 @@ const init = () => {
     const greeting = q('#greeting');
 
     let refreshRate = 50;
-    s(refreshRate);
     
     
     /// INTERACTS
@@ -114,6 +113,8 @@ const init = () => {
             for(let i = 0; i < filteredProducts.length; ++i) {
                 displayArea.appendChild(buildCell(filteredProducts[i],i));
             };
+
+            if (filteredProducts.length !== 1) sendTopBar(`Found ${filteredProducts.length} results!`); else sendTopBar(`Found ${filteredProducts.length} result!`)
             
         },filterButton);
     });
@@ -268,7 +269,7 @@ function buildCell(product,id) {
     img.src = `https:${product.api_featured_image}`;
     cell.appendChild(img);
 
-    const name = buildElement('p',product.name,['prodName',`${id}`]);
+    const name = buildElement('p',product.name.replace('<BR>',' '),['prodName',`${id}`]);
     cell.appendChild(name);
 
     const brand = buildElement('a',`by ${product.brand}`,['prodBrand',`${id}`]);

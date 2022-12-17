@@ -1,3 +1,11 @@
+### 46 Changelog ref 46
+- Created sidebar for filtration menu
+    - Styled sidebar
+    - Styled select elements within sidebar
+
+### 45 Changelog ref 45
+- ```buildCell()``` now removes ```<br>``` tags put in place by the api, replacing them with a space
+
 ### 44 Changelog ref 44
 - Set login and register functionality to set the buttons to inactive after successfully firing
     - Previously, changing states to inactive was triggered by a keydown event that checked for empty text inputs, so even though logging in/registering cleared the text input, it didn't trigger the keydown event that changed the buttons to inactive
@@ -193,7 +201,7 @@
 ### 3 Changelog ref 3
 - Upgraded loading message
     - DOM ```<h1>``` element
-    - Uses sin to oscillate opacity
+    - Uses sine to oscillate opacity
     - Hides itself when ```allProducts``` becomes truthy/filled
     - Removed alert
 
@@ -203,4 +211,4 @@
 ### 1 Changelog ref 1
 - addEventListener shortcut function ```a()``` renamed to ```ael()```
 - Sends alert when attempting test before load is complete
-- loads list of 10 latest fetched elements into ```<ul \#test>``` upon keydown
+- loads list of 10 latest fetched elements into ```<ul id='test'>``` upon keydown
