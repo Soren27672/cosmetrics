@@ -1,3 +1,9 @@
+### 47 Changelog ref 47
+- Created show/hide button for the tags area
+- Added "Filter Products" title to the filtration menu
+- Converted pixel units to em
+- Broad stylistic changes to appearance
+
 ### 46 Changelog ref 46
 - Created sidebar for filtration menu
     - Styled sidebar

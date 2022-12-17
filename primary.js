@@ -24,6 +24,7 @@ const init = () => {
     const register = q('#register');
     register.classList.add('inactive');
     const filterButton = q('#filterButton');
+    const openTags = q('#openTags');
 
     /// DIVS
     const userDiv = q('#userDiv');
@@ -119,7 +120,14 @@ const init = () => {
         },filterButton);
     });
 
-    // SETUP LOGGING IN
+    /// SHOW TAGS DIV
+    ael('click',e => {
+        e.preventDefault();
+        tagsDiv.style.display = tagsDiv.style.display === '' ? 'block' : '';
+        openTags.textContent = openTags.textContent === 'Show Tags' ? 'Hide Tags' : 'Show Tags';
+    },openTags)
+
+    /// SETUP LOGGING IN
     ael('click',e => {
         e.preventDefault();
         if (logIn.classList.contains('inactive')) return;
@@ -227,7 +235,7 @@ const init = () => {
 
     // SET UP ALL/ANY SWAPPER
     ael('click',e => {
-        allAny.textContent = allAnyBinarium[allAny.textContent];
+        allAny.textContent = allAny.textContent === 'all' ? 'any' : 'all';
     },allAny)
 
     ael('keydown',e => {

@@ -1,5 +1,12 @@
-body {
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+* {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 16px;
+}
+
+html, body {
+    height: 100%;
+    margin: 0px;
+    background-color: lavenderblush;
 }
 
 .prodCell {
@@ -18,22 +25,10 @@ body {
     /*border: solid black 1px;
     background-color: lightgray; */
     cursor: pointer;
-    border-radius: 3px;
-    padding-left: 3px;
-    padding-right: 3px;
-    padding-bottom: 2px;
-}
-
-#allAny {
-    color: hotpink;
-    cursor: pointer;
-    /* border: solid darkgray 1px; */
-    background-color: white;
-    border-radius: 3px;
-    padding-left: 3px;
-    padding-right: 3px;
-    padding-bottom: 2px;
-    box-shadow: 2px 2px #00000040;
+    border-radius: 0.1875em;
+    padding-left: 0.1875em;
+    padding-right: 0.1875em;
+    padding-bottom: 0.125em;
 }
 
 .prodPrice {
@@ -48,13 +43,11 @@ body {
 
 select {
     border: none;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    font-size: 16px;
-    border-radius: 3px;
-    padding-left: 3px;
-    padding-right: 3px;
-    padding-bottom: 2px;
-    box-shadow: 2px 2px #00000040;
+    border-radius: 0.1875em;
+    padding-left: 0.1875em;
+    padding-right: 0.1875em;
+    padding-bottom: 0.125em;
+    box-shadow: 0.125em 0.125em #00000040;
     font-weight: bold;
     color: hotpink;
     background-color: white;
@@ -64,12 +57,10 @@ select {
 
 select:hover {
     border: none;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    font-size: 16px;
-    border-radius: 3px;
-    padding-left: 3px;
-    padding-right: 3px;
-    padding-bottom: 2px;
+    border-radius: 0.1875em;
+    padding-left: 0.1875em;
+    padding-right: 0.1875em;
+    padding-bottom: 0.125em;
     font-weight: bold; /*
     box-shadow: none;
     color: purple;
@@ -77,19 +68,29 @@ select:hover {
 }
 
 button,[type=image] {
-    border: solid 3px hotpink;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    font-size: 16px;
-    border-radius: 3px;
-    padding-left: 3px;
-    padding-right: 3px;
-    padding-bottom: 2px;
-    box-shadow: 2px 2px #00000040;
+    padding-left: 0.1875em;
+    padding-right: 0.1875em;
+    padding-bottom: 0.1875em;
+    box-shadow: 0.125em 0.125em #00000040;
     font-weight: bold;
     color: hotpink;
     background-color: white;
     cursor: pointer;
     margin: 5px;
+    border: none;
+    border-radius: 0.1875em;
+    
+}
+
+#searchDiv button {
+    margin: 3px auto 3px auto;
+    text-align: center;
+    display: block;
+}
+
+[type=image] {
+    border: 0.125em solid hotpink;
+    border-radius: 0.4375em;
 }
 
 select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inactive),[type=image]:hover:not(.inactive) {
@@ -138,16 +139,16 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
 }
 
 /* Starts out hidden */
-#userDiv, #userOptionsDiv {
+#userDiv, #userOptionsDiv, #tagsDiv {
     display: none;
 }
 
 #userDiv {
-    padding: 8px;
+    padding: 0.5em;
     background-color: white;
-    border-radius: 7px;
-    border: 3px solid hotpink;
-    box-shadow: 2px 2px #00000040;
+    border-radius: 0.4375em;
+    border: 0.125em solid hotpink;
+    box-shadow: 0.125em 0.125em #00000040;
     width: fit-content;
     margin: 5px;
     position: absolute;
@@ -164,7 +165,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     width: 100vw;
     margin: 0px;
     height: fit-content;
-    background-color: hotpink;
+    background-color: palevioletred;
 }
 
 .topBarMessage {
@@ -177,11 +178,12 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
 }
 
 #searchDiv {
-    border: 3px hotpink solid;
-    border-radius: 7px;
-    width: 14.25rem;
-    padding: 7px;
-    box-shadow: 2px 2px #00000040;
+    border: 0.125em hotpink solid;
+    border-radius: 0.4375em;
+    background-color: white;
+    width: 14.25em;
+    padding: 0.4375em;
+    box-shadow: 0.125em 0.125em #00000040;
     margin: 5px;
 }
 
@@ -192,4 +194,37 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
 
 #appetizers {
     position: relative;
+}
+
+#openTags {
+    width: 10ch;
+}
+
+#allAny {
+    color: hotpink;
+    cursor: pointer;
+    /* border: solid darkgray 1px; */
+    background-color: white;
+    border-radius: 0.1875em;
+    padding-left: 0.1875em;
+    padding-right: 0.1875em;
+    padding-bottom: 0.125em;
+    box-shadow: 0.125em 0.125em #00000040;
+}
+
+h2 {
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+#titleDiv {
+    background-color: hotpink;
+    padding: 4.75px 0em 4.75px 4.75px;
+}
+h1 {
+    text-align: left;
+    font-size: 2.25rem;
+    margin: 0px;
+    color: white;
+    letter-spacing: 3.5px;
 }
