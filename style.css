@@ -4,9 +4,9 @@
 }
 
 html, body {
-    height: 100%;
+    height: auto;
     margin: 0px;
-    background-color: lavenderblush;
+    background-color: white;
 }
 
 .prodCell {
@@ -49,7 +49,7 @@ select {
     padding-bottom: 0.125em;
     box-shadow: 0.125em 0.125em #00000040;
     font-weight: bold;
-    color: hotpink;
+    color: rgb(191, 45, 118);
     background-color: white;
     margin: 3px auto 10px auto;
     display: block;
@@ -73,7 +73,7 @@ button,[type=image] {
     padding-bottom: 0.1875em;
     box-shadow: 0.125em 0.125em #00000040;
     font-weight: bold;
-    color: hotpink;
+    color: rgb(191, 45, 118);
     background-color: white;
     cursor: pointer;
     margin: 5px;
@@ -89,7 +89,7 @@ button,[type=image] {
 }
 
 [type=image] {
-    border: 0.125em solid hotpink;
+    border: 0.125em solid rgb(191, 45, 118);
     border-radius: 0.4375em;
 }
 
@@ -128,6 +128,8 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
 
 #openUser {
     padding-top: 3px;
+    margin: 0px 4.75px;
+    float:right;
 }
 
 .inactive {
@@ -147,11 +149,12 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     padding: 0.5em;
     background-color: white;
     border-radius: 0.4375em;
-    border: 0.125em solid hotpink;
+    border: 0.125em solid rgb(191, 45, 118);
     box-shadow: 0.125em 0.125em #00000040;
     width: fit-content;
-    margin: 5px;
+    margin: 4.75px;
     position: absolute;
+    right: 0px;
 }
 
 #greeting {
@@ -178,13 +181,17 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
 }
 
 #searchDiv {
-    border: 0.125em hotpink solid;
+    border: 0.125em rgb(191, 45, 118) solid;
     border-radius: 0.4375em;
     background-color: white;
     width: 14.25em;
     padding: 0.4375em;
     box-shadow: 0.125em 0.125em #00000040;
-    margin: 5px;
+    height: fit-content;
+    max-height: calc(100vh - 1.75em);
+    overflow: scroll;
+    position: sticky;
+    top: 5px;
 }
 
 #searchDiv p {
@@ -201,7 +208,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
 }
 
 #allAny {
-    color: hotpink;
+    color: rgb(191, 45, 118);
     cursor: pointer;
     /* border: solid darkgray 1px; */
     background-color: white;
@@ -215,16 +222,26 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
 h2 {
     text-align: center;
     font-size: 1.5rem;
+    color: rgb(191, 45, 118);
+    margin-top: 12.92px; 
 }
 
 #titleDiv {
-    background-color: hotpink;
+    background-color: rgb(191, 45, 118);
     padding: 4.75px 0em 4.75px 4.75px;
 }
 h1 {
-    text-align: left;
     font-size: 2.25rem;
     margin: 0px;
     color: white;
     letter-spacing: 3.5px;
+    display: inline;
+    width: fit-content;
+}
+
+#body {
+    margin: 5px;
+    display: grid;
+    grid-template-columns: 15.375em auto;
+    grid-column-gap: 10px;
 }

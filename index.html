@@ -11,55 +11,60 @@
         </div>
         <div id="titleDiv">
             <h1>COSMETRICS</h1>
-        </div>
-        <div id="appetizers">
             <input type="image" src="./icons8-user-31.png" id="openUser">
-            <div id="userDiv">
-                <p id="greeting">No user currently signed in<br>Sign in below!</p>
-                <div id="logInDiv">
-                    <form id="logInForm">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" placeholder="username"><br>
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="password"><br>
-                        <button id="logIn" >Log in</button>
-                        <button id="register">Register</button>
-                    </form>
-                </div>
-                <div id="userOptionsDiv">
-                    <button id="favorites">Favorites</button><br>
-                    <button id="logOut">Log out</button>
-                </div>
+        </div>
+        <div id="userDiv">
+            <p id="greeting">No user currently signed in<br>Sign in below!</p>
+            <div id="logInDiv">
+                <form id="logInForm">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="username"><br>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="password"><br>
+                    <button id="logIn" >Log in</button>
+                    <button id="register">Register</button>
+                </form>
+            </div>
+            <div id="userOptionsDiv">
+                <button id="favorites">Favorites</button><br>
+                <button id="logOut">Log out</button>
             </div>
         </div>
-        <h2 id="loader">Loading!</h2>
-
-        <div id="searchDiv">
-            <h2>Filter Products</h2>
-            <form>
-                <p>Brand</p>
-                <select id="brandFilter">
-                    <option class="default" value="brand">loading...</option>
-                </select>
-                <p>Type</p>
-                <select id="typeFilter">
-                    <option class="default" value="type">loading...</option>
-                </select>
-                <p>Category</p>
-                <select id="categoryFilter">
-                    <option class="default" value="category">loading...</option>
-                </select>
-                <button id="openTags">Show Tags</button>
-                <div id="tagsDiv">
-                    <p>Show products that are tagged with <strong id="allAny">all</strong> of the following:</p>
-                </div>
-            </form>
-            <button id="filterButton">Apply Filter</button>
+        <div id="appetizers">
+            <h2>Appetizers Go Here</h2>
         </div>
-
+        <h2 id="loader">Loading!</h2>
         
-        <div id="displayArea">
+        
 
+        <div id="body">
+            <div id="searchDiv">
+                <h2>Filter Products</h2>
+                <form>
+                    <p>Brand</p>
+                    <select id="brandFilter">
+                        <option class="default" value="brand">loading...</option>
+                    </select>
+                    <p>Type</p>
+                    <select id="typeFilter">
+                        <option class="default" value="type">loading...</option>
+                    </select>
+                    <p>Category</p>
+                    <select id="categoryFilter">
+                        <option class="default" value="category">loading...</option>
+                    </select>
+                    <button id="openTags">Show Tags</button>
+                    <div id="tagsDiv">
+                        <p>Show products that are tagged with <strong id="allAny">all</strong> of the following:</p>
+                    </div>
+                </form>
+                <button id="filterButton">Apply Filter</button>
+            </div>
+
+            
+            <div id="displayArea">
+
+            </div>
         </div>
 
         <br>

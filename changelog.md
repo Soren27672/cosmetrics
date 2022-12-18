@@ -1,3 +1,8 @@
+### 48 Changelog ref 48
+- Moved user div to top right
+- Put filtration menu and display area in a grid
+- Made filtration menu sticky
+
 ### 47 Changelog ref 47
 - Created show/hide button for the tags area
 - Added "Filter Products" title to the filtration menu
