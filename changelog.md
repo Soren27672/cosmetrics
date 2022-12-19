@@ -1,3 +1,12 @@
+### 49 Changelog ref 49
+- Created grid for displaying the filtered products
+- Created color displays for each product with a pop out menu displaying more colors when available
+    - Iterated thru first 6 elements of ```product.product_colors```, adding each's ```.hex_value``` as the ```background-color``` of a new small ```div``` element that would be added into a grid called ```colorsDiv``` inside the product's cell
+    - Set the ```colorsDiv```'s ```grid-template-columns``` property to update dynamically based on how many colors were to be displayed
+    - If more than 6 colors are in the array, a ```p``` element with the content "more colors" is added onto the cell
+        - Hovering over this element displays a dropdown with the rest of the colors
+- Added a placeholder empty "Metrics" div on the right side of the grid
+
 ### 48 Changelog ref 48
 - Moved user div to top right
 - Put filtration menu and display area in a grid

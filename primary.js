@@ -2,8 +2,47 @@
 let allProducts = false;
 let atId1 = false;
 let signs = [];
+const demoProd = {
+    brand: 'Enigma',
+    image_link: '//www.sephora.com/productimages/sku/s1925965-av-15-zoom.jpg?imwidth=315',
+    decription: 'Finally, a lip gloss that will never fade. Go ahead, wear it to bed, we love a challenge.<BR>Shine above all the rest with permagloss, by Enigma.',
+    product_type: 'lip_gloss',
+    tag_list: ['vegan free','glossless','no pig'],
+    website_link: 'https://google.com',
+    price: '60.85',
+    price_sign: null,
+    name: 'Permagloss by Enigma',
+    category: 'lip_gloss',
+    product_colors: [{
+        hex_value: '#abcdef',
+        name: 'alphabeta'
+    }, {
+        hex_value: '#00000f',
+        name: 'midnight'
+    }, {
+        hex_value: '#0f0f0f',
+        name: 'groy'
+    }, {
+        hex_value: '#13fa00',
+        name: 'elation'
+    }, {
+        hex_value: '#fa6601',
+        name: 'fruitful'
+    }, {
+        hex_value: '#e11fee',
+        name: 'elite'
+    }, {
+        hex_value: '#777765',
+        name: 'numeric'
+    }, {
+        hex_value: '#fa1e5f',
+        name: 'limestone'
+    }]
+}
 
 const init = () => {
+    
+
     const loader = q('#loader');
     
     const logInForm = q('#logInForm');
@@ -120,6 +159,10 @@ const init = () => {
         },filterButton);
     });
 
+    /* for(let i = 0; i < 12; ++i) {
+        displayArea.appendChild(buildCell(demoProd,0));
+    } */
+
     /// SHOW TAGS DIV
     ael('click',e => {
         e.preventDefault();
@@ -231,7 +274,7 @@ const init = () => {
             loader.style.display = 'none';
             document.querySelectorAll('.default').forEach(cv => cv.textContent = 'select');
         };
-    },refreshRate)
+    },refreshRate);
 
     // SET UP ALL/ANY SWAPPER
     ael('click',e => {
@@ -271,19 +314,20 @@ function buildElement(type,text = undefined,classes = [],id = undefined) {
 }
 
 function buildCell(product,id) {
-    const cell = buildElement('div',undefined,['prodCell',`${id}`]);
+    const cell = buildElement('div',null,['prodCell',`${id}`]);
 
-    const img = buildElement('img',['prodImg',`${id}`]);
-    img.src = `https:${product.api_featured_image}`;
+    const img = buildElement('img',null,['prodImg',`${id}`]);
+    img.src = `https://${product.api_featured_image}`;
     cell.appendChild(img);
 
-    const name = buildElement('p',product.name.replace('<BR>',' '),['prodName',`${id}`]);
+    const name = buildElement('p',product.name.replaceAll('<BR>',' '),['prodName',`${id}`]);
     cell.appendChild(name);
 
     const brand = buildElement('a',`by ${product.brand}`,['prodBrand',`${id}`]);
     brand.href = product.website_link;
     cell.appendChild(brand);
-    cell.appendChild(buildElement('br'));
+
+    const priceDiv = buildElement('div','',['priceDiv',`${id}`])
 
     const currency = buildElement('p','',['prodCurrency',`${id}`]);
     
@@ -301,7 +345,7 @@ function buildCell(product,id) {
         // Currency formatting
         if (product.price_sign === null) {
             currency.textContent = '$';
-            currency.style.color = '#800000';
+            currency.classList.add('none');
 
             const div = buildElement('div',undefined,['popOutDiv',`${id}`])
             currency.appendChild(div)
@@ -309,12 +353,43 @@ function buildCell(product,id) {
             div.appendChild(message);
 
         } else currency.textContent = product.price_sign;
-        cell.appendChild(currency);
+        priceDiv.appendChild(currency);
     }
     
     const price = buildElement('p',`${formattedPrice}`,['prodPrice',`${id}`]);
 
-    cell.appendChild(price);
+    priceDiv.appendChild(price);
+    cell.appendChild(priceDiv);
+
+    const colorsDiv = buildElement('div',null,['colorsDiv',`${id}`]);
+
+    let i = 0;
+
+    for(;i < 6; ++i) {
+        if (product.product_colors[i]) {
+            colorsDiv.appendChild(buildColorBox(product.product_colors[i],id));
+        } else break;
+    }
+
+    colorsDiv.style.gridTemplateColumns = `repeat(${i}, max-content)`;
+    cell.appendChild(colorsDiv);
+    if (product.product_colors.length > 6) {
+        const more = buildElement('p','More colors');
+
+        const moreColorsDiv = buildElement('div',null,['popOutDiv','moreColorsDiv',`${id}`]);
+
+        const amtOfMoreColors = product.product_colors.length
+        
+        moreColorsDiv.style.gridTemplateColumns = `repeat(${Math.min(amtOfMoreColors - 6,3)},max-content)`;
+        moreColorsDiv.style.left = `${89.25 - (8.5*(Math.min(amtOfMoreColors - 6,3)) + 5*(Math.min(amtOfMoreColors - 6,3) - 1))}px`
+
+        for(let i = 6; i < product.product_colors.length; ++i) {
+            moreColorsDiv.appendChild(buildColorBox(product.product_colors[i],id));
+        }
+
+        more.appendChild(moreColorsDiv);
+        cell.appendChild(more);
+    }
 
     return cell;
 }
@@ -424,7 +499,6 @@ function moveAlongArray(array,element,property,subtractFrom = null,reverse = fal
     let i = 1;
     const IV = setInterval(() => {
         if (i < array.length) {
-            s('tempotanklmao')
             element.style[property] = `${produceFinal(array,i,subtractFrom,reverse)}px`;
             ++i;
         }
@@ -438,6 +512,13 @@ function produceFinal(array,i,subSubtractFrom,subReverse) {
     let final = subReverse ? array[array.length - i] : array[i];
     if (typeof subSubtractFrom === 'number') final = subSubtractFrom - final;
     return final;
+}
+
+function buildColorBox(colorObject,id) {
+    const box = buildElement('div',null,['colorBox',`${id}`]);
+    box.style.backgroundColor = `${colorObject.hex_value}`;
+
+    return box;
 }
 
 // Random # of products feature
