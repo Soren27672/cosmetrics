@@ -131,6 +131,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     position: absolute;
     padding: 10px;
     visibility: hidden;
+    z-index: 2;
 }
 
 .popOutText {
@@ -181,6 +182,10 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     justify-content: center;
 }
 
+.colorsDiv:not(.colorsDiv+p) {
+    margin-bottom: 1em;
+}
+
 .colorBox {
     height: 17px;
     width: 17px;
@@ -226,6 +231,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     margin: 4.75px;
     position: absolute;
     right: 0px;
+    z-index: 1;
 }
 
 #greeting {
@@ -240,6 +246,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     margin: 0px;
     height: fit-content;
     background-color: palevioletred;
+    z-index: 3;
 }
 
 .topBarMessage {
@@ -251,7 +258,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     color: white;
 }
 
-#searchDiv {
+#searchDiv, #metricsDiv {
     border: 0.125em rgb(191, 45, 118) solid;
     border-radius: 0.4375em;
     background-color: white;
@@ -326,4 +333,9 @@ h1 {
     margin: 5px;
     grid-template-columns: 206.5px 206.5px 206.5px 206.5px;
     grid-auto-rows: max-content;
+}
+
+.metric {
+    font-weight: bold;
+    color: rgb(191, 45, 118);
 }

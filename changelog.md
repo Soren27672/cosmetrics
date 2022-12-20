@@ -1,3 +1,11 @@
+### 50 Changelog ref 50
+- Added a 1em margin to the bottom of all ```colorsDiv```s that arent followed by a ```<p>```
+- Site now loads the first 12 products after a successful fetch
+- Changed z indexes of pop out dialogues and the message bar to appear over other elements
+- Site now sends error messages if db.json could not be reached
+- The average price of all displayed products is now shown in the metrics column
+    - Average is calculated by iterating thru the ```filteredProducts``` array and pushing all values (that arent null) into an array of ```prices```, then reducing the array of ```prices``` via addition, then dividing it by the length of the ```prices``` array
+
 ### 49 Changelog ref 49
 - Created grid for displaying the filtered products
 - Created color displays for each product with a pop out menu displaying more colors when available

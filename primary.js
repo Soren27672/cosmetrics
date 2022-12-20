@@ -74,6 +74,10 @@ const init = () => {
     const displayArea = q('#displayArea');
     const topBarDiv = q('#topBarDiv');
 
+    /// P ELEMENTS
+    const average = q('#average');
+
+
     const allAnyBinarium = {
         'all': 'any',
         'any': 'all'
@@ -120,7 +124,7 @@ const init = () => {
             tagsDiv.appendChild(buildElement('br'));
         }
 
-        for(let i = 0; i < 10; ++i) {
+        for(let i = 0; i < 12; ++i) {
             displayArea.appendChild(buildCell(allProducts[i],i));
         };
 
@@ -147,6 +151,24 @@ const init = () => {
                     return false;
                 });
             };
+
+            const prices = [];
+            let maxPrice = 0;
+            let minPrice = 0;
+
+            for(const prod of filteredProducts) {
+                
+                if (prod.price === null) continue;
+
+                const price = parseInt(prod.price);
+                prices.push(price);
+                maxPrice = Math.max(maxPrice,price);
+                minPrice = Math.min(minPrice,price);
+
+                s('prod.price,price,prices,prices.reduce((ac,cv) => ac+cv)',prod.price,price,prices,prices.reduce((ac,cv) => ac+cv));
+            }
+
+            if(prices.length) average.textContent = Math.round((prices.reduce((ac,cv) => ac+cv) / prices.length) * 100) / 100; else average.textContent = 'No Data!'
 
             displayArea.innerHTML = '';
 
@@ -198,6 +220,16 @@ const init = () => {
                 userOptionsDiv.style.display = 'block';
                 sendTopBar(`Welcome back, ${user}!`);
             } else if (json.password !== logInForm.password.value) sendTopBar('Incorrect password'); else sendTopBar('Unexpected Error, try again');
+        })
+        .catch(reason => {
+            s(reason.message);
+            switch (reason.message) {
+                case 'Failed to fetch':
+                    sendTopBar('Could not access database');
+                break;
+                default:
+                    sendTopBar(reason.message);
+            }
         });
     },logIn)
 
