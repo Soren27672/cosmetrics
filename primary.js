@@ -75,7 +75,9 @@ const init = () => {
     const topBarDiv = q('#topBarDiv');
 
     /// P ELEMENTS
-    const average = q('#average');
+    const avg = q('#avg');
+    const min = q('#min');
+    const max = q('#max');
 
 
     const allAnyBinarium = {
@@ -153,22 +155,56 @@ const init = () => {
             };
 
             const prices = [];
-            let maxPrice = 0;
-            let minPrice = 0;
+            let maxPrice = {
+                value: 0
+            };
+            let minPrice = {
+                value: 1000000
+            };
+            let skips = 0;
 
-            for(const prod of filteredProducts) {
-                
-                if (prod.price === null) continue;
+            for(const index in filteredProducts) {
 
-                const price = parseInt(prod.price);
-                prices.push(price);
-                maxPrice = Math.max(maxPrice,price);
-                minPrice = Math.min(minPrice,price);
+                if (filteredProducts[index].price === null) {
+                    ++skips;
+                    continue;
+                }
 
-                s('prod.price,price,prices,prices.reduce((ac,cv) => ac+cv)',prod.price,price,prices,prices.reduce((ac,cv) => ac+cv));
+                const prodPrice = parseInt(filteredProducts[index].price);
+
+                if (prodPrice === 0) {
+                    ++skips;
+                    continue;
+                }
+
+                prices.push(prodPrice);
+
+                switch (true) {
+                    case prodPrice > maxPrice.value:
+                        maxPrice.ids = [];
+                        maxPrice.ids.push(index);
+                        maxPrice.value = prodPrice;
+                        break;
+                    case prodPrice === maxPrice.value:
+                        maxPrice.ids.push(index);
+                        break;
+                    case prodPrice < minPrice.value:
+                        minPrice.ids = [];
+                        minPrice.ids.push(index);
+                        minPrice.value = prodPrice;
+                        break;
+                    case prodPrice === minPrice.value:
+                        minPrice.ids.push(index);
+                        break;
+                }
             }
 
-            if(prices.length) average.textContent = Math.round((prices.reduce((ac,cv) => ac+cv) / prices.length) * 100) / 100; else average.textContent = 'No Data!'
+            if(prices.length) {
+                avg.textContent = `$${roundToPlace((prices.reduce((ac,cv) => ac+cv) / (prices.length - skips)),0.01)}`;
+                min.textContent = `$${minPrice.value}`;
+                max.textContent = `$${maxPrice.value}`;
+
+            } else avg.textContent = 'No Data!'
 
             displayArea.innerHTML = '';
 
@@ -551,6 +587,11 @@ function buildColorBox(colorObject,id) {
     box.style.backgroundColor = `${colorObject.hex_value}`;
 
     return box;
+}
+
+function roundToPlace(number,place) {
+    const multiplier = place / (place ** 2);
+    return Math.round(number * multiplier) / multiplier;
 }
 
 // Random # of products feature

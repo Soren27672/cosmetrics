@@ -1,3 +1,10 @@
+### 51 Changelog ref 51
+- Metrics column now displays the minimum and maximum prices of the filtered selection
+    - When prices are being added to the array of prices to be averaged, they are checked against the previous maximum price (initially 0) to see if they match or are a new maximum
+    - If the product's price is equal to the previous max, the index (Within ```filteredProducts```) of that product is added to an array (```maxPrice.ids```) that contains all products with the max price
+    - If a new max price is discovered, ```maxPrice.ids``` is cleared and ```maxPrice.value``` is set to the new max price
+    - Same system for minimum prices, except the initial minimum is set to 1000000
+
 ### 50 Changelog ref 50
 - Added a 1em margin to the bottom of all ```colorsDiv```s that arent followed by a ```<p>```
 - Site now loads the first 12 products after a successful fetch
