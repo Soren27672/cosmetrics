@@ -132,9 +132,7 @@ const init = () => {
             tagsDiv.appendChild(buildElement('br'));
         }
 
-        for(let i = 0; i < 12; ++i) {
-            displayArea.appendChild(buildCell(allProducts[i],i));
-        };
+        fillDisplay(allProducts.slice(0,12));
 
         // DRY UP
         ael('click',e => {
@@ -160,59 +158,7 @@ const init = () => {
                 });
             };
 
-            const prices = [];
-            let maxPrice = {
-                value: 0
-            };
-            let minPrice = {
-                value: 1000000
-            };
-            let skips = 0;
-
-            for(const index in filteredProducts) {
-
-                if (filteredProducts[index].price === null) continue;
-
-                const prodPrice = parseInt(filteredProducts[index].price);
-
-                if (prodPrice === 0) continue;
-
-                prices.push(prodPrice);
-
-                switch (true) {
-                    case prodPrice > maxPrice.value:
-                        maxPrice.ids = [];
-                        maxPrice.ids.push(index);
-                        maxPrice.value = prodPrice;
-                        break;
-                    case prodPrice === maxPrice.value:
-                        maxPrice.ids.push(index);
-                        break;
-                    case prodPrice < minPrice.value:
-                        minPrice.ids = [];
-                        minPrice.ids.push(index);
-                        minPrice.value = prodPrice;
-                        break;
-                    case prodPrice === minPrice.value:
-                        minPrice.ids.push(index);
-                        break;
-                }
-            }
-
-            if(prices.length) {
-                avg.textContent = `$${roundToPlace((prices.reduce((ac,cv) => ac+cv) / (prices.length - skips)),0.01)}`;
-                min.textContent = `$${minPrice.value}`;
-                max.textContent = `$${maxPrice.value}`;
-
-            } else avg.textContent = 'No Data!'
-
-            displayArea.innerHTML = '';
-
-            for(let i = 0; i < filteredProducts.length; ++i) {
-                displayArea.appendChild(buildCell(filteredProducts[i],i));
-            };
-
-            if (filteredProducts.length !== 1) sendTopBar(`Found ${filteredProducts.length} results!`); else sendTopBar(`Found ${filteredProducts.length} result!`)
+            fillDisplay(filteredProducts);
             
         },filterButton);
     });
@@ -391,7 +337,7 @@ function buildCell(product,id) {
     const name = buildElement('p',product.name.replaceAll('<BR>',' '),['prodName',`${id}`]);
     cell.appendChild(name);
 
-    const brand = buildElement('a',`by ${product.brand}`,['prodBrand',`${id}`]);
+    const brand = buildElement('a',`by ${capitalizeFirsts(product.brand)}`,['prodBrand',`${id}`]);
     brand.href = product.website_link;
     cell.appendChild(brand);
 
@@ -399,30 +345,24 @@ function buildCell(product,id) {
 
     const currency = buildElement('p','',['prodCurrency',`${id}`]);
     
-    let formattedPrice = parseFloat(product.price);
+    const float = parseFloat(product.price);
+    let formattedPrice;
     if ((product.price === null) || (product.price === '0.0')) {
-        formattedPrice = "Price unlisted, visit the merchant's website"
-        
+        formattedPrice = "Price unlisted, visit the merchant's website";
+    } else formattedPrice = formatPrice(float);
 
-    }
-    else {
-        // Price formatting
-        if (formattedPrice === Math.floor(formattedPrice)) formattedPrice += '.00';
-        else if (formattedPrice * 10 === Math.floor(formattedPrice * 10)) formattedPrice += '0';
+    // Currency formatting
+    if (product.price_sign === null) {
+        currency.textContent = '$';
+        currency.classList.add('none');
 
-        // Currency formatting
-        if (product.price_sign === null) {
-            currency.textContent = '$';
-            currency.classList.add('none');
+        const div = buildElement('div',undefined,['popOutDiv',`${id}`])
+        currency.appendChild(div)
+        const message = buildElement('p',"No currency was provided for this product, visit the merchant's website for more information",['popOutText',`${id}`])
+        div.appendChild(message);
 
-            const div = buildElement('div',undefined,['popOutDiv',`${id}`])
-            currency.appendChild(div)
-            const message = buildElement('p',"No currency was provided for this product, visit the merchant's website for more information",['popOutText',`${id}`])
-            div.appendChild(message);
-
-        } else currency.textContent = product.price_sign;
-        priceDiv.appendChild(currency);
-    }
+    } else currency.textContent = product.price_sign;
+    priceDiv.appendChild(currency);
     
     const price = buildElement('p',`${formattedPrice}`,['prodPrice',`${id}`]);
 
@@ -612,11 +552,8 @@ function buildColorBox(colorObject,id) {
                 return false;
             });
 
-            displayArea.textContent = '';
+            fillDisplay(filteredProducts);
 
-            for(let i = 0; i < filteredProducts.length; ++i) {
-                displayArea.appendChild(buildCell(filteredProducts[i],i));
-            }
         },showProducts)
 
         highlight.style.display = 'block';
@@ -631,6 +568,76 @@ function buildColorBox(colorObject,id) {
 function roundToPlace(number,place) {
     const multiplier = place / (place ** 2);
     return Math.round(number * multiplier) / multiplier;
+}
+
+function fillDisplay(array) {
+
+    /// PREPARE METRICS
+    const prices = [];
+        let maxPrice = {
+            value: 0
+        };
+        let minPrice = {
+            value: 1000000
+        };
+
+    /// GENERATE METRICS
+    for(const index in array) {
+
+        if (array[index].price === null) continue;
+
+        const prodPrice = parseInt(array[index].price);
+
+        if (prodPrice === 0) continue;
+
+        prices.push(prodPrice);
+
+        switch (true) {
+            case prodPrice > maxPrice.value:
+                maxPrice.ids = [];
+                maxPrice.ids.push(index);
+                maxPrice.value = prodPrice;
+                break;
+            case prodPrice === maxPrice.value:
+                maxPrice.ids.push(index);
+                break;
+            case prodPrice < minPrice.value:
+                minPrice.ids = [];
+                minPrice.ids.push(index);
+                minPrice.value = prodPrice;
+                break;
+            case prodPrice === minPrice.value:
+                minPrice.ids.push(index);
+                break;
+        }
+     }
+
+    /// UPDATE DOM WITH METRICS
+    if(prices.length) {
+        avg.textContent = `$${formatPrice(roundToPlace((prices.reduce((ac,cv) => ac+cv) / prices.length),0.01))}`;
+        min.textContent = `$${formatPrice(minPrice.value)}`;
+        max.textContent = `$${formatPrice(maxPrice.value)}`;
+
+    } else for(const metric of [avg,min,max]) {
+        metric.textContent = 'No Data!';
+        };
+
+    /// CLEAR DISPLAY AREA
+    displayArea.innerHTML = '';
+
+    /// FILL DISPLAY AREA
+    for(let i = 0; i < array.length; ++i) {
+        displayArea.appendChild(buildCell(array[i],i));
+    };
+
+    /// SEND COMPLETION MESSAGE
+    if (array.length !== 1) sendTopBar(`Found ${array.length} results!`); else sendTopBar(`Found ${array.length} result!`)
+}
+
+function formatPrice(float) {
+    if (float === Math.floor(float)) float += '.00';
+    else if (float * 10 === Math.floor(float * 10)) float += '0';
+    return float;
 }
 
 // Random # of products feature

@@ -1,3 +1,7 @@
+### 54 Changelog ref 54
+- Code that fills the display with the product cells moved to its own reference ```fillDisplay()```
+- Brand names now are run through ```capitalizeFirsts()``` before being appended
+
 ### 53 Changelog ref 53
 - When viewing a color's metrics, you can now press a button that says "Show Products with this Color" and the display area refills with only products that have a color in ```.product_colors``` with the exact hex value as the one currently dispalyed in the metrics column
     - When a color is brought to the metrics column, the button is created and given a class that is the hex value of the displayed color
