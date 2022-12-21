@@ -15,28 +15,31 @@ const demoProd = {
     category: 'lip_gloss',
     product_colors: [{
         hex_value: '#abcdef',
-        name: 'alphabeta'
+        colour_name: 'alphabeta'
     }, {
         hex_value: '#00000f',
-        name: 'midnight'
+        colour_name: 'midnight'
     }, {
         hex_value: '#0f0f0f',
-        name: 'groy'
+        colour_name: 'groy'
     }, {
         hex_value: '#13fa00',
-        name: 'elation'
+        colour_name: 'elation'
     }, {
-        hex_value: '#fa6601',
-        name: 'fruitful'
+        hex_value: '#f46601',
+        colour_name: 'fruitful'
     }, {
         hex_value: '#e11fee',
-        name: 'elite'
+        colour_name: 'elite'
     }, {
         hex_value: '#777765',
-        name: 'numeric'
+        colour_name: 'numeric'
     }, {
         hex_value: '#fa1e5f',
-        name: 'limestone'
+        colour_name: 'limestone'
+    }, {
+        hex_value: '#BF2C7E',
+        colour_name:'heart on pencil'
     }]
 }
 
@@ -98,6 +101,8 @@ const init = () => {
             }
 
         // CREATE DROPDOWNS FROM RESPONSE
+
+        allProducts.push(demoProd);
         
         const brands = createArrayOfValuesStoredInKey(allProducts,'brand');
         populateDropdown(brandFilter,brands);
@@ -588,16 +593,34 @@ function buildColorBox(colorObject,id) {
         color.style.backgroundColor = colorObject.hex_value;
         highlight.appendChild(color);
 
-        const name = buildElement('p',capitalizeFirsts(colorObject.colour_name),['colorName',`${id}`]);
-        highlight.appendChild(name);
+        const nameFormatted = colorObject.colour_name == null ? 'No Color Name' : colorObject.colour_name;
+        const nameEl = buildElement('p',capitalizeFirsts(nameFormatted),['colorName',`${id}`]);
+        highlight.appendChild(nameEl);
 
         const hex = buildElement('p',colorObject.hex_value,['colorHex',`${id}`]);
         highlight.appendChild(hex);
 
-        const showProducts = buildElement('button','Show Products with this Color',['showProductsByColor']);
+        const showProducts = buildElement('button','Show Products with this Color',['showProductsByColor',colorObject.hex_value]);
+        ael('click',e => {
+            e.preventDefault();
+            filteredProducts = [];
+            
+            filteredProducts = allProducts.filter(cv => {
+                for(const color of cv.product_colors) {
+                    if (color.hex_value === e.target.classList[1]) return true;
+                }
+                return false;
+            });
+
+            displayArea.textContent = '';
+
+            for(let i = 0; i < filteredProducts.length; ++i) {
+                displayArea.appendChild(buildCell(filteredProducts[i],i));
+            }
+        },showProducts)
 
         highlight.style.display = 'block';
-        //ael()
+        
         highlight.appendChild(showProducts);
 
     },box)

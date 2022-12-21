@@ -1,3 +1,8 @@
+### 53 Changelog ref 53
+- When viewing a color's metrics, you can now press a button that says "Show Products with this Color" and the display area refills with only products that have a color in ```.product_colors``` with the exact hex value as the one currently dispalyed in the metrics column
+    - When a color is brought to the metrics column, the button is created and given a class that is the hex value of the displayed color
+    - When the button is pressed, it iterates through ```allProducts```, then iterates through each product's array of ```product_colors``` and returns true if any color's ```.hex_value``` matches the hex value class it was given on creation
+
 ### 52 Changelog ref 52
 - Color boxes now tint when hovered to indicate that they may be interacted with
 - Clicking on a color box brings up color information in the metrics column
