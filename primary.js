@@ -73,6 +73,7 @@ const init = () => {
     const tagsDiv = q('#tagsDiv');
     const displayArea = q('#displayArea');
     const topBarDiv = q('#topBarDiv');
+    const highlight = q('#highlight');
 
     /// P ELEMENTS
     const avg = q('#avg');
@@ -165,17 +166,11 @@ const init = () => {
 
             for(const index in filteredProducts) {
 
-                if (filteredProducts[index].price === null) {
-                    ++skips;
-                    continue;
-                }
+                if (filteredProducts[index].price === null) continue;
 
                 const prodPrice = parseInt(filteredProducts[index].price);
 
-                if (prodPrice === 0) {
-                    ++skips;
-                    continue;
-                }
+                if (prodPrice === 0) continue;
 
                 prices.push(prodPrice);
 
@@ -585,6 +580,27 @@ function produceFinal(array,i,subSubtractFrom,subReverse) {
 function buildColorBox(colorObject,id) {
     const box = buildElement('div',null,['colorBox',`${id}`]);
     box.style.backgroundColor = `${colorObject.hex_value}`;
+
+    ael('click',e => {
+        highlight.textContent = '';
+
+        const color = buildElement('div',null,['color',`${id}`]);
+        color.style.backgroundColor = colorObject.hex_value;
+        highlight.appendChild(color);
+
+        const name = buildElement('p',capitalizeFirsts(colorObject.colour_name),['colorName',`${id}`]);
+        highlight.appendChild(name);
+
+        const hex = buildElement('p',colorObject.hex_value,['colorHex',`${id}`]);
+        highlight.appendChild(hex);
+
+        const showProducts = buildElement('button','Show Products with this Color',['showProductsByColor']);
+
+        highlight.style.display = 'block';
+        //ael()
+        highlight.appendChild(showProducts);
+
+    },box)
 
     return box;
 }

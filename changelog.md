@@ -1,3 +1,7 @@
+### 52 Changelog ref 52
+- Color boxes now tint when hovered to indicate that they may be interacted with
+- Clicking on a color box brings up color information in the metrics column
+
 ### 51 Changelog ref 51
 - Metrics column now displays the minimum and maximum prices of the filtered selection
     - When prices are being added to the array of prices to be averaged, they are checked against the previous maximum price (initially 0) to see if they match or are a new maximum

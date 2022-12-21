@@ -17,7 +17,7 @@ html, body {
     height: inherit;
 }
 
-.prodName {
+.prodName, .colorName {
     text-align: center;
     font-weight: bold;
     margin-bottom: 3px;
@@ -193,6 +193,10 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     position: relative;
 }
 
+.colorBox:hover {
+    filter: brightness(0.75);
+}
+
 .colorsDiv+p {
     display: block;
     text-align: center;
@@ -217,7 +221,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
 }
 
 /* Starts out hidden */
-#userDiv, #userOptionsDiv, #tagsDiv {
+#userDiv, #userOptionsDiv, #tagsDiv, #highlight {
     display: none;
 }
 
@@ -302,6 +306,8 @@ h2 {
     font-size: 1.5rem;
     color: rgb(191, 45, 118);
     margin-top: 12.92px; 
+    border-bottom: rgb(191, 45, 118) 0.125rem solid;
+    padding-bottom: 0.1875em;
 }
 
 #titleDiv {
@@ -338,4 +344,20 @@ h1 {
 .metric {
     font-weight: bold;
     color: rgb(191, 45, 118);
+}
+
+.color {
+    width: 14.25em;
+    height: 14.25em;
+}
+
+.colorHex {
+    margin: 3px;
+    text-align: center;
+}
+
+#highlight {
+    border-bottom: solid 0.125em rgb(191, 45, 118);
+    padding-bottom: 0.1875em;
+    margin-bottom: 0.4375em;
 }
