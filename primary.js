@@ -3,8 +3,9 @@ let allProducts = false;
 let atId1 = false;
 let signs = [];
 let selectionAvg;
-let selectionMin;
-let selectionMax;
+let maxPrice = {};
+let minPrice = {};
+let current
 const exchangeRates = {
     '$': 1,
     '£': 1.21,
@@ -76,6 +77,8 @@ const init = () => {
     register.classList.add('inactive');
     const filterButton = q('#filterButton');
     const openTags = q('#openTags');
+    const minButton = q('#minButton');
+    const maxButton = q('#maxButton');
 
     /// DIVS
     const userDiv = q('#userDiv');
@@ -302,9 +305,60 @@ const init = () => {
     ael('keydown',e => {
         if(e.key === 'k') sendTopBar('Funcionale!',1,3,50);
     })
+
+    /// SHOW MIN AND MAX BUTTONS
+    ael('click',e => {
+        e.preventDefault();
+        const childrenArray = [...displayArea.children];
+        if (minButton.textContent === 'Show') {
+            for(const cell of childrenArray) {
+                for(const id of minPrice.ids) {
+                    if (cell.classList.contains(id)) {
+                        cell.style.display = 'block';
+                        break;
+                    }
+                    cell.style.display = 'none';
+                };
+            };
+            maxButton.textContent = 'Show';
+        } else {
+            for (const cell of childrenArray) {
+                cell.style.display = 'block';
+            };
+        };
+        minButton.textContent = minButton.textContent === 'Show' ? 'Back' : 'Show';
+    },minButton)
+
+    ael('click',e => {
+        e.preventDefault();
+        const childrenArray = [...displayArea.children];
+        if (maxButton.textContent === 'Show') {
+            for(const cell of childrenArray) {
+                for(const id of maxPrice.ids) {
+                    if (cell.classList.contains(id)) {
+                        cell.style.display = 'block';
+                        break;
+                    }
+                    cell.style.display = 'none';
+                };
+            };
+            minButton.textContent = 'Show';
+        } else {
+            for (const cell of childrenArray) {
+                cell.style.display = 'block';
+            };
+        };
+        maxButton.textContent = maxButton.textContent === 'Show' ? 'Back' : 'Show';
+    },maxButton)
 }
 
 document.addEventListener('DOMContentLoaded',init);
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//FUNCTIONS//BELOW///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 function s(...message) {
     for(el of message){
@@ -441,12 +495,19 @@ function buildCell(product,id) {
                 versusSelectionAvg.textContent = `$${formatPrice(-1 * difference)} (${Math.round(-1000 * difference / selectionAvg,0.1) / 10}%) lower than average`;
             } else if (difference === 0) versusSelectionAvg.textContent = 'Is the average price';
 
-            if (float === selectionMax) highlight.appendChild(buildElement('p','This is the most expensive item',['priceWarning']));
-            if (float === selectionMin) highlight.appendChild(buildElement('p','This is the least expensive item',['priceWarning']));
+            if (float === maxPrice.value) highlight.appendChild(buildElement('p','This is the most expensive item',['priceWarning']));
+            if (float === minPrice.value) highlight.appendChild(buildElement('p','This is the least expensive item',['priceWarning']));
 
 
             highlight.appendChild(versusSelectionAvg);
         }
+
+        const clear = buildElement('button','Clear',['clear']);
+        ael('click',e => {
+            e.preventDefault();
+            highlight.style.display = 'none';
+        },clear)
+        highlight.appendChild(clear);
 
         highlight.style.display = 'block';
 
@@ -632,10 +693,10 @@ function fillDisplay(array) {
 
     /// PREPARE METRICS
     const prices = [];
-        let maxPrice = {
+        maxPrice = {
             value: 0
         };
-        let minPrice = {
+        minPrice = {
             value: 1000000
         };
 
@@ -675,9 +736,9 @@ function fillDisplay(array) {
         avg.textContent = `$${formatPrice(avgPrice)}`;
         selectionAvg = avgPrice;
         min.textContent = `$${formatPrice(minPrice.value)}`;
-        selectionMin = minPrice.value;
+        minButton.textContent = 'Show';
         max.textContent = `$${formatPrice(maxPrice.value)}`;
-        selectionMax = maxPrice.value;
+        maxButton.textContent = 'Show';
 
     } else for(const metric of [avg,min,max]) {
         metric.textContent = 'No Data!';

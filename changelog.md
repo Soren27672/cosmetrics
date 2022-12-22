@@ -1,3 +1,12 @@
+### 57 Changelog ref 57
+- Added "clear" button to the metrics display which hides the ```#hightlight``` div displaying info about the selected product/color
+- Moved ```minPrice``` and ```maxPrice``` to global variables, removed ```selectionMin``` and ```selectionMax``` as those values can now be accessed via ```.value``` on the min/maxPrice objects
+- Added "Show" button to metrics beneath min and max prices, which changes to a "Back" button once clicked
+    - Upon clicking, code iterates thru all cells in the display area. It then iterates through min/maxPrice.ids and looks for a match within the cell's classes, changing ```cell.style.display``` to none if there is no match
+    - (Within the ```fillDisplay()``` function, an array of cell ids with the minimum or maximum value is stored within min/maxPrice.ids so that it may be access in the above method)
+    - If you click the button while it is currently displaying the min/max, it will revert to the normal selection
+    - Applying a new filter and clicking the other min/max show button both set the "back" text to "show"
+
 ### 56 Changelog ref 56
 - Updated selection average, minimum and maximum values to be held in global variables instead of the first index of a node's ```.classList```
 - Created text for when no brand was provided for a product
