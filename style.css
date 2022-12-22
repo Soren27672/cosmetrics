@@ -352,7 +352,7 @@ h1 {
 }
 
 .colorHex {
-    margin: 3px;
+    margin: 3px auto 7px auto;
     text-align: center;
 }
 
@@ -360,4 +360,10 @@ h1 {
     border-bottom: solid 0.125em rgb(191, 45, 118);
     padding-bottom: 0.1875em;
     margin-bottom: 0.4375em;
+}
+
+.buttonsDiv {
+    display: grid;
+    align-content: center;
+    grid-template-columns: 1fr 1fr;
 }

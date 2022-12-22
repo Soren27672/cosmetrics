@@ -2,6 +2,11 @@
 let allProducts = false;
 let atId1 = false;
 let signs = [];
+const exchangeRates = {
+    '$': 1,
+    '£': 1.21,
+    '€': 1.06
+}
 const demoProd = {
     brand: 'Enigma',
     image_link: '//www.sephora.com/productimages/sku/s1925965-av-15-zoom.jpg?imwidth=315',
@@ -83,11 +88,6 @@ const init = () => {
     const min = q('#min');
     const max = q('#max');
 
-
-    const allAnyBinarium = {
-        'all': 'any',
-        'any': 'all'
-    }
     let filteredProducts = [];
     let checkedTags = [];
     let user = null;
@@ -341,34 +341,42 @@ function buildCell(product,id) {
     brand.href = product.website_link;
     cell.appendChild(brand);
 
-    const priceDiv = buildElement('div','',['priceDiv',`${id}`])
+    /// PRICE
+    /// Create div for price
+    const priceDiv = buildElement('div','',['priceDiv',`${id}`]);
 
-    const currency = buildElement('p','',['prodCurrency',`${id}`]);
-    
-    const float = parseFloat(product.price);
+    /// Prepare variable for price display
     let formattedPrice;
+    const float = parseFloat(product.price);
+    /// Check to see if a price is listed
     if ((product.price === null) || (product.price === '0.0')) {
         formattedPrice = "Price unlisted, visit the merchant's website";
-    } else formattedPrice = formatPrice(float);
+    } else {
+        /// If a price is listed, create currency element and prepare for
+        /// price formatting
+        formattedPrice = formatPrice(float * exchangeRates[product.price_sign]);
+        const currency = buildElement('p','',['prodCurrency',`${id}`]);
 
-    // Currency formatting
-    if (product.price_sign === null) {
-        currency.textContent = '$';
-        currency.classList.add('none');
-
-        const div = buildElement('div',undefined,['popOutDiv',`${id}`])
-        currency.appendChild(div)
-        const message = buildElement('p',"No currency was provided for this product, visit the merchant's website for more information",['popOutText',`${id}`])
-        div.appendChild(message);
-
-    } else currency.textContent = product.price_sign;
-    priceDiv.appendChild(currency);
+        if (product.price_sign === null) {
+            /// Create "No currency provided" popup
+            currency.textContent = '$';
+            currency.classList.add('none');
+    
+            const div = buildElement('div',undefined,['popOutDiv',`${id}`])
+            currency.appendChild(div)
+            const message = buildElement('p',"No currency was provided for this product, visit the merchant's website for more information",['popOutText',`${id}`])
+            div.appendChild(message);
+    
+        } else currency.textContent = '$';
+        priceDiv.appendChild(currency);
+    }
     
     const price = buildElement('p',`${formattedPrice}`,['prodPrice',`${id}`]);
 
     priceDiv.appendChild(price);
     cell.appendChild(priceDiv);
 
+    /// COLORS
     const colorsDiv = buildElement('div',null,['colorsDiv',`${id}`]);
 
     let i = 0;
@@ -398,6 +406,49 @@ function buildCell(product,id) {
         more.appendChild(moreColorsDiv);
         cell.appendChild(more);
     }
+
+    const buttonsDiv = buildElement('div',null,['buttonsDiv',id]);
+
+    /// FAVORITE
+    const favoriteButton = buildElement('button','Favorite',['favoriteButton',id]);
+    buttonsDiv.appendChild(favoriteButton);
+
+    /// COMPARE
+    const compareButton = buildElement('button','Compare',['compareButton',id]);
+
+    ael('click',e => {
+        highlight.textContent = '';
+
+        highlight.appendChild(img.cloneNode(true));
+        highlight.appendChild(name.cloneNode(true));
+        highlight.appendChild(brand.cloneNode(true))
+        highlight.appendChild(priceDiv.cloneNode(true));
+
+        /// Determine metrics and phrasing
+
+        if ((product.price !== null) && (parseInt(product.price) !== 0)) {
+            const versusSelectionAvg = buildElement('p')
+            let difference = float - avg.classList[1];
+            if (difference > 0) {
+                versusSelectionAvg.textContent = `$${formatPrice(difference)} (${Math.round(1000 * difference / avg.classList[1],0.1) / 10}%) higher than average`;
+            } else if (difference < 0) {
+                versusSelectionAvg.textContent = `$${formatPrice(-1 * difference)} (${Math.round(-1000 * difference / avg.classList[1],0.1) / 10}%) lower than average`;
+            } else if (difference === 0) versusSelectionAvg.textContent = 'Is the average price';
+
+            if (float === parseFloat(max.classList[1])) highlight.appendChild(buildElement('p','This is the most expensive item',['priceWarning']));
+            if (float === parseFloat(min.classList[1])) highlight.appendChild(buildElement('p','This is the least expensive item',['priceWarning']));
+
+
+            highlight.appendChild(versusSelectionAvg);
+        }
+
+        highlight.style.display = 'block';
+
+    },compareButton)
+
+    buttonsDiv.appendChild(compareButton);
+
+    cell.appendChild(buttonsDiv);
 
     return cell;
 }
@@ -566,7 +617,7 @@ function buildColorBox(colorObject,id) {
 }
 
 function roundToPlace(number,place) {
-    const multiplier = place / (place ** 2);
+    const multiplier = place ** -1;
     return Math.round(number * multiplier) / multiplier;
 }
 
@@ -586,7 +637,7 @@ function fillDisplay(array) {
 
         if (array[index].price === null) continue;
 
-        const prodPrice = parseInt(array[index].price);
+        const prodPrice = parseFloat(array[index].price) * exchangeRates[array[index].price_sign];
 
         if (prodPrice === 0) continue;
 
@@ -614,9 +665,16 @@ function fillDisplay(array) {
 
     /// UPDATE DOM WITH METRICS
     if(prices.length) {
-        avg.textContent = `$${formatPrice(roundToPlace((prices.reduce((ac,cv) => ac+cv) / prices.length),0.01))}`;
+        avgPrice = roundToPlace((prices.reduce((ac,cv) => ac+cv) / prices.length),0.01);
+        avg.textContent = `$${formatPrice(avgPrice)}`;
+        avg.classList.remove(avg.classList[1]);
+        avg.classList.add(avgPrice);
         min.textContent = `$${formatPrice(minPrice.value)}`;
+        min.classList.remove(min.classList[1]);
+        min.classList.add(minPrice.value);
         max.textContent = `$${formatPrice(maxPrice.value)}`;
+        max.classList.remove(max.classList[1]);
+        max.classList.add(maxPrice.value);
 
     } else for(const metric of [avg,min,max]) {
         metric.textContent = 'No Data!';
@@ -635,9 +693,9 @@ function fillDisplay(array) {
 }
 
 function formatPrice(float) {
-    if (float === Math.floor(float)) float += '.00';
-    else if (float * 10 === Math.floor(float * 10)) float += '0';
-    return float;
+    if (float === Math.floor(float)) return float += '.00';
+    else if (float * 10 === Math.floor(float * 10)) return float += '0';
+    else return roundToPlace(float,0.01);
 }
 
 // Random # of products feature
@@ -665,5 +723,13 @@ function formatPrice(float) {
     for each element of provided array, add <option>
     element into provided element
     set .value to provided value
+
+    Translate currency
+    -Should be taken care of before cell is built
+    -No cell should list pounds
+    Enact:
+    -In buildCell
+    -Before price formatting
+    -Multiply unformatted price by a multiplier stored in an exchange rates object
 
 */

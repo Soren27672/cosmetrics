@@ -1,3 +1,17 @@
+### 55 Changelog ref 55
+- Added Compare and Favorite buttons to product cells
+    - They display as two center-aligned grid cells
+- Fixed buggy currency formatting
+    - Previously it would still create a currency element even if no price was provided (And prepend it onto the "No price listed" message)
+    - All currency is now translated to USD
+    - In all places where prices are to be displayed, they are multiplied by an exchange rate stored in an ```exchangeRates``` object that has key/value pairs of currency symbols and exchange rates respectively
+- Increased margin between hex value and "show products" button within the metrics color display
+- When assigning metric values as classes to the metric elements, code now first removes previously assigned class/value before adding the new one so that ```.classlist[1]``` will always reference the most recent value of each metric
+- Fixed inaccurate roundToPlace() function, which previously set the multiplier as the ```place``` parameter to the -2 power, now sets it to the -1 power
+- Compare button appends certain duplicate nodes of a cell into the metrics panel as well as listing some data about its relative price
+    - Upon clicking the "compare" button, the difference and percent difference between the selection average (stored in the first index of the selection average node's ```.classList```) is calculated and a <p> with a message is appended to the metrics column
+    - The price is also compared against the selection's minimum and maximum prices to determine if a message declaring so should be appended
+
 ### 54 Changelog ref 54
 - Code that fills the display with the product cells moved to its own reference ```fillDisplay()```
 - Brand names now are run through ```capitalizeFirsts()``` before being appended
