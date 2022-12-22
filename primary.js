@@ -120,6 +120,8 @@ const init = () => {
         const categories = createArrayOfValuesStoredInKey(allProducts,'category');
         populateDropdown(categoryFilter,categories); 
 
+        s(brands,types,categories);
+
         signs = allProducts.filter(cv => {
             if ((cv.price_sign === null) && (cv.price !== null)) return true;
         });
@@ -530,26 +532,44 @@ function populateDropdown(dropdown,array) {
     }
 }
 
-function createArrayOfValuesStoredInKey(arr,key) {
+function createArrayOfValuesStoredInKey(arr,key,alphabetize = true) {
+    // The goal of this function is to take an array of objects and a key and then
+    //     return an array of all unique values stored in that key within all the
+    //     objects in the array
     const values = {};
 
         for(const pair in arr) {
+            // Detect if value at arr[pair] is an array
             if(Array.isArray(arr[pair][key])) {
+                // If so, then add each element of that array to `values` as a key
                 for(const el of arr[pair][key]) {
                     values[el] = true;
                     }
                 }
             else if (arr[pair][key]) {
+                // If it's not an array, then just add it as is to `values` as a key
                 values[arr[pair][key]] = true
             }
         }
     
-        return (Object.keys(values)).map(cv => {
+        // Then, create an array that is just the keys of `values`
+        //     (This way we have an array of all unique values stored in that key)
+
+        if(alphabetize) {
+            return ((Object.keys(values)).sort()).map(cv => {
             return {
                 scored: cv.replace(' ','_'),
                 spaced: cv.replace('_',' ')
             }
-        })
+            
+        });
+    } else {
+        return (Object.keys(values)).map(cv => {
+        return {
+            scored: cv.replace(' ','_'),
+            spaced: cv.replace('_',' ')
+        }});
+    }
 }
 
 function filterByKeyValue(array,key,value) {
@@ -710,25 +730,24 @@ function fillDisplay(array) {
 
         prices.push(prodPrice);
 
-        switch (true) {
-            case prodPrice > maxPrice.value:
-                maxPrice.ids = [];
-                maxPrice.ids.push(index);
-                maxPrice.value = prodPrice;
-                break;
-            case prodPrice === maxPrice.value:
-                maxPrice.ids.push(index);
-                break;
-            case prodPrice < minPrice.value:
-                minPrice.ids = [];
-                minPrice.ids.push(index);
-                minPrice.value = prodPrice;
-                break;
-            case prodPrice === minPrice.value:
-                minPrice.ids.push(index);
-                break;
+        if (prodPrice > maxPrice.value) {
+            maxPrice.ids = [];
+            maxPrice.ids.push(index);
+            maxPrice.value = prodPrice;
         }
-    }
+
+        if (prodPrice === maxPrice.value) {
+	        maxPrice.ids.push(index);
+        }
+
+        if (prodPrice < minPrice.value) {
+	        minPrice.ids = [];
+	        minPrice.ids.push(index);
+	        minPrice.value = prodPrice;
+        }
+        if (prodPrice === minPrice.value)
+            minPrice.ids.push(index);
+        }
 
     /// UPDATE DOM WITH METRICS
     if(prices.length) {

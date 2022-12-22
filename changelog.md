@@ -1,3 +1,24 @@
+### 58 Changelog ref 58
+- ```createArrayOfValuesStoredInKey()``` now optionally sorts its return arrays alphabetically with its third parameter ```alphabetize``` which is true by default 
+- Fixed bug where minimum price displayed as $1000000
+    - Was caused by the switch statement within ```fillDisplay()``` triggering the case:
+```
+case prodPrice === maxPrice.value:
+    maxPrice.ids.push(index);
+    break;
+```
+    which would break out of the switch statement before it could get to the case:
+```
+case prodPrice < minPrice.value:
+    minPrice.ids = [];
+    minPrice.ids.push(index);
+    minPrice.value = prodPrice;
+    break;
+```
+    which was responsible for resetting the minimum from its default value of 1000000
+    - Switch statement now replaced with a series of if statements that are not exlcusive of each other (are not else-based)
+
+
 ### 57 Changelog ref 57
 - Added "clear" button to the metrics display which hides the ```#hightlight``` div displaying info about the selected product/color
 - Moved ```minPrice``` and ```maxPrice``` to global variables, removed ```selectionMin``` and ```selectionMax``` as those values can now be accessed via ```.value``` on the min/maxPrice objects
