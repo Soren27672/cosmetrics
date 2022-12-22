@@ -1,3 +1,8 @@
+### 56 Changelog ref 56
+- Updated selection average, minimum and maximum values to be held in global variables instead of the first index of a node's ```.classList```
+- Created text for when no brand was provided for a product
+    - Fixed consequent bugs involved with a ```.brand``` property of ```null```
+
 ### 55 Changelog ref 55
 - Added Compare and Favorite buttons to product cells
     - They display as two center-aligned grid cells

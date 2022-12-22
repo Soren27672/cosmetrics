@@ -2,15 +2,19 @@
 let allProducts = false;
 let atId1 = false;
 let signs = [];
+let selectionAvg;
+let selectionMin;
+let selectionMax;
 const exchangeRates = {
     '$': 1,
     '£': 1.21,
-    '€': 1.06
+    '€': 1.06,
+    [null]: 1
 }
 const demoProd = {
     brand: 'Enigma',
     image_link: '//www.sephora.com/productimages/sku/s1925965-av-15-zoom.jpg?imwidth=315',
-    decription: 'Finally, a lip gloss that will never fade. Go ahead, wear it to bed, we love a challenge.<BR>Shine above all the rest with permagloss, by Enigma.',
+    description: 'Finally, a lip gloss that will never fade. Go ahead, wear it to bed, we love a challenge.<BR>Shine above all the rest with permagloss, by Enigma.',
     product_type: 'lip_gloss',
     tag_list: ['vegan free','glossless','no pig'],
     website_link: 'https://google.com',
@@ -334,10 +338,11 @@ function buildCell(product,id) {
     img.src = `https://${product.api_featured_image}`;
     cell.appendChild(img);
 
-    const name = buildElement('p',product.name.replaceAll('<BR>',' '),['prodName',`${id}`]);
+    const name = buildElement('p',clearTags(product.name),['prodName',`${id}`]);
     cell.appendChild(name);
 
-    const brand = buildElement('a',`by ${capitalizeFirsts(product.brand)}`,['prodBrand',`${id}`]);
+    const brandText = product.brand ? `by ${capitalizeFirsts(product.brand)}` : 'No Brand Provided';
+    const brand = buildElement('a',brandText,['prodBrand',`${id}`]);
     brand.href = product.website_link;
     cell.appendChild(brand);
 
@@ -423,20 +428,21 @@ function buildCell(product,id) {
         highlight.appendChild(name.cloneNode(true));
         highlight.appendChild(brand.cloneNode(true))
         highlight.appendChild(priceDiv.cloneNode(true));
+        highlight.appendChild(buildElement('p',clearTags(product.description),['prodDescription']));
 
         /// Determine metrics and phrasing
 
         if ((product.price !== null) && (parseInt(product.price) !== 0)) {
             const versusSelectionAvg = buildElement('p')
-            let difference = float - avg.classList[1];
+            let difference = float - selectionAvg;
             if (difference > 0) {
-                versusSelectionAvg.textContent = `$${formatPrice(difference)} (${Math.round(1000 * difference / avg.classList[1],0.1) / 10}%) higher than average`;
+                versusSelectionAvg.textContent = `$${formatPrice(difference)} (${Math.round(1000 * difference / selectionAvg,0.1) / 10}%) higher than average`;
             } else if (difference < 0) {
-                versusSelectionAvg.textContent = `$${formatPrice(-1 * difference)} (${Math.round(-1000 * difference / avg.classList[1],0.1) / 10}%) lower than average`;
+                versusSelectionAvg.textContent = `$${formatPrice(-1 * difference)} (${Math.round(-1000 * difference / selectionAvg,0.1) / 10}%) lower than average`;
             } else if (difference === 0) versusSelectionAvg.textContent = 'Is the average price';
 
-            if (float === parseFloat(max.classList[1])) highlight.appendChild(buildElement('p','This is the most expensive item',['priceWarning']));
-            if (float === parseFloat(min.classList[1])) highlight.appendChild(buildElement('p','This is the least expensive item',['priceWarning']));
+            if (float === selectionMax) highlight.appendChild(buildElement('p','This is the most expensive item',['priceWarning']));
+            if (float === selectionMin) highlight.appendChild(buildElement('p','This is the least expensive item',['priceWarning']));
 
 
             highlight.appendChild(versusSelectionAvg);
@@ -622,6 +628,7 @@ function roundToPlace(number,place) {
 }
 
 function fillDisplay(array) {
+    s(array.length);
 
     /// PREPARE METRICS
     const prices = [];
@@ -634,7 +641,6 @@ function fillDisplay(array) {
 
     /// GENERATE METRICS
     for(const index in array) {
-
         if (array[index].price === null) continue;
 
         const prodPrice = parseFloat(array[index].price) * exchangeRates[array[index].price_sign];
@@ -661,25 +667,22 @@ function fillDisplay(array) {
                 minPrice.ids.push(index);
                 break;
         }
-     }
+    }
 
     /// UPDATE DOM WITH METRICS
     if(prices.length) {
         avgPrice = roundToPlace((prices.reduce((ac,cv) => ac+cv) / prices.length),0.01);
         avg.textContent = `$${formatPrice(avgPrice)}`;
-        avg.classList.remove(avg.classList[1]);
-        avg.classList.add(avgPrice);
+        selectionAvg = avgPrice;
         min.textContent = `$${formatPrice(minPrice.value)}`;
-        min.classList.remove(min.classList[1]);
-        min.classList.add(minPrice.value);
+        selectionMin = minPrice.value;
         max.textContent = `$${formatPrice(maxPrice.value)}`;
-        max.classList.remove(max.classList[1]);
-        max.classList.add(maxPrice.value);
+        selectionMax = maxPrice.value;
 
     } else for(const metric of [avg,min,max]) {
         metric.textContent = 'No Data!';
         };
-
+    
     /// CLEAR DISPLAY AREA
     displayArea.innerHTML = '';
 
@@ -687,7 +690,7 @@ function fillDisplay(array) {
     for(let i = 0; i < array.length; ++i) {
         displayArea.appendChild(buildCell(array[i],i));
     };
-
+    
     /// SEND COMPLETION MESSAGE
     if (array.length !== 1) sendTopBar(`Found ${array.length} results!`); else sendTopBar(`Found ${array.length} result!`)
 }
@@ -696,6 +699,10 @@ function formatPrice(float) {
     if (float === Math.floor(float)) return float += '.00';
     else if (float * 10 === Math.floor(float * 10)) return float += '0';
     else return roundToPlace(float,0.01);
+}
+
+function clearTags(string) {
+    return string.replaceAll(/(<([^>]+)>)/ig,' ');
 }
 
 // Random # of products feature
