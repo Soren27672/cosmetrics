@@ -1,3 +1,7 @@
+### 59 Changelog ref 59
+- Added min and max price range filter
+    - Added two more .filter steps into the click event on the "apply filter" button, each which checks if the ```parseFloat()```ed ```cv.price``` is greater/lesser than the ```parseFloat()```ed ```.value``` of one of the two new ```<input type="text">```s inside the new ```<div id="priceRange">```
+
 ### 58 Changelog ref 58
 - ```createArrayOfValuesStoredInKey()``` now optionally sorts its return arrays alphabetically with its third parameter ```alphabetize``` which is true by default 
 - Fixed bug where minimum price displayed as $1000000

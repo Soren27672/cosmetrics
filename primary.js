@@ -79,6 +79,8 @@ const init = () => {
     const openTags = q('#openTags');
     const minButton = q('#minButton');
     const maxButton = q('#maxButton');
+    const filterMin = q('#filterMin');
+    const filterMax = q('#filterMax');
 
     /// DIVS
     const userDiv = q('#userDiv');
@@ -150,6 +152,31 @@ const init = () => {
             if (typeFilter.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === types[typeFilter.value].scored);
             if (categoryFilter.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === categories[categoryFilter.value].scored);
 
+            const filterMinValue = parseFloat(filterMin.value);
+            if (!isNaN(filterMinValue)) {
+                filteredProducts = filteredProducts.filter(cv => {
+                    const price = parseFloat(cv.price);
+                    if (cv.price === null || price === 0) return false;
+                    if (price >= filterMinValue) {
+                        s(`it ran`);
+                        return true;
+                    };
+                    return false;
+                });
+            }
+
+            const filterMaxValue = parseFloat(filterMax.value);
+            s(NaN === parseFloat(''))
+            if (!isNaN(filterMaxValue)) {
+                filteredProducts = filteredProducts.filter(cv => {
+                    s('Max ran')
+                    const price = parseFloat(cv.price);
+                    if (cv.price === null || price === 0) return false;
+                    if (price <= filterMaxValue) return true;
+                    return false;
+                });
+            };
+
             checkedTags = [...tagsDiv.children].filter(cv => cv.checked === true).map(cv => cv.value);
 
 
@@ -172,6 +199,7 @@ const init = () => {
         },filterButton);
     });
 
+    /// CHECK WITHOUT FETCHING
     /* for(let i = 0; i < 12; ++i) {
         displayArea.appendChild(buildCell(demoProd,0));
     } */

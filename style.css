@@ -367,3 +367,17 @@ h1 {
     align-content: center;
     grid-template-columns: 1fr 1fr;
 }
+
+#priceRange p, #priceRange input {
+    display: inline;
+    margin: 0px;
+}
+
+#priceRange input {
+    width: 4ch;
+}
+
+#priceRange {
+    margin: 3px auto 3px auto;
+    width: fit-content;
+}
