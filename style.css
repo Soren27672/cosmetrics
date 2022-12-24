@@ -221,7 +221,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
 }
 
 /* Starts out hidden */
-#userDiv, #userOptionsDiv, #tagsDiv, #highlight {
+#userDiv, #userOptionsDiv, #sortDiv, #filterDiv, #highlight {
     display: none;
 }
 

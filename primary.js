@@ -76,7 +76,8 @@ const init = () => {
     const register = q('#register');
     register.classList.add('inactive');
     const filterButton = q('#filterButton');
-    const openTags = q('#openTags');
+    const openFilters = q('#openFilters');
+    const openSorts = q('#openSorts');
     const minButton = q('#minButton');
     const maxButton = q('#maxButton');
     const filterMin = q('#filterMin');
@@ -88,6 +89,8 @@ const init = () => {
     let userOpenST = false;
     const userOptionsDiv = q('#userOptionsDiv');
     const tagsDiv = q('#tagsDiv');
+    const filterDiv = q('#filterDiv');
+    const sortDiv = q('#sortDiv');
     const displayArea = q('#displayArea');
     const topBarDiv = q('#topBarDiv');
     const highlight = q('#highlight');
@@ -107,6 +110,7 @@ const init = () => {
         allProducts = json;
         for(let i = 0; i < allProducts.length; ++i) {
             allProducts[i].index = i;
+            allProducts[i].parsedPrice = (isNaN(parseFloat(allProducts[i].price))) || (parseFloat(allProducts[i].price) === 0) ? null : parseFloat(allProducts[i].price);
             }
 
         // CREATE DROPDOWNS FROM RESPONSE
@@ -155,24 +159,17 @@ const init = () => {
             const filterMinValue = parseFloat(filterMin.value);
             if (!isNaN(filterMinValue)) {
                 filteredProducts = filteredProducts.filter(cv => {
-                    const price = parseFloat(cv.price);
-                    if (cv.price === null || price === 0) return false;
-                    if (price >= filterMinValue) {
-                        s(`it ran`);
-                        return true;
-                    };
+                    if (cv.parsedPrice === null) return false;
+                    if (cv.parsedPrice >= filterMinValue) return true;
                     return false;
                 });
-            }
+            };
 
             const filterMaxValue = parseFloat(filterMax.value);
-            s(NaN === parseFloat(''))
             if (!isNaN(filterMaxValue)) {
                 filteredProducts = filteredProducts.filter(cv => {
-                    s('Max ran')
-                    const price = parseFloat(cv.price);
-                    if (cv.price === null || price === 0) return false;
-                    if (price <= filterMaxValue) return true;
+                    if (cv.parsedPrice === null) return false;
+                    if (cv.parsedPrice <= filterMaxValue) return true;
                     return false;
                 });
             };
@@ -194,6 +191,57 @@ const init = () => {
                 });
             };
 
+            const sort = [...q('[type=radio]',true)].find(cv => cv.checked === true);
+
+            if(sort) {
+                switch (sort.value) {
+                    case 'lowPriceSort':
+                        filteredProducts.sort((a,b) => a.parsedPrice - b.parsedPrice);
+                        break;
+                    case 'highPriceSort':
+                        filteredProducts.sort((a,b) => b.parsedPrice - a.parsedPrice);
+                        break;
+                    case 'alphaSort':
+                        filteredProducts.sort((a,b) => {
+                            const aName = clearTags(a.name).toUpperCase();
+                            const bName = clearTags(b.name).toUpperCase();
+                            if (aName < bName) return -1;
+                            if (aName > bName) return 1;
+                            if (aName === bName) return 0;
+                        });
+                        break;
+                    case 'revAlphaSort':
+                        filteredProducts.sort((a,b) => {
+                            const aName = clearTags(a.name).toUpperCase();
+                            const bName = clearTags(b.name).toUpperCase();
+                            if (aName > bName) return -1;
+                            if (aName < bName) return 1;
+                            if (aName === bName) return 0;
+                        });
+                        break;
+                    case 'alphaBrandSort':
+                        filteredProducts.sort((a,b) => {
+                            const aBrand = clearTags(a.brand).toUpperCase();
+                            const bBrand = clearTags(b.brand).toUpperCase();
+                            if (aBrand < bBrand) return -1;
+                            if (aBrand > bBrand) return 1;
+                            if (aBrand === bBrand) return 0;
+                        });
+                        break;
+                    case 'revAlphaBrandSort':
+                        filteredProducts.sort((a,b) => {
+                            const aBrand = clearTags(a.brand).toUpperCase();
+                            const bBrand = clearTags(b.brand).toUpperCase();
+                            if (aBrand > bBrand) return -1;
+                            if (aBrand < bBrand) return 1;
+                            if (aBrand === bBrand) return 0;
+                        });
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             fillDisplay(filteredProducts);
             
         },filterButton);
@@ -204,12 +252,9 @@ const init = () => {
         displayArea.appendChild(buildCell(demoProd,0));
     } */
 
-    /// SHOW TAGS DIV
-    ael('click',e => {
-        e.preventDefault();
-        tagsDiv.style.display = tagsDiv.style.display === '' ? 'block' : '';
-        openTags.textContent = openTags.textContent === 'Show Tags' ? 'Hide Tags' : 'Show Tags';
-    },openTags)
+    /// IMPLEMENT SHOW BUTTONS
+    implementShowButton(openFilters,filterDiv,'Show Filters','Close Filters');
+    implementShowButton(openSorts,sortDiv,'Show Sorts','Close Sorts');
 
     /// SETUP LOGGING IN
     ael('click',e => {
@@ -436,14 +481,13 @@ function buildCell(product,id) {
 
     /// Prepare variable for price display
     let formattedPrice;
-    const float = parseFloat(product.price);
     /// Check to see if a price is listed
     if ((product.price === null) || (product.price === '0.0')) {
         formattedPrice = "Price unlisted, visit the merchant's website";
     } else {
         /// If a price is listed, create currency element and prepare for
         /// price formatting
-        formattedPrice = formatPrice(float * exchangeRates[product.price_sign]);
+        formattedPrice = formatPrice(product.parsedPrice * exchangeRates[product.price_sign]);
         const currency = buildElement('p','',['prodCurrency',`${id}`]);
 
         if (product.price_sign === null) {
@@ -518,15 +562,15 @@ function buildCell(product,id) {
 
         if ((product.price !== null) && (parseInt(product.price) !== 0)) {
             const versusSelectionAvg = buildElement('p')
-            let difference = float - selectionAvg;
+            let difference = product.parsedPrice - selectionAvg;
             if (difference > 0) {
                 versusSelectionAvg.textContent = `$${formatPrice(difference)} (${Math.round(1000 * difference / selectionAvg,0.1) / 10}%) higher than average`;
             } else if (difference < 0) {
                 versusSelectionAvg.textContent = `$${formatPrice(-1 * difference)} (${Math.round(-1000 * difference / selectionAvg,0.1) / 10}%) lower than average`;
-            } else if (difference === 0) versusSelectionAvg.textContent = 'Is the average price';
+            } else if (difference === 0) versusSelectionAvg.textContent = 'It is the average price';
 
-            if (float === maxPrice.value) highlight.appendChild(buildElement('p','This is the most expensive item',['priceWarning']));
-            if (float === minPrice.value) highlight.appendChild(buildElement('p','This is the least expensive item',['priceWarning']));
+            if (product.parsedPrice === maxPrice.value) highlight.appendChild(buildElement('p','This is the most expensive item',['priceWarning']));
+            if (product.parsedPrice === minPrice.value) highlight.appendChild(buildElement('p','This is the least expensive item',['priceWarning']));
 
 
             highlight.appendChild(versusSelectionAvg);
@@ -750,11 +794,9 @@ function fillDisplay(array) {
 
     /// GENERATE METRICS
     for(const index in array) {
-        if (array[index].price === null) continue;
+        if (array[index].parsedPrice === null) continue;
 
-        const prodPrice = parseFloat(array[index].price) * exchangeRates[array[index].price_sign];
-
-        if (prodPrice === 0) continue;
+        const prodPrice = array[index].parsedPrice * exchangeRates[array[index].price_sign];
 
         prices.push(prodPrice);
 
@@ -810,7 +852,17 @@ function formatPrice(float) {
 }
 
 function clearTags(string) {
-    return string.replaceAll(/(<([^>]+)>)/ig,' ');
+    if (string === null) return '';
+    let returnString = string.replaceAll(/(<([^>]+)>)/ig,' ');
+    return returnString.replaceAll('\n','');
+}
+
+function implementShowButton(button,element,closedText,openText) {
+    ael('click',e => {
+        e.preventDefault();
+        element.style.display = element.style.display === '' ? 'block' : '';
+        button.textContent = button.textContent === closedText ? openText : closedText;
+    },button)
 }
 
 // Random # of products feature

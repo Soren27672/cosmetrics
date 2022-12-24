@@ -39,8 +39,9 @@
 
         <div id="body">
             <div id="searchDiv">
-                <h2>Filter Products</h2>
-                <form>
+                <h2>Find Products</h2>
+                <button id="openFilters">Show Filters</button>
+                <div id="filterDiv">
                     <p>Brand</p>
                     <select id="brandFilter">
                         <option class="default" value="brand">loading...</option>
@@ -60,12 +61,29 @@
                         <p> to $</p>
                         <input id="filterMax" type="text" placeholder="max">
                     </div>
-                    <button id="openTags">Show Tags</button>
+                    <p>Show products that are tagged with <strong id="allAny">all</strong> of the following:</p>
                     <div id="tagsDiv">
-                        <p>Show products that are tagged with <strong id="allAny">all</strong> of the following:</p>
+
                     </div>
-                </form>
-                <button id="filterButton">Apply Filter</button>
+                </div>
+                <button id="openSorts">Show Sorts</button>
+                <div id="sortDiv">
+                    <input type="radio" name="sort" id="noneSort" value="noneSort">
+                    <label for="noneSort">None</label><br>
+                    <input type="radio" name="sort" id="lowPriceSort" value="lowPriceSort">
+                    <label for="lowPriceSort">Price low to high</label><br>
+                    <input type="radio" name="sort" id="highPriceSort" value="highPriceSort">
+                    <label for="highPriceSort">Price high to low</label><br>
+                    <input type="radio" name="sort" id="alphaSort" value="alphaSort">
+                    <label for="alphaSort">Alphabetically by name</label><br>
+                    <input type="radio" name="sort" id="revAlphaSort" value="revAlphaSort">
+                    <label for="revAlphaSort">Reverse Alpha by name</label><br>
+                    <input type="radio" name="sort" id="alphaBrandSort" value="alphaBrandSort">
+                    <label for="alphaBrandSort">Alphabetically by brand</label><br>
+                    <input type="radio" name="sort" id="revAlphaBrandSort" value="revAlphaBrandSort">
+                    <label for="revAlphaBrandSort">Reverse Alpha by brand</label>
+                </div>
+                <button id="filterButton">Apply Contraints</button>
             </div>
 
             

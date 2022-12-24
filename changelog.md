@@ -1,3 +1,20 @@
+### 60 Changelog ref 60
+- Moved filters into their own div
+- Moved tags out of a separate collapsable div and into the filter div
+- Created new Sort div
+- Changed "Apply Filters" to "Apply Constraints"
+- Upon retrieving allProducts, code now adds the product's price as a float into the product object at ```product.parsedPrice```
+    - Now, parseFloat() doesn't need to be called whenever the product's price is needed, it can be accessed with the ```.parsedPrice``` key
+- Updated the max/min price filters and metrics portion of ```fillDisplay()``` to operate with ```product.parsedPrice``` where they previously parsed the price themselves
+- Added sorting functionality
+    - Different types of sorts are available on a radio button panel
+    - Sorting functionality is in place after filtration code within the event attached to the "Apply Constraints" button
+    - Starts by iterating thru all ```[type=radio]``` elements using ```.find()```, looking for an element whose ```.checked``` property returns true
+    - Once such a radio element is found, it sets the variable ```sort``` to that element's ```.value``` property
+    - ```sort``` is then passed into a switch statement which runs a different ```.sort()``` depending on the value of ```sort```
+    - The price-based sorts both operate by simply subtracting ```a.parsedPrice``` and ```b.parsedPrice``` from each other (depending on hi-to-lo or lo-to-hi)
+    - The alphabetical sorts first apply ```.toUpperCase()``` and ```clearTags()``` to ```a/b.name``` or ```a/b.brand``` before comparison so that lowercase letters and vestigial html tags do not cause an inaccurate sort
+
 ### 59 Changelog ref 59
 - Added min and max price range filter
     - Added two more .filter steps into the click event on the "apply filter" button, each which checks if the ```parseFloat()```ed ```cv.price``` is greater/lesser than the ```parseFloat()```ed ```.value``` of one of the two new ```<input type="text">```s inside the new ```<div id="priceRange">```
