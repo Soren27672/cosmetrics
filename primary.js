@@ -576,6 +576,7 @@ function buildCell(product,id) {
             highlight.appendChild(versusSelectionAvg);
         }
 
+        /// Build Clear button
         const clear = buildElement('button','Clear',['clear']);
         ael('click',e => {
             e.preventDefault();
@@ -737,8 +738,10 @@ function buildColorBox(colorObject,id) {
     box.style.backgroundColor = `${colorObject.hex_value}`;
 
     ael('click',e => {
+        // Clear Previous
         highlight.textContent = '';
 
+        // Build color details (Swatch, name, hex value)
         const color = buildElement('div',null,['color',`${id}`]);
         color.style.backgroundColor = colorObject.hex_value;
         highlight.appendChild(color);
@@ -750,6 +753,7 @@ function buildColorBox(colorObject,id) {
         const hex = buildElement('p',colorObject.hex_value,['colorHex',`${id}`]);
         highlight.appendChild(hex);
 
+        // Show products with this color
         const showProducts = buildElement('button','Show Products with this Color',['showProductsByColor',colorObject.hex_value]);
         ael('click',e => {
             e.preventDefault();
@@ -765,10 +769,18 @@ function buildColorBox(colorObject,id) {
             fillDisplay(filteredProducts);
 
         },showProducts)
-
-        highlight.style.display = 'block';
-        
         highlight.appendChild(showProducts);
+
+        // Build Clear Button
+        const clear = buildElement('button','Clear',['clear']);
+        ael('click',e => {
+            e.preventDefault();
+            highlight.style.display = 'none';
+        },clear)
+        highlight.appendChild(clear);
+
+        // Display
+        highlight.style.display = 'block';
 
     },box)
 
@@ -898,5 +910,50 @@ function implementShowButton(button,element,closedText,openText) {
     -In buildCell
     -Before price formatting
     -Multiply unformatted price by a multiplier stored in an exchange rates object
+
+
+    getFiltrations(array of objects(objs), array of keys to search thru(keys),beautifier,alphebetizeOption) {
+        initialize returnObject
+        for each key in object 1 of objs {
+            (if that key is contained in the keys array)
+            if (!!keys.find(cv => cv === key)) {
+                initialize the keyDataObject = {
+                    nameRaw: key,
+                    nameRefined: key.beautifier(),
+                    valuesRaw: [],
+                    valuesRefined; []
+                }
+                initialize valuesSet = {}
+                for each object in objs {
+                    if (not an array) {
+                    valuesSet.add(object.key)
+                    }
+                    if (is an array) {
+                        for each element of array {
+                            valuesSet.add(object.key[element])
+                        }
+                    }
+                }
+                keyDataObject.valuesRaw = Array.from(valuesSet)
+                if (alphabetize) keyDataObject.valuesRaw.sort();
+                keyDataObject.valuesRefined = keyDataObject.valuesRaw.map(beautifier);
+                returnObject.key = keyDataObject;
+            }
+        }
+        return keyDataObject;
+    }
+
+
+    for each key in keysToLookFor {
+        for each key in arrayOfObjects[0] {
+            if (key === key)
+        }
+    }
+    ^Runs thru all keys in object for each key in keysToLookFor
+    Runs thru 10 keys 3 times
+
+    Vice Versa
+    ^Runs thru all keys in keysToLookFor for each key in object
+    runs thru 3 keys 10 times
 
 */

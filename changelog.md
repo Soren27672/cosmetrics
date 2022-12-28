@@ -1,3 +1,6 @@
+### 61 Changelog ref 61
+- Added Clear button to color swatches displayed in the metrics column
+
 ### 60 Changelog ref 60
 - Moved filters into their own div
 - Moved tags out of a separate collapsable div and into the filter div
