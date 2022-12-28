@@ -1,3 +1,15 @@
+### 62 Changelog ref 62
+- Wrote function ```getFiltrations()``` which is an updated version of ```createArrayOfValuesStoredInKey()```
+    - ```getFiltrations()``` creates key-data objects that contain the raw name of the key it was passed, the formatted name of the key it was passed, a list of all raw values stored in the given key across all objects, and an array of the raw values formatted
+    - ```getFiltrations()``` accepts an array of key names that it will generate a key-data object for, and will return an object containing all of those key-data objects
+    - ```getFiltrations()``` accepts a function to use as its formatter, so different formats may be applied if the desired display format changes
+    - ```getFiltrations()``` has an optional alphabetizer parameter, which if it is provided a truthy value, it will alphabetize the lists of raw and refined values
+- Replaced previous ```.spaced``` and ```.scored``` system used throughout previous filtration code
+    - In order to compare against strings present in allProducts, code previously required ```.spaced``` or ```.scored``` situationally due to inconsistency in the data provided by the API
+    - But now ```.valuesRaw``` may always be used in these situations
+- ```brands```, ```types```, ```categories``` and ```tags``` have all been retired and their functionality has been reworked into ```filtrations.brand```/```product_type```/```category``` and ```tag_list```
+
+
 ### 61 Changelog ref 61
 - Added Clear button to color swatches displayed in the metrics column
 

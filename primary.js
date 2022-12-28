@@ -1,7 +1,6 @@
 
 let allProducts = false;
 let atId1 = false;
-let signs = [];
 let selectionAvg;
 let maxPrice = {};
 let minPrice = {};
@@ -14,7 +13,7 @@ const exchangeRates = {
 }
 const demoProd = {
     brand: 'Enigma',
-    image_link: '//www.sephora.com/productimages/sku/s1925965-av-15-zoom.jpg?imwidth=315',
+    image_link: 'www.sephora.com/productimages/sku/s1925965-av-15-zoom.jpg?imwidth=315',
     description: 'Finally, a lip gloss that will never fade. Go ahead, wear it to bed, we love a challenge.<BR>Shine above all the rest with permagloss, by Enigma.',
     product_type: 'lip_gloss',
     tag_list: ['vegan free','glossless','no pig'],
@@ -117,30 +116,22 @@ const init = () => {
 
         allProducts.push(demoProd);
         
-        const brands = createArrayOfValuesStoredInKey(allProducts,'brand');
-        populateDropdown(brandFilter,brands);
+        const filtrations = getFiltrations(allProducts,['brand','product_type','category','tag_list'],filterFormatter,true)
 
-        const types = createArrayOfValuesStoredInKey(allProducts,'product_type');
-        populateDropdown(typeFilter,types);
+        populateDropdown(brandFilter,filtrations.brand.valuesRefined);
 
-        const categories = createArrayOfValuesStoredInKey(allProducts,'category');
-        populateDropdown(categoryFilter,categories); 
+        populateDropdown(typeFilter,filtrations.product_type.valuesRefined);
 
-        s(brands,types,categories);
+        populateDropdown(categoryFilter,filtrations.category.valuesRefined); 
 
-        signs = allProducts.filter(cv => {
-            if ((cv.price_sign === null) && (cv.price !== null)) return true;
-        });
-
-        const tags = createArrayOfValuesStoredInKey(allProducts,'tag_list');
-        for(const tag in tags) {
-            const box = buildElement('input',false,[],tags[tag].scored);
+        for(const tag in filtrations.tag_list.valuesRefined) {
+            const box = buildElement('input',false,[],tag);
             box.type = 'checkbox';
             box.name = 'tags';
-            box.value = tags[tag].scored;
+            box.value = tag;
 
-            const label = buildElement('label',capitalizeFirsts(tags[tag].spaced));
-            label.setAttribute('for',`${tags[tag].scored}`);
+            const label = buildElement('label',filtrations.tag_list.valuesRefined[tag]);
+            label.setAttribute('for',tag);
             
             tagsDiv.appendChild(box);
             tagsDiv.appendChild(label);
@@ -152,9 +143,9 @@ const init = () => {
         // DRY UP
         ael('click',e => {
             filteredProducts = [...allProducts];
-            if (brandFilter.value !== "brand") filteredProducts = filteredProducts.filter(cv => cv.brand === brands[brandFilter.value].spaced);
-            if (typeFilter.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === types[typeFilter.value].scored);
-            if (categoryFilter.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === categories[categoryFilter.value].scored);
+            if (brandFilter.value !== "brand") filteredProducts = filteredProducts.filter(cv => cv.brand === filtrations.brand.valuesRaw[brandFilter.value]);
+            if (typeFilter.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === filtrations.product_type.valuesRaw[typeFilter.value]);
+            if (categoryFilter.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === filtrations.category.valuesRaw[categoryFilter.value]);
 
             const filterMinValue = parseFloat(filterMin.value);
             if (!isNaN(filterMinValue)) {
@@ -174,19 +165,21 @@ const init = () => {
                 });
             };
 
-            checkedTags = [...tagsDiv.children].filter(cv => cv.checked === true).map(cv => cv.value);
+            checkedTags = [...tagsDiv.children]
+            .filter(cv => cv.checked === true)
+            .map(cv => cv.value);
 
 
             // ANYALL FUNCTIONALITY
             if (allAny.textContent === "all") {
                 for(const tag of checkedTags) {
-                    filteredProducts = filteredProducts.filter(cv => cv.tag_list.includes(tag.replace('_',' ')));
+                    filteredProducts = filteredProducts.filter(cv => cv.tag_list.includes(filtrations.tag_list.valuesRaw[tag]));
                 };
             } else if (checkedTags.length !== 0) {
                 filteredProducts = filteredProducts.filter(cv => {
                     for(const tag of checkedTags) {
-                        if (cv.tag_list.includes(tag.replace('_',' '))) return true;
-                    }
+                        if (cv.tag_list.includes(filtrations.tag_list.valuesRaw[tag])) return true;
+                    };
                     return false;
                 });
             };
@@ -597,8 +590,8 @@ function buildCell(product,id) {
 
 function populateDropdown(dropdown,array) {
     for(let i = 0; i < array.length; ++i) {
-        if ((array[i].spaced !== 'null') && (array[i].spaced !== '')) {
-            const option = buildElement('option',capitalizeFirsts(array[i].spaced));
+        if ((array[i] !== 'null') && (array[i] !== '')) {
+            const option = buildElement('option',array[i]);
             option.value = i;
             dropdown.appendChild(option);
         }
@@ -875,6 +868,42 @@ function implementShowButton(button,element,closedText,openText) {
         element.style.display = element.style.display === '' ? 'block' : '';
         button.textContent = button.textContent === closedText ? openText : closedText;
     },button)
+}
+
+function getFiltrations(objects,keysToSearch,formatter,alphabetize = false) {
+    const returnObject = {};
+    for (const objectKey in objects[0]) {
+        if (!!keysToSearch.find(cv => cv === objectKey)) {
+            const keyDataObject = {
+                nameRaw: objectKey,
+                nameRefined: formatter(objectKey),
+                valuesRaw: [],
+                valuesRefined: []
+            };
+            const values = {}
+            for (const object of objects) {
+                if (typeof object[objectKey] === 'string') {
+                    values[object[objectKey]] = true;
+                    continue;
+                }
+                if (Array.isArray(object[objectKey])) {
+                    for (const element of object[objectKey]) {
+                        values[element] = true;
+                    }
+                }
+            }
+            keyDataObject.valuesRaw = [...Object.keys(values)];
+            if (alphabetize) keyDataObject.valuesRaw.sort();
+            keyDataObject.valuesRefined = keyDataObject.valuesRaw.map(formatter);
+            returnObject[objectKey] = keyDataObject;
+        }
+    }
+    return returnObject;
+}
+
+function filterFormatter(string) {
+    string = string.replaceAll('_',' ');
+    return capitalizeFirsts(string);
 }
 
 // Random # of products feature
