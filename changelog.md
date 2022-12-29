@@ -1,3 +1,8 @@
+### 63 Changelog ref 63
+- Wrote function ```findValueDeviation()```, which takes a value and an average and returns an object containing the difference between the value and the average and the percent difference between the value and average
+- Wrote function ```average()``` which reduces an array of numbers into its sum, then divides it by its length
+- Updated calculation of deviations to use these functions instead of performing calculations inside the string interpolations
+
 ### 62 Changelog ref 62
 - Wrote function ```getFiltrations()``` which is an updated version of ```createArrayOfValuesStoredInKey()```
     - ```getFiltrations()``` creates key-data objects that contain the raw name of the key it was passed, the formatted name of the key it was passed, a list of all raw values stored in the given key across all objects, and an array of the raw values formatted

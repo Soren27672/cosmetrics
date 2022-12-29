@@ -553,20 +553,20 @@ function buildCell(product,id) {
 
         /// Determine metrics and phrasing
 
-        if ((product.price !== null) && (parseInt(product.price) !== 0)) {
-            const versusSelectionAvg = buildElement('p')
-            let difference = product.parsedPrice - selectionAvg;
-            if (difference > 0) {
-                versusSelectionAvg.textContent = `$${formatPrice(difference)} (${Math.round(1000 * difference / selectionAvg,0.1) / 10}%) higher than average`;
-            } else if (difference < 0) {
-                versusSelectionAvg.textContent = `$${formatPrice(-1 * difference)} (${Math.round(-1000 * difference / selectionAvg,0.1) / 10}%) lower than average`;
-            } else if (difference === 0) versusSelectionAvg.textContent = 'It is the average price';
+        if ((product.price !== null) && (product.parsedPrice !== 0)) {
+            const versusSelectionAvgP = buildElement('p');
+            const difference = findValueDeviation(product.parsedPrice,avgPrice)
+            if (difference.unit > 0) {
+                versusSelectionAvgP.textContent = `$${formatPrice(difference.unit)} (${roundToPlace(difference.percent,0.01)}%) higher than average`;
+            } else if (difference.unit < 0) {
+                versusSelectionAvgP.textContent = `$${formatPrice(-1 * difference.unit)} (${roundToPlace(-1 * difference.percent,0.01)}%) lower than average`;
+            } else if (difference === 0) versusSelectionAvgP.textContent = 'It is the average price';
 
             if (product.parsedPrice === maxPrice.value) highlight.appendChild(buildElement('p','This is the most expensive item',['priceWarning']));
             if (product.parsedPrice === minPrice.value) highlight.appendChild(buildElement('p','This is the least expensive item',['priceWarning']));
 
 
-            highlight.appendChild(versusSelectionAvg);
+            highlight.appendChild(versusSelectionAvgP);
         }
 
         /// Build Clear button
@@ -598,6 +598,7 @@ function populateDropdown(dropdown,array) {
     }
 }
 
+/// REMOVE
 function createArrayOfValuesStoredInKey(arr,key,alphabetize = true) {
     // The goal of this function is to take an array of objects and a key and then
     //     return an array of all unique values stored in that key within all the
@@ -638,6 +639,7 @@ function createArrayOfValuesStoredInKey(arr,key,alphabetize = true) {
     }
 }
 
+/// REMOVE
 function filterByKeyValue(array,key,value) {
     const indexes = [];
     for(const index in array) {
@@ -826,7 +828,7 @@ function fillDisplay(array) {
 
     /// UPDATE DOM WITH METRICS
     if(prices.length) {
-        avgPrice = roundToPlace((prices.reduce((ac,cv) => ac+cv) / prices.length),0.01);
+        avgPrice = roundToPlace(average(prices));
         avg.textContent = `$${formatPrice(avgPrice)}`;
         selectionAvg = avgPrice;
         min.textContent = `$${formatPrice(minPrice.value)}`;
@@ -904,6 +906,17 @@ function getFiltrations(objects,keysToSearch,formatter,alphabetize = false) {
 function filterFormatter(string) {
     string = string.replaceAll('_',' ');
     return capitalizeFirsts(string);
+}
+
+function average(array) { 
+    return array.reduce((ac,cv) => ac += cv) / array.length;
+}
+
+function findValueDeviation(value,average) {
+    const returnObject = {};
+    returnObject.unit = value - average;
+    returnObject.percent = returnObject.diff / average;
+    return returnObject;
 }
 
 // Random # of products feature
