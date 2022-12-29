@@ -1,7 +1,6 @@
 
 let allProducts = false;
 let atId1 = false;
-let selectionAvg;
 let maxPrice = {};
 let minPrice = {};
 let current
@@ -52,6 +51,7 @@ const demoProd = {
     }]
 }
 
+
 const init = () => {
     
 
@@ -94,13 +94,14 @@ const init = () => {
     const topBarDiv = q('#topBarDiv');
     const highlight = q('#highlight');
 
-    /// P ELEMENTS
-    const avg = q('#avg');
-    const min = q('#min');
-    const max = q('#max');
+     /// P ELEMENTS
+    const selectionAvg = q('#slectionAvg');
+    const selectionMin = q('#selectionMin');
+    const selectionMax = q('#selectionMax');
 
     let filteredProducts = [];
     let checkedTags = [];
+    let selectionMetrics = {};
     let user = null;
 
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
@@ -555,11 +556,11 @@ function buildCell(product,id) {
 
         if ((product.price !== null) && (product.parsedPrice !== 0)) {
             const versusSelectionAvgP = buildElement('p');
-            const difference = findValueDeviation(product.parsedPrice,avgPrice)
+            const difference = findValueDeviation(product.parsedPrice,selectionMetrics.avg)
             if (difference.unit > 0) {
-                versusSelectionAvgP.textContent = `$${formatPrice(difference.unit)} (${roundToPlace(difference.percent,0.01)}%) higher than average`;
+                versusSelectionAvgP.textContent = `$${formatPrice(difference.unit)} (${difference.percent}%) higher than average`;
             } else if (difference.unit < 0) {
-                versusSelectionAvgP.textContent = `$${formatPrice(-1 * difference.unit)} (${roundToPlace(-1 * difference.percent,0.01)}%) lower than average`;
+                versusSelectionAvgP.textContent = `$${formatPrice(-1 * difference.unit)} (${-1 * difference.percent}%) lower than average`;
             } else if (difference === 0) versusSelectionAvgP.textContent = 'It is the average price';
 
             if (product.parsedPrice === maxPrice.value) highlight.appendChild(buildElement('p','This is the most expensive item',['priceWarning']));
@@ -782,58 +783,30 @@ function buildColorBox(colorObject,id) {
     return box;
 }
 
-function roundToPlace(number,place) {
+function roundToPlace(number,place = 0.01) {
     const multiplier = place ** -1;
     return Math.round(number * multiplier) / multiplier;
 }
 
 function fillDisplay(array) {
-    s(array.length);
 
-    /// PREPARE METRICS
+    /// Create Array
     const prices = [];
-        maxPrice = {
-            value: 0
-        };
-        minPrice = {
-            value: 1000000
-        };
+    for (const product of array) {
+        if (product.parsedPrice === null) continue;
+        prices.push(product.parsedPrice * exchangeRates[product.price_sign]);
+    };
+    s(prices)
+    
+    /// Generate metrics with array
+    selectionMetrics = findMetrics(prices,[roundToPlace]);
 
-    /// GENERATE METRICS
-    for(const index in array) {
-        if (array[index].parsedPrice === null) continue;
-
-        const prodPrice = array[index].parsedPrice * exchangeRates[array[index].price_sign];
-
-        prices.push(prodPrice);
-
-        if (prodPrice > maxPrice.value) {
-            maxPrice.ids = [];
-            maxPrice.ids.push(index);
-            maxPrice.value = prodPrice;
-        }
-
-        if (prodPrice === maxPrice.value) {
-	        maxPrice.ids.push(index);
-        }
-
-        if (prodPrice < minPrice.value) {
-	        minPrice.ids = [];
-	        minPrice.ids.push(index);
-	        minPrice.value = prodPrice;
-        }
-        if (prodPrice === minPrice.value)
-            minPrice.ids.push(index);
-        }
-
-    /// UPDATE DOM WITH METRICS
-    if(prices.length) {
-        avgPrice = roundToPlace(average(prices));
-        avg.textContent = `$${formatPrice(avgPrice)}`;
-        selectionAvg = avgPrice;
-        min.textContent = `$${formatPrice(minPrice.value)}`;
+    /// Update DOM with metrics
+    if(selectionMetrics) {
+        selectionAvg.textContent = `$${formatPrice(selectionMetrics.avg)}`;
+        selectionMin.textContent = `$${formatPrice(selectionMetrics.min.value)}`;
         minButton.textContent = 'Show';
-        max.textContent = `$${formatPrice(maxPrice.value)}`;
+        selectionMax.textContent = `$${formatPrice(selectionMetrics.max.value)}`;
         maxButton.textContent = 'Show';
 
     } else for(const metric of [avg,min,max]) {
@@ -915,8 +888,81 @@ function average(array) {
 function findValueDeviation(value,average) {
     const returnObject = {};
     returnObject.unit = value - average;
-    returnObject.percent = returnObject.diff / average;
+    returnObject.percent = roundToPlace(returnObject.unit * 100 / average,0.01);
     return returnObject;
+}
+
+function buildComparisonDiv(price,groupPrices,groupName,parentNode,groupMetrics = false) {
+    const div = buildElement('div',null,['comparisonDiv']);
+
+    const header = buildElement('p',`Compared to ${groupName}`,['comparisonHeader']);
+    div.appendChild(header);
+
+    const comparisonMessage = buildElement('p');
+
+    const groupMetrics = 
+    const difference = findValueDeviation(price,avgPrice)
+    if (difference.unit > 0) {
+        comparisonMessage.textContent = `$${formatPrice(difference.unit)} (${difference.percent}%) higher than average`;
+    } else if (difference.unit < 0) {
+        comparisonMessage.textContent = `$${formatPrice(-1 * difference.unit)} (${-1 * difference.percent,0.01}%) lower than average`;
+    } else if (difference === 0) comparisonMessage.textContent = 'It is the average price';
+
+    if (price === maxPrice.value) highlight.appendChild(buildElement('p','This is the most expensive item',['priceWarning']));
+    if (price === minPrice.value) highlight.appendChild(buildElement('p','This is the least expensive item',['priceWarning']));
+
+
+    div.appendChild(comparisonMessage);
+
+    parentNode.appendChild(div);
+}
+
+function findMetrics(array,formatters = []) {
+    if (!Array.isArray(array)) return undefined;
+
+    max = {
+        value: 0
+    };
+    min = {
+        value: 1000000
+    };
+
+    /// GENERATE METRICS
+    for(const index in array) {
+        if (array[index] > max.value) {
+            max.ids = [];
+            max.value = array[index];
+        }
+
+        if (array[index] === max.value) {
+	        max.ids.push(index);
+        }
+
+        if (array[index] < min.value) {
+	        min.ids = [];
+	        min.value = array[index];
+        }
+        if (array[index] === min.value) {
+            min.ids.push(index);
+        }
+    }
+
+    let avg = average(array)
+    s(avg,max.value,min.value)
+
+    for (const formatter of formatters) {
+        avg = formatter(avg);
+        max.value = formatter(max.value);
+        min.value = formatter(min.value);
+        s(avg,max.value,min.value)
+    }
+
+    return {
+        avg: avg,
+        max: max,
+        min: min
+    }
+    
 }
 
 // Random # of products feature

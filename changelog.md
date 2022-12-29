@@ -1,3 +1,18 @@
+### 64 Changelog ref 64
+- Fixed bug with ```findValueDeviation()``` that caused the returned object's ```.unit``` key to be NaN due to using the wrong key name
+- Moved code that found maximum, minimum and average values into its own reference at ```findMetrics()```
+    - ```findMetrics()``` accepts an array of values and an array of formatter functions
+    - ```finMetrics()``` returns an object containing the average, maximum and minimum values of the selection as well as a list of all index at which minimum and maximum values occur
+    - If ```findMetrics()``` receives an array of formatter functions, it will pass the average, minimum and maximum values through all the formatter functions one after another before returning the final object containing the metrics
+- Implemented a for loop to iterate through calculating price deviations against several groups
+- ```roundToPlace()```'s place parameter now defaults to 0.01
+    - This way, it can operate as a callback function without a workaround to somehow recognize when it's being used and pass a value into it
+    - ```roundToPlace()``` is passed as a callback function to ```findMetrics()``` as a formatter function
+-  Renamed ```avg```, ```min``` and ```max``` variables to ```selectionAvg```/```min```/```max``` to be more meaningful
+    - Additionally updated the HTML tags for each element to the updated variable name for consistency
+- Introduced ```selectionMetrics``` to globally store the metrics object of the filtered products' prices
+    - This way, metrics for the selection will not have to be recalculated upon every comparison
+
 ### 63 Changelog ref 63
 - Wrote function ```findValueDeviation()```, which takes a value and an average and returns an object containing the difference between the value and the average and the percent difference between the value and average
 - Wrote function ```average()``` which reduces an array of numbers into its sum, then divides it by its length
