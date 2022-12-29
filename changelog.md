@@ -1,3 +1,9 @@
+### 65 Changelog ref 65
+- Finished implementing function ```buildComparisonDiv()``` that will create a DOM node that displays the comparison information of the products
+    - ```buildComparisonDiv()``` takes a price, a group of prices to compare against or a metrics object, a group name to display in the DOM and a parent node to append the div to
+    - ```buildComparisonDiv()``` can optionally take a group metrics object as the second parameter so that a metrics object doesn't need to be generated if one already exists in the global context
+- Metrics objects returned by ```findMetrics()``` now have a property ```.isMetricsObject``` set to true so that it can quickly be determined if a value is or is not a metrics object
+
 ### 64 Changelog ref 64
 - Fixed bug with ```findValueDeviation()``` that caused the returned object's ```.unit``` key to be NaN due to using the wrong key name
 - Moved code that found maximum, minimum and average values into its own reference at ```findMetrics()```

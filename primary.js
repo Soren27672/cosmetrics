@@ -554,21 +554,9 @@ function buildCell(product,id) {
 
         /// Determine metrics and phrasing
 
-        if ((product.price !== null) && (product.parsedPrice !== 0)) {
-            const versusSelectionAvgP = buildElement('p');
-            const difference = findValueDeviation(product.parsedPrice,selectionMetrics.avg)
-            if (difference.unit > 0) {
-                versusSelectionAvgP.textContent = `$${formatPrice(difference.unit)} (${difference.percent}%) higher than average`;
-            } else if (difference.unit < 0) {
-                versusSelectionAvgP.textContent = `$${formatPrice(-1 * difference.unit)} (${-1 * difference.percent}%) lower than average`;
-            } else if (difference === 0) versusSelectionAvgP.textContent = 'It is the average price';
-
-            if (product.parsedPrice === maxPrice.value) highlight.appendChild(buildElement('p','This is the most expensive item',['priceWarning']));
-            if (product.parsedPrice === minPrice.value) highlight.appendChild(buildElement('p','This is the least expensive item',['priceWarning']));
-
-
-            highlight.appendChild(versusSelectionAvgP);
-        }
+        buildComparisonDiv(product.parsedPrice,selectionMetrics,'this selection',highlight);
+        buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.product_type === product.product_type).map(cv => cv.parsedPrice),`all ${filterFormatter(product.product_type)}s`,highlight);
+        buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.brand === product.brand).map(cv => cv.parsedPrice),`all products by ${filterFormatter(product.brand)}`,highlight);
 
         /// Build Clear button
         const clear = buildElement('button','Clear',['clear']);
@@ -796,7 +784,6 @@ function fillDisplay(array) {
         if (product.parsedPrice === null) continue;
         prices.push(product.parsedPrice * exchangeRates[product.price_sign]);
     };
-    s(prices)
     
     /// Generate metrics with array
     selectionMetrics = findMetrics(prices,[roundToPlace]);
@@ -881,7 +868,7 @@ function filterFormatter(string) {
     return capitalizeFirsts(string);
 }
 
-function average(array) { 
+function average(array) {
     return array.reduce((ac,cv) => ac += cv) / array.length;
 }
 
@@ -892,27 +879,46 @@ function findValueDeviation(value,average) {
     return returnObject;
 }
 
-function buildComparisonDiv(price,groupPrices,groupName,parentNode,groupMetrics = false) {
+function buildComparisonDiv(price,pricesArrayOrMetricsObject,groupName,parentNode) {
     const div = buildElement('div',null,['comparisonDiv']);
 
     const header = buildElement('p',`Compared to ${groupName}`,['comparisonHeader']);
     div.appendChild(header);
 
+    /// DETERMINE GROUP METRICS
+    // If the pricesArrayOrMetricsObject is an array, then generate a metrics object
+    // for it and assign that to groupMetrics, otherwise, assign groupMetrics
+    // the value passed to pricesArrayOrMetricsObject so that the function can
+    // use the metrics object we pass it
+    const groupMetrics = Array.isArray(pricesArrayOrMetricsObject) ?
+        findMetrics(pricesArrayOrMetricsObject,[roundToPlace]) :
+        pricesArrayOrMetricsObject;
+
+    if (pricesArrayOrMetricsObject.length === 0) console.error('buildComparisonDiv received empty array');
+
+    // Make sure the value we passed to pricesArrayOrMetricsObject is a metrics object
+    if (!groupMetrics.isMetricsObject) {
+        console.error('Invalid metrics object provided');
+        return groupMetrics;
+    }
+
+    /// CREATE AND FILL COMPARISON MESSAGE
     const comparisonMessage = buildElement('p');
 
-    const groupMetrics = 
-    const difference = findValueDeviation(price,avgPrice)
+    s(groupMetrics)
+    const difference = findValueDeviation(price,groupMetrics.avg);
+    s(difference);
     if (difference.unit > 0) {
         comparisonMessage.textContent = `$${formatPrice(difference.unit)} (${difference.percent}%) higher than average`;
     } else if (difference.unit < 0) {
-        comparisonMessage.textContent = `$${formatPrice(-1 * difference.unit)} (${-1 * difference.percent,0.01}%) lower than average`;
+        comparisonMessage.textContent = `$${formatPrice(-1 * difference.unit)} (${-1 * difference.percent}%) lower than average`;
     } else if (difference === 0) comparisonMessage.textContent = 'It is the average price';
 
-    if (price === maxPrice.value) highlight.appendChild(buildElement('p','This is the most expensive item',['priceWarning']));
-    if (price === minPrice.value) highlight.appendChild(buildElement('p','This is the least expensive item',['priceWarning']));
-
-
     div.appendChild(comparisonMessage);
+
+    // Most/least expensive product messages
+    if (price === groupMetrics.max.value) div.appendChild(buildElement('p','This is the most expensive item',['priceWarning']));
+    if (price === groupMetrics.min.value) div.appendChild(buildElement('p','This is the least expensive item',['priceWarning']));
 
     parentNode.appendChild(div);
 }
@@ -948,19 +954,18 @@ function findMetrics(array,formatters = []) {
     }
 
     let avg = average(array)
-    s(avg,max.value,min.value)
 
     for (const formatter of formatters) {
         avg = formatter(avg);
         max.value = formatter(max.value);
         min.value = formatter(min.value);
-        s(avg,max.value,min.value)
     }
 
     return {
         avg: avg,
         max: max,
-        min: min
+        min: min,
+        isMetricsObject: true
     }
     
 }
