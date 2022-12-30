@@ -1,3 +1,6 @@
+### 68 Changelog ref 68
+- Favorite button now uses a PATCH request to add its product's id into a user's favorites array in the mock backend
+
 ### 67 Changelog ref 67
 - Code now uses function ```logInUser()``` when a successful username and password are used
     - ```logInUser()``` sets ```user``` to the parameter it's passed, fetches the user's favorited products from the mock backend and removes the ```.inactive``` class from all favorite buttons

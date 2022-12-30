@@ -9,10 +9,17 @@
       "password": "password2"
     },
     {
+      "favorites": [
+        "1046",
+        "1043"
+      ],
       "id": "Newton",
       "password": "apple"
     },
     {
+      "favorites": [
+        "1045"
+      ],
       "id": "Remattra",
       "password": "sufferasihave"
     },

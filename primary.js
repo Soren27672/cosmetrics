@@ -555,6 +555,26 @@ function buildCell(product,id) {
     /// FAVORITE
     const favoriteButton = buildElement('button','Favorite',['favoriteButton'],product.id);
     if (!user) favoriteButton.classList.add('inactive');
+    
+    ael('click',e => {
+        e.preventDefault();
+        favoritedProducts.push(favoriteButton.id);
+        fetch(`http://localhost:3000/users/${encodeURI(user)}`,{
+            method: 'PATCH',
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            body: JSON.stringify({
+                favorites: favoritedProducts
+            })
+        })
+        .then(res => res.json())
+        .then(json => {
+            s(json);
+            sendTopBar('Added to favorites!');
+        })
+    },favoriteButton)
     buttonsDiv.appendChild(favoriteButton);
 
     /// COMPARE
