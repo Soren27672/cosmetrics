@@ -331,12 +331,12 @@ h1 {
     grid-column-gap: 10px;
 }
 
-#displayArea {
+#displayDiv {
     display: grid;
     align-content: center;
     grid-column-gap: 10px;
     grid-row-gap: 10px;
-    margin: 5px;
+    margin: auto;
     grid-template-columns: 206.5px 206.5px 206.5px 206.5px;
     grid-auto-rows: max-content;
 }

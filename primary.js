@@ -1,15 +1,53 @@
-const css = false;
+// Milliseconds between intervals
+let refreshRate = 50;
+    
+/// INTERACTS
+const brandFilterSCT = q('#brandFilter');
+const brandClearBTN = q('#brandClear');
+const typeFilterSCT = q('#typeFilter');
+const typeClearBTN = q('#typeClear');
+const categoryFilterSCT = q('#categoryFilter');
+const categoryClearBTN = q('#categoryClear');
+const openUserBTN = q('#openUser');
+const logOutBTN = q('#logOut');
+const allAnyBTN = q('#allAny');
+const logInBTN = q('#logIn');
+logInBTN.classList.add('inactive');
+const registerBTN = q('#register');
+registerBTN.classList.add('inactive');
+const applyConstraintsBTN = q('#applyConstraints');
+const openFiltersBTN = q('#openFilters');
+const openSortsBTN = q('#openSorts');
+const minBTN = q('#minButton');
+const maxBTN = q('#maxButton');
+const filterMinTXT = q('#filterMin');
+const filterMaxTXT = q('#filterMax');
+const showFavoritesBTN = q('#showFavorites');
+const logInFRM = q('#logInForm');
 
-let user = null;
-let favoriteProducts = {};
-let allProducts = [];
-let selectionMetrics = {};
-const exchangeRates = {
-    '$': 1,
-    '£': 1.21,
-    '€': 1.06,
-    [null]: 1
-}
+/// DIVS
+const userDiv = q('#userDiv');
+const logInDiv = q('#logInDiv');
+const userOptionsDiv = q('#userOptionsDiv');
+const tagsDiv = q('#tagsDiv');
+const filterDiv = q('#filterDiv');
+const sortDiv = q('#sortDiv');
+const displayDiv = q('#displayDiv');
+const topBarDiv = q('#topBarDiv');
+const highlightDiv = q('#highlight');
+
+ /// TEXT AND MESSAGES
+const loader = q('#loader');
+const greeting = q('#greeting');
+const selectionAvg = q('#selectionAvg');
+const selectionMin = q('#selectionMin');
+const selectionMax = q('#selectionMax');
+
+let filteredProducts = [];
+let checkedTags = [];
+
+// For testing CSS updates without fetching to the API
+const testingCSS = false;
 const demoProd = {
     brand: 'Enigma',
     image_link: '//s3.amazonaws.com/donovanbailey/products/api_featured_images/000/000/896/original/open-uri20171224-4-133ccrb?1514082674',
@@ -51,82 +89,55 @@ const demoProd = {
     }]
 }
 
+/// Variables used in calculation and functionalities
+let user = null;
+let favoriteProducts = {};
+let allProducts = [];
+let selectionMetrics = {};
+const exchangeRates = {
+    '$': 1,
+    '£': 1.21,
+    '€': 1.06,
+    [null]: 1
+}
 
 const init = () => {
-    
 
-    const loader = q('#loader');
-    
-    const logInForm = q('#logInForm');
-    const greeting = q('#greeting');
-
-    let refreshRate = 50;
-    
-    
-    /// INTERACTS
-    const brandFilter = q('#brandFilter');
-    const brandClear = q('#brandClear');
-    const typeFilter = q('#typeFilter');
-    const typeClear = q('#typeClear');
-    const categoryFilter = q('#categoryFilter');
-    const categoryClear = q('#categoryClear');
-    const openUser = q('#openUser');
-    const logOut = q('#logOut');
-    const allAny = q('#allAny');
-    const logIn = q('#logIn');
-    logIn.classList.add('inactive');
-    const register = q('#register');
-    register.classList.add('inactive');
-    const filterButton = q('#filterButton');
-    const openFilters = q('#openFilters');
-    const openSorts = q('#openSorts');
-    const minButton = q('#minButton');
-    const maxButton = q('#maxButton');
-    const filterMin = q('#filterMin');
-    const filterMax = q('#filterMax');
-
-    /// DIVS
-    const userDiv = q('#userDiv');
-    const logInDiv = q('#logInDiv');
-    let userOpenST = false;
-    const userOptionsDiv = q('#userOptionsDiv');
-    const tagsDiv = q('#tagsDiv');
-    const filterDiv = q('#filterDiv');
-    const sortDiv = q('#sortDiv');
-    const displayArea = q('#displayArea');
-    const topBarDiv = q('#topBarDiv');
-    const highlight = q('#highlight');
-
-     /// P ELEMENTS
-    const selectionAvg = q('#slectionAvg');
-    const selectionMin = q('#selectionMin');
-    const selectionMax = q('#selectionMax');
-
-    let filteredProducts = [];
-    let checkedTags = [];
-
-    if(!css) {
+    if(!testingCSS) {
+    // GET ARRAY OF ALL PRODUCT OBJECTS FROM API
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
     .then(res => res.json())
     .then(json => {
+        // assign array of objects to allProducts
         allProducts = json;
+
+        // Udpate each object with data about its index in allProducts (so that it
+        // can be referenced even when part of a different array)
+        // and its parsed price property (so that it doesn't need to be found
+        // at every access)
         for(let i = 0; i < allProducts.length; ++i) {
             allProducts[i].index = i;
-            allProducts[i].parsedPrice = (isNaN(parseFloat(allProducts[i].price))) || (parseFloat(allProducts[i].price) === 0) ? null : parseFloat(allProducts[i].price);
+            allProducts[i].parsedPrice =
+            // Check if the price key's value is null or zero
+            ((allProducts[i].price === null)) || (parseFloat(allProducts[i].price) === 0) ?
+            // if so, parsedPrice will be null
+            null :
+            // Otherwise parsedPrice will be the parsed value
+            parseFloat(allProducts[i].price);
             }
-
-        // CREATE DROPDOWNS FROM RESPONSE
-
-        allProducts.push(demoProd);
         
+        // Assign filtrations to a filtrations object generated by getFiltrations
         const filtrations = getFiltrations(allProducts,['brand','product_type','category','tag_list'],filterFormatter,true)
 
-        populateDropdown(brandFilter,filtrations.brand.valuesRefined);
+        // DRY UP
+        // Fill dropdown menus with information generated by getFiltrations
+        populateDropdown(brandFilterSCT,filtrations.brand.valuesRefined);
 
-        populateDropdown(typeFilter,filtrations.product_type.valuesRefined);
+        populateDropdown(typeFilterSCT,filtrations.product_type.valuesRefined);
 
-        populateDropdown(categoryFilter,filtrations.category.valuesRefined); 
+        populateDropdown(categoryFilterSCT,filtrations.category.valuesRefined); 
 
+        // Generate checkboxes based on the generated filtrations object
         for(const tag in filtrations.tag_list.valuesRefined) {
             const box = buildElement('input',false,[],tag);
             box.type = 'checkbox';
@@ -141,16 +152,17 @@ const init = () => {
             tagsDiv.appendChild(buildElement('br'));
         }
 
+        // Initially fill the display with a couple products for visual appeal
         fillDisplay(allProducts.slice(0,12));
 
         // DRY UP
         ael('click',e => {
             filteredProducts = [...allProducts];
-            if (brandFilter.value !== "brand") filteredProducts = filteredProducts.filter(cv => cv.brand === filtrations.brand.valuesRaw[brandFilter.value]);
-            if (typeFilter.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === filtrations.product_type.valuesRaw[typeFilter.value]);
-            if (categoryFilter.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === filtrations.category.valuesRaw[categoryFilter.value]);
+            if (brandFilterSCT.value !== "brand") filteredProducts = filteredProducts.filter(cv => cv.brand === filtrations.brand.valuesRaw[brandFilterSCT.value]);
+            if (typeFilterSCT.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === filtrations.product_type.valuesRaw[typeFilterSCT.value]);
+            if (categoryFilterSCT.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === filtrations.category.valuesRaw[categoryFilterSCT.value]);
 
-            const filterMinValue = parseFloat(filterMin.value);
+            const filterMinValue = parseFloat(filterMinTXT.value);
             if (!isNaN(filterMinValue)) {
                 filteredProducts = filteredProducts.filter(cv => {
                     if (cv.parsedPrice === null) return false;
@@ -159,7 +171,7 @@ const init = () => {
                 });
             };
 
-            const filterMaxValue = parseFloat(filterMax.value);
+            const filterMaxValue = parseFloat(filterMaxTXT.value);
             if (!isNaN(filterMaxValue)) {
                 filteredProducts = filteredProducts.filter(cv => {
                     if (cv.parsedPrice === null) return false;
@@ -174,7 +186,7 @@ const init = () => {
 
 
             // ANYALL FUNCTIONALITY
-            if (allAny.textContent === "all") {
+            if (allAnyBTN.textContent === "all") {
                 for(const tag of checkedTags) {
                     filteredProducts = filteredProducts.filter(cv => cv.tag_list.includes(filtrations.tag_list.valuesRaw[tag]));
                 };
@@ -240,13 +252,13 @@ const init = () => {
 
             fillDisplay(filteredProducts);
             
-        },filterButton);
+        },applyConstraintsBTN);
     });
     } else {
 
     /// CHECK WITHOUT FETCHING
     for(let i = 0; i < 12; ++i) {
-        displayArea.appendChild(buildCell(demoProd,0));
+        displayDiv.appendChild(buildCell(demoProd,0));
     }
     for (let i = 0; i < 12; ++i) {
         allProducts.push(demoProd);
@@ -254,11 +266,11 @@ const init = () => {
     }
 
     /// IMPLEMENT SHOW BUTTONS
-    implementShowButton(openFilters,filterDiv,'Show Filters','Close Filters');
-    implementShowButton(openSorts,sortDiv,'Show Sorts','Close Sorts');
+    implementShowButton(openFiltersBTN,filterDiv,'Show Filters','Close Filters');
+    implementShowButton(openSortsBTN,sortDiv,'Show Sorts','Close Sorts');
 
     /// IMPLEMENT CLEAR SELECTED FILTER BUTTON
-    for(const pair of [[brandFilter,brandClear],[typeFilter,typeClear],[categoryFilter,categoryClear]]) {
+    for(const pair of [[brandFilterSCT,brandClearBTN],[typeFilterSCT,typeClearBTN],[categoryFilterSCT,categoryClearBTN]]) {
         s(pair)
         pair[1].addEventListener('click', e => {
             e.preventDefault();
@@ -266,13 +278,19 @@ const init = () => {
         })
     }
 
+    /// IMPLEMENT SHOW FAVORITES BUTTON
+    ael('click',e => {
+        e.preventDefault;
+        fillDisplay(allProducts.filter(cv => favoriteProducts[cv.id]));
+    },showFavoritesBTN)
+
     /// SETUP LOGGING IN
     ael('click',e => {
         e.preventDefault();
-        if (logIn.classList.contains('inactive')) return;
+        if (logInBTN.classList.contains('inactive')) return;
         let ok;
         let status;
-        fetch(`http://localhost:3000/users/${encodeURI(logInForm.username.value)}`)
+        fetch(`http://localhost:3000/users/${encodeURI(logInFRM.username.value)}`)
         .then(res => {
             ok = res.ok;
             status = res.status;
@@ -281,19 +299,19 @@ const init = () => {
         .then(json => {
             if (!ok) {
                 if (status === 404) {
-                    sendTopBar(`Our records show no account registered under ${logInForm.username.value}`)
+                    sendTopBar(`Our records show no account registered under ${logInFRM.username.value}`)
                 } else sendTopBar('Unexpected Error, try again');
-            } else if ((json.password === logInForm.password.value)) {
+            } else if ((json.password === logInFRM.password.value)) {
                 logInUser(json.id);
-                logInForm.username.value = '';
-                logInForm.password.value = '';
-                logIn.classList.add('inactive');
-                register.classList.add('inactive');
+                logInFRM.username.value = '';
+                logInFRM.password.value = '';
+                logInBTN.classList.add('inactive');
+                registerBTN.classList.add('inactive');
                 greeting.textContent = `Hello, ${user}!`
                 logInDiv.style.display = 'none';
                 userOptionsDiv.style.display = 'block';
                 sendTopBar(`Welcome back, ${user}!`);
-            } else if (json.password !== logInForm.password.value) sendTopBar('Incorrect password'); else sendTopBar('Unexpected Error, try again');
+            } else if (json.password !== logInFRM.password.value) sendTopBar('Incorrect password'); else sendTopBar('Unexpected Error, try again');
         })
         .catch(reason => {
             s(reason.message);
@@ -305,13 +323,13 @@ const init = () => {
                     sendTopBar(reason.message);
             }
         });
-    },logIn)
+    },logInBTN)
 
     /// REGISTERING NEW ACCOUNT
     ael('click',e => {
         e.preventDefault();
-        if (register.classList.contains('inactive')) return;
-        fetch(`http://localhost:3000/users/${encodeURI(logInForm.username.value)}`)
+        if (registerBTN.classList.contains('inactive')) return;
+        fetch(`http://localhost:3000/users/${encodeURI(logInFRM.username.value)}`)
         .then(res => {
             if (res.status === 404) {
                 fetch(`http://localhost:3000/users`,{
@@ -321,33 +339,33 @@ const init = () => {
                         "Accept": "application/json"
                     },
                     body: JSON.stringify({
-                        id: logInForm.username.value,
-                        password: logInForm.password.value
+                        id: logInFRM.username.value,
+                        password: logInFRM.password.value
                     })
                 })
                 .then(res => res.json())
                 .then(json => {
                     user = json.id;
-                    logInForm.username.value = '';
-                    logInForm.password.value = '';
-                    logIn.classList.add('inactive');
-                    register.classList.add('inactive');
+                    logInFRM.username.value = '';
+                    logInFRM.password.value = '';
+                    logInBTN.classList.add('inactive');
+                    registerBTN.classList.add('inactive');
                     greeting.textContent = `Hello, ${user}!`
                     sendTopBar(`Registration Success! Welcome to Cosmetrics, ${user}!`);
                 });
-                } else if (res.ok) alert(`The account ${logInForm.username.value} is already taken.`)
+                } else if (res.ok) alert(`The account ${logInFRM.username.value} is already taken.`)
             });
-    },register)
+    },registerBTN)
 
     /// DEACTIVATE LOGIN/REGI BUTTONS WHEN FIELDS ARE EMPTY
     ael('keydown',e => {
         setTimeout(() => {
-            if ((logInForm.password.value === '') || (logInForm.username.value === '')) {
-                logIn.classList.add('inactive');
-                register.classList.add('inactive');
+            if ((logInFRM.password.value === '') || (logInFRM.username.value === '')) {
+                logInBTN.classList.add('inactive');
+                registerBTN.classList.add('inactive');
             } else {
-                logIn.classList.remove('inactive');
-                register.classList.remove('inactive');
+                logInBTN.classList.remove('inactive');
+                registerBTN.classList.remove('inactive');
             }
         },1)
 
@@ -357,18 +375,15 @@ const init = () => {
     ael('click',e => {
         e.preventDefault();
         logOutUser();
-    },logOut)
+    },logOutBTN)
 
     /// CLOSING USER DIV
     ael('click', e => {
         e.preventDefault();
-        if (!userOpenST) {
-            userDiv.style.display = 'block';
-        } else if (userOpenST) {
-            userDiv.style.display = 'none';
-        }
-        userOpenST = !userOpenST;
-    },openUser)
+        userDiv.style.display = userDiv.style.display === '' ?
+        'block' :
+        '';
+    },openUserBTN)
 
     // LOADING DIALOG
     // (Color changing)
@@ -384,14 +399,14 @@ const init = () => {
 
     // SET UP ALL/ANY SWAPPER
     ael('click',e => {
-        allAny.textContent = allAny.textContent === 'all' ? 'any' : 'all';
-    },allAny)
+        allAnyBTN.textContent = allAnyBTN.textContent === 'all' ? 'any' : 'all';
+    },allAnyBTN)
 
     /// SHOW MIN AND MAX BUTTONS
     ael('click',e => {
         e.preventDefault();
-        const childrenArray = [...displayArea.children];
-        if (minButton.textContent === 'Show') {
+        const childrenArray = [...displayDiv.children];
+        if (minBTN.textContent === 'Show') {
             for(const cell of childrenArray) {
                 for(const id of selectionMetrics.min.ids) {
                     if (cell.classList[1] === id) {
@@ -401,19 +416,19 @@ const init = () => {
                     cell.style.display = 'none';
                 };
             };
-            maxButton.textContent = 'Show';
+            maxBTN.textContent = 'Show';
         } else {
             for (const cell of childrenArray) {
                 cell.style.display = 'block';
             };
         };
-        minButton.textContent = minButton.textContent === 'Show' ? 'Back' : 'Show';
-    },minButton)
+        minBTN.textContent = minBTN.textContent === 'Show' ? 'Back' : 'Show';
+    },minBTN)
 
     ael('click',e => {
         e.preventDefault();
-        const childrenArray = [...displayArea.children];
-        if (maxButton.textContent === 'Show') {
+        const childrenArray = [...displayDiv.children];
+        if (maxBTN.textContent === 'Show') {
             for(const cell of childrenArray) {
                 for(const id of selectionMetrics.max.ids) {
                     if (cell.classList[1] === id) {
@@ -423,14 +438,14 @@ const init = () => {
                     cell.style.display = 'none';
                 };
             };
-            minButton.textContent = 'Show';
+            minBTN.textContent = 'Show';
         } else {
             for (const cell of childrenArray) {
                 cell.style.display = 'block';
             };
         };
-        maxButton.textContent = maxButton.textContent === 'Show' ? 'Back' : 'Show';
-    },maxButton)
+        maxBTN.textContent = maxBTN.textContent === 'Show' ? 'Back' : 'Show';
+    },maxBTN)
 }
 
 document.addEventListener('DOMContentLoaded',init);
@@ -601,33 +616,33 @@ function buildCell(product,id) {
     const compareButton = buildElement('button','Compare',['compareButton',id]);
 
     ael('click',e => {
-        highlight.textContent = '';
+        highlightDiv.textContent = '';
 
-        highlight.appendChild(img.cloneNode(true));
-        highlight.appendChild(name.cloneNode(true));
-        highlight.appendChild(brand.cloneNode(true))
-        highlight.appendChild(priceDiv.cloneNode(true));
-        highlight.appendChild(buildElement('p',clearTags(product.description),['prodDescription']));
+        highlightDiv.appendChild(img.cloneNode(true));
+        highlightDiv.appendChild(name.cloneNode(true));
+        highlightDiv.appendChild(brand.cloneNode(true))
+        highlightDiv.appendChild(priceDiv.cloneNode(true));
+        highlightDiv.appendChild(buildElement('p',clearTags(product.description),['prodDescription']));
 
         /// Determine metrics and phrasing
 
-        buildComparisonDiv(product.parsedPrice,selectionMetrics,'this selection',highlight);
+        buildComparisonDiv(product.parsedPrice,selectionMetrics,'this selection',highlightDiv);
         if(product.product_type !== null) {
-            buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.product_type === product.product_type).map(cv => cv.parsedPrice),`all ${filterFormatter(product.product_type)}s`,highlight);
+            buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.product_type === product.product_type).map(cv => cv.parsedPrice),`all ${filterFormatter(product.product_type)}s`,highlightDiv);
         }
         if (product.brand !== null) {
-            buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.brand === product.brand).map(cv => cv.parsedPrice),`all products by ${filterFormatter(product.brand)}`,highlight);
+            buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.brand === product.brand).map(cv => cv.parsedPrice),`all products by ${filterFormatter(product.brand)}`,highlightDiv);
         }
 
         /// Build Clear button
         const clear = buildElement('button','Clear',['clear']);
         ael('click',e => {
             e.preventDefault();
-            highlight.style.display = 'none';
+            highlightDiv.style.display = 'none';
         },clear)
-        highlight.appendChild(clear);
+        highlightDiv.appendChild(clear);
 
-        highlight.style.display = 'block';
+        highlightDiv.style.display = 'block';
 
     },compareButton)
 
@@ -636,7 +651,6 @@ function buildCell(product,id) {
     cell.appendChild(buttonsDiv);
 
     if (favoriteProducts[`${product.id}`] !== undefined) {
-        s(`Passed from buildCell to updateFavorite: ${cell}`);
         updateFavorite(cell);
     }
 
@@ -811,19 +825,19 @@ function buildColorBox(colorObject,id) {
 
     ael('click',e => {
         // Clear Previous
-        highlight.textContent = '';
+        highlightDiv.textContent = '';
 
         // Build color details (Swatch, name, hex value)
         const color = buildElement('div',null,['color',`${id}`]);
         color.style.backgroundColor = colorObject.hex_value;
-        highlight.appendChild(color);
+        highlightDiv.appendChild(color);
 
         const nameFormatted = colorObject.colour_name == null ? 'No Color Name' : colorObject.colour_name;
         const nameEl = buildElement('p',capitalizeFirsts(nameFormatted),['colorName',`${id}`]);
-        highlight.appendChild(nameEl);
+        highlightDiv.appendChild(nameEl);
 
         const hex = buildElement('p',colorObject.hex_value,['colorHex',`${id}`]);
-        highlight.appendChild(hex);
+        highlightDiv.appendChild(hex);
 
         // Show products with this color
         const showProducts = buildElement('button','Show Products with this Color',['showProductsByColor',colorObject.hex_value]);
@@ -841,18 +855,18 @@ function buildColorBox(colorObject,id) {
             fillDisplay(filteredProducts);
 
         },showProducts)
-        highlight.appendChild(showProducts);
+        highlightDiv.appendChild(showProducts);
 
         // Build Clear Button
         const clear = buildElement('button','Clear',['clear']);
         ael('click',e => {
             e.preventDefault();
-            highlight.style.display = 'none';
+            highlightDiv.style.display = 'none';
         },clear)
-        highlight.appendChild(clear);
+        highlightDiv.appendChild(clear);
 
         // Display
-        highlight.style.display = 'block';
+        highlightDiv.style.display = 'block';
 
     },box)
 
@@ -880,17 +894,16 @@ function fillDisplay(array) {
         selectionMax.textContent = `$${formatPrice(selectionMetrics.max.value)}`;
         maxButton.textContent = 'Show';
 
-    } else for(const metric of [avg,min,max]) {
+    } else for(const metric of [selectionAvg,selectionMin,selectionMax]) {
         metric.textContent = 'No Data!';
         };
     
     /// CLEAR DISPLAY AREA
-    displayArea.innerHTML = '';
+    displayDiv.innerHTML = '';
 
     /// FILL DISPLAY AREA
     for(let i = 0; i < array.length; ++i) {
-        s(`Passed from fillDisplay to buildCell: ${i}`);
-        displayArea.appendChild(buildCell(array[i],i));
+        displayDiv.appendChild(buildCell(array[i],i));
     };
     
     /// SEND COMPLETION MESSAGE
@@ -990,14 +1003,12 @@ function buildComparisonDiv(price,pricesArrayOrMetricsObject,groupName,parentNod
     /// CREATE AND FILL COMPARISON MESSAGE
     const comparisonMessage = buildElement('p');
 
-    s(groupMetrics)
     const difference = findValueDeviation(price,groupMetrics.avg);
-    s(difference);
     if (difference.unit > 0) {
         comparisonMessage.textContent = `$${formatPrice(difference.unit)} (${difference.percent}%) higher than average`;
     } else if (difference.unit < 0) {
         comparisonMessage.textContent = `$${formatPrice(-1 * difference.unit)} (${-1 * difference.percent}%) lower than average`;
-    } else if (difference === 0) comparisonMessage.textContent = 'It is the average price';
+    } else if (difference.unit === 0) comparisonMessage.textContent = 'It is the average price';
 
     div.appendChild(comparisonMessage);
 
@@ -1040,7 +1051,9 @@ function findMetrics(array,formatters = []) {
         }
     }
 
-    let avg = average(array)
+    if (!Array.isArray(min.ids)) return undefined; 
+
+    let avg = average(array.filter(cv => cv !== null));
 
     for (const formatter of formatters) {
         avg = formatter(avg);
@@ -1059,7 +1072,6 @@ function findMetrics(array,formatters = []) {
 
 function updateFavorite(cell,wasFavorited = true) {
     if (wasFavorited) {
-        s(`received by updateFavorite from buildCell: ${cell}`)
         cell.style.backgroundColor = 'pink';
         cell.querySelector('.favoriteButton').textContent = 'Unfavorite';
     } else {

@@ -1,3 +1,16 @@
+### 72 Changelog ref 72
+- Moved variable declarations into the global scope
+- Renamed variables according to a more descriptive schema
+- Began annotation up to line 155
+
+### 71 Changelog ref 71
+- Revised code in calculation of the selection average
+    - Now ignores ```null``` values by using ```.filter()```
+- Clicking the "Favorites" button in the user menu now displays all of the user's favorited items
+- Fixed bug that caused no ```<p>``` element to display when the price of the item was equal to the average price of the selection
+    - Code previously only stored the unit difference between product price and average price in the variable ```difference```, but difference has been revised into an object that contains both unit difference and percent difference
+    - Code that displayed the "equal to average" message had not been updated to ```difference.unit``` from ```difference```
+
 ### 70 Changelog ref 70
 - Created ```updateFavorite()``` which takes a cell and a second parameter ```isFavorited``` and updates cell background color and favorite button text based on whether ```isFavorited``` is true or false
     - All code that previously manually changed those two properties has been updated to use ```updateFavorite()``` instead

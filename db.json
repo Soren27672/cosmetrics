@@ -2,7 +2,13 @@
   "users": [
     {
       "id": "Maxwell",
-      "password": "password"
+      "password": "password",
+      "favorites": {
+        "648": true,
+        "912": true,
+        "1019": true,
+        "1038": true
+      }
     },
     {
       "id": "Anastasia",
