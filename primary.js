@@ -1,5 +1,7 @@
 const css = false;
 
+let user = null;
+let favoritedProducts = [];
 let allProducts = [];
 let selectionMetrics = {};
 const exchangeRates = {
@@ -102,7 +104,6 @@ const init = () => {
 
     let filteredProducts = [];
     let checkedTags = [];
-    let user = null;
 
     if(!css) {
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
@@ -283,7 +284,7 @@ const init = () => {
                     sendTopBar(`Our records show no account registered under ${logInForm.username.value}`)
                 } else sendTopBar('Unexpected Error, try again');
             } else if ((json.password === logInForm.password.value)) {
-                user = json.id;
+                logInUser(json.id);
                 logInForm.username.value = '';
                 logInForm.password.value = '';
                 logIn.classList.add('inactive');
@@ -552,7 +553,8 @@ function buildCell(product,id) {
     const buttonsDiv = buildElement('div',null,['buttonsDiv',id]);
 
     /// FAVORITE
-    const favoriteButton = buildElement('button','Favorite',['favoriteButton',id]);
+    const favoriteButton = buildElement('button','Favorite',['favoriteButton'],product.id);
+    if (!user) favoriteButton.classList.add('inactive');
     buttonsDiv.appendChild(favoriteButton);
 
     /// COMPARE
@@ -679,11 +681,21 @@ function logOutUser() {
     logInDiv.style.display = 'block';
     userOptionsDiv.style.display = 'none';
     greeting.innerHTML = `No user currently signed in<br>Sign in below!`;
+    for (const button of [...q('.favoriteButton',true)]) {
+        button.classList.add('inactive');
+    }
+    favoritedProducts = [];
     sendTopBar('Logged out!');
 }
 
-function logInUser(user) {
-
+function logInUser(username) {
+    user = username;
+    /* fetch(`https://localhost:3000/users/${encodeURI(user)}/favorites`)
+    .then(res => res.json())
+    .then(json => favoritedProducts = ) */
+    for (const button of [...q('.favoriteButton',true)]) {
+        button.classList.remove('inactive');
+    }
 }
 
 function sendTopBar(message,easeSec = 1,duration = 3,refresh = 50) {

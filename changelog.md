@@ -1,3 +1,8 @@
+### 67 Changelog ref 67
+- Code now uses function ```logInUser()``` when a successful username and password are used
+    - ```logInUser()``` sets ```user``` to the parameter it's passed, fetches the user's favorited products from the mock backend and removes the ```.inactive``` class from all favorite buttons
+- ```buildCell()``` now sets its favorite button's id attribute to ```product.id```, so that it can be checked against the user's list of favorited product ids to determine which text it should display (favorite or unfavorite)
+
 ### 66 Changelog ref 66
 - Added if statement that checks to see if ```css``` is true before executing the initial fetch
     - if it is, it won't execute the fetch and will instead push ```demoProd``` into ```allProducts``` 12 times
