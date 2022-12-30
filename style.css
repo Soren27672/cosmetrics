@@ -175,10 +175,10 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
 }
 
 .colorsDiv {
-    margin-top: 1em;
+    padding: 1em;
     display: grid;
     grid-column-gap: 10px;
-    
+    background-color: white;
     justify-content: center;
 }
 

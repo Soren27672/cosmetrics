@@ -1,3 +1,9 @@
+
+### 69 Changelog ref 69
+- ```logInUser()``` now GETs the list of favorite products from the backend and then iterates thru all cells, changing the background color to pink if its third class is any of the ids in ```favoritedProducts```
+- ```buildCell()``` now assigns its product's id as a third class to all cells it builds
+- Logging out resets the background color of all cells
+
 ### 68 Changelog ref 68
 - Favorite button now uses a PATCH request to add its product's id into a user's favorites array in the mock backend
 

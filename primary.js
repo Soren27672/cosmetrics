@@ -398,7 +398,7 @@ const init = () => {
         if (minButton.textContent === 'Show') {
             for(const cell of childrenArray) {
                 for(const id of selectionMetrics.min.ids) {
-                    if (cell.classList.contains(id)) {
+                    if (cell.classList[1] === id) {
                         cell.style.display = 'block';
                         break;
                     }
@@ -420,7 +420,7 @@ const init = () => {
         if (maxButton.textContent === 'Show') {
             for(const cell of childrenArray) {
                 for(const id of selectionMetrics.max.ids) {
-                    if (cell.classList.contains(id)) {
+                    if (cell.classList[1] === id) {
                         cell.style.display = 'block';
                         break;
                     }
@@ -471,7 +471,10 @@ function buildElement(type,text = undefined,classes = [],id = undefined) {
 }
 
 function buildCell(product,id) {
-    const cell = buildElement('div',null,['prodCell',`${id}`]);
+    const cell = buildElement('div',null,['prodCell',`${id}`,product.id]);
+    for (const id of favoritedProducts) {
+        if (id === product.id) cell.style.backgroundColor = 'pink';
+    }
 
     const img = buildElement('img',null,['prodImg',`${id}`]);
     img.src = `https://${product.api_featured_image}`;
@@ -704,18 +707,29 @@ function logOutUser() {
     for (const button of [...q('.favoriteButton',true)]) {
         button.classList.add('inactive');
     }
+    for (const cell of [...q('.prodCell',true)]) {
+        cell.style.backgroundColor = 'white';
+    }
     favoritedProducts = [];
     sendTopBar('Logged out!');
 }
 
 function logInUser(username) {
     user = username;
-    /* fetch(`https://localhost:3000/users/${encodeURI(user)}/favorites`)
+    fetch(`http://localhost:3000/users/${encodeURI(user)}`)
     .then(res => res.json())
-    .then(json => favoritedProducts = ) */
-    for (const button of [...q('.favoriteButton',true)]) {
-        button.classList.remove('inactive');
-    }
+    .then(json => {
+        favoritedProducts = json.favorites;
+        for (const button of [...q('.favoriteButton',true)]) {
+            button.classList.remove('inactive');
+        }
+        for (const cell of [...q('.prodCell',true)]) {
+            for (const id of favoritedProducts) {
+                if (cell.classList[2] === id) cell.style.backgroundColor = 'pink';
+            }
+        }
+    })
+    
 }
 
 function sendTopBar(message,easeSec = 1,duration = 3,refresh = 50) {
