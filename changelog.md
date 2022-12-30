@@ -1,3 +1,15 @@
+### 70 Changelog ref 70
+- Created ```updateFavorite()``` which takes a cell and a second parameter ```isFavorited``` and updates cell background color and favorite button text based on whether ```isFavorited``` is true or false
+    - All code that previously manually changed those two properties has been updated to use ```updateFavorite()``` instead
+- Moved code that changes background color of a cell based on its "favorite" status to the end of ```buildCell()``` so that ```updateFavorite()``` never has a chance to reference a part of the cell that is not yet built
+- Changed ```favoriteProducts``` from an array to an object
+    - This way, the code can check if a product's id is favorited with one line of code instead of iterating thru the array until a match is found
+    - Updated code that used ```favoritedProducts``` to be compatible with its new data typing
+- ```buildCell()``` sets its favorite button's text to "Unfavorite" if its product is on the user's favorites list
+    - Clicking unfavorite deletes a product's id from the keys of ```favoriteProducts``` and then sends ```favoriteProducts``` alongside the key ```favorites``` in a PATCH request to the logged in user's URL
+    - Clicking unfavorite also sets it back to favorite and resets the background to white
+- ```logInUser()``` now updates cell/favorite buttons to pink/"unfavorite" based on the user's favorite list
+- ```logOutUser()``` now updates all fav buttons to "favorite" whenever called
 
 ### 69 Changelog ref 69
 - ```logInUser()``` now GETs the list of favorite products from the backend and then iterates thru all cells, changing the background color to pink if its third class is any of the ids in ```favoritedProducts```

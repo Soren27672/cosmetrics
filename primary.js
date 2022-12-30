@@ -1,7 +1,7 @@
 const css = false;
 
 let user = null;
-let favoritedProducts = [];
+let favoriteProducts = {};
 let allProducts = [];
 let selectionMetrics = {};
 const exchangeRates = {
@@ -387,10 +387,6 @@ const init = () => {
         allAny.textContent = allAny.textContent === 'all' ? 'any' : 'all';
     },allAny)
 
-    ael('keydown',e => {
-        if(e.key === 'k') sendTopBar('Funcionale!',1,3,50);
-    })
-
     /// SHOW MIN AND MAX BUTTONS
     ael('click',e => {
         e.preventDefault();
@@ -472,9 +468,6 @@ function buildElement(type,text = undefined,classes = [],id = undefined) {
 
 function buildCell(product,id) {
     const cell = buildElement('div',null,['prodCell',`${id}`,product.id]);
-    for (const id of favoritedProducts) {
-        if (id === product.id) cell.style.backgroundColor = 'pink';
-    }
 
     const img = buildElement('img',null,['prodImg',`${id}`]);
     img.src = `https://${product.api_featured_image}`;
@@ -555,28 +548,52 @@ function buildCell(product,id) {
 
     const buttonsDiv = buildElement('div',null,['buttonsDiv',id]);
 
-    /// FAVORITE
+    /// J2FAVORITE
     const favoriteButton = buildElement('button','Favorite',['favoriteButton'],product.id);
     if (!user) favoriteButton.classList.add('inactive');
     
     ael('click',e => {
         e.preventDefault();
-        favoritedProducts.push(favoriteButton.id);
-        fetch(`http://localhost:3000/users/${encodeURI(user)}`,{
-            method: 'PATCH',
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-            },
-            body: JSON.stringify({
-                favorites: favoritedProducts
-            })
-        })
-        .then(res => res.json())
-        .then(json => {
-            s(json);
-            sendTopBar('Added to favorites!');
-        })
+        if (favoriteButton.classList.contains('inactive')) return;
+        if (favoriteButton.textContent === 'Favorite') {
+	        favoriteProducts[favoriteButton.id] = true;
+	        fetch(`http://localhost:3000/users/${encodeURI(user)}`,{
+	            method: 'PATCH',
+	            headers: {
+	                "Content-Type": "application/json",
+	                "Accept": "application/json",
+	            },
+	            body: JSON.stringify({
+	                favorites: favoriteProducts
+	            })
+	        })
+	        .then(res => res.json())
+	        .then(json => {
+	            s(json);
+                updateFavorite(cell);
+	            sendTopBar('Added to favorites!');
+	        });
+        }
+
+        if (favoriteButton.textContent === 'Unfavorite') {
+            delete favoriteProducts[favoriteButton.id];
+            fetch(`http://localhost:3000/users/${encodeURI(user)}`,{
+	            method: 'PATCH',
+	            headers: {
+	                "Content-Type": "application/json",
+	                "Accept": "application/json",
+	            },
+	            body: JSON.stringify({
+	                favorites: favoriteProducts
+	            })
+	        })
+	        .then(res => res.json())
+	        .then(json => {
+	            s(json);
+                updateFavorite(cell,false);
+	            sendTopBar('Removed from favorites!');
+	        });
+        }
     },favoriteButton)
     buttonsDiv.appendChild(favoriteButton);
 
@@ -617,6 +634,11 @@ function buildCell(product,id) {
     buttonsDiv.appendChild(compareButton);
 
     cell.appendChild(buttonsDiv);
+
+    if (favoriteProducts[`${product.id}`] !== undefined) {
+        s(`Passed from buildCell to updateFavorite: ${cell}`);
+        updateFavorite(cell);
+    }
 
     return cell;
 }
@@ -708,9 +730,9 @@ function logOutUser() {
         button.classList.add('inactive');
     }
     for (const cell of [...q('.prodCell',true)]) {
-        cell.style.backgroundColor = 'white';
+        updateFavorite(cell);
     }
-    favoritedProducts = [];
+    favoriteProducts = {};
     sendTopBar('Logged out!');
 }
 
@@ -719,13 +741,14 @@ function logInUser(username) {
     fetch(`http://localhost:3000/users/${encodeURI(user)}`)
     .then(res => res.json())
     .then(json => {
-        favoritedProducts = json.favorites;
+        if (json.favorites) favoriteProducts = json.favorites;
         for (const button of [...q('.favoriteButton',true)]) {
             button.classList.remove('inactive');
         }
         for (const cell of [...q('.prodCell',true)]) {
-            for (const id of favoritedProducts) {
-                if (cell.classList[2] === id) cell.style.backgroundColor = 'pink';
+            // Both the class and the key are strings, so they eval to equal
+            if (favoriteProducts[cell.classList[2]] !== undefined) {
+                updateFavorite(cell);
             }
         }
     })
@@ -866,6 +889,7 @@ function fillDisplay(array) {
 
     /// FILL DISPLAY AREA
     for(let i = 0; i < array.length; ++i) {
+        s(`Passed from fillDisplay to buildCell: ${i}`);
         displayArea.appendChild(buildCell(array[i],i));
     };
     
@@ -1031,6 +1055,17 @@ function findMetrics(array,formatters = []) {
         isMetricsObject: true
     }
     
+}
+
+function updateFavorite(cell,wasFavorited = true) {
+    if (wasFavorited) {
+        s(`received by updateFavorite from buildCell: ${cell}`)
+        cell.style.backgroundColor = 'pink';
+        cell.querySelector('.favoriteButton').textContent = 'Unfavorite';
+    } else {
+        cell.style.backgroundColor = 'white';
+        cell.querySelector('.favoriteButton').textContent = 'Favorite';
+    }
 }
 
 // Random # of products feature
