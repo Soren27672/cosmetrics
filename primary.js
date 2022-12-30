@@ -1,9 +1,7 @@
+const css = false;
 
-let allProducts = false;
-let atId1 = false;
-let maxPrice = {};
-let minPrice = {};
-let current
+let allProducts = [];
+let selectionMetrics = {};
 const exchangeRates = {
     '$': 1,
     '£': 1.21,
@@ -12,7 +10,7 @@ const exchangeRates = {
 }
 const demoProd = {
     brand: 'Enigma',
-    image_link: 'www.sephora.com/productimages/sku/s1925965-av-15-zoom.jpg?imwidth=315',
+    image_link: '//s3.amazonaws.com/donovanbailey/products/api_featured_images/000/000/896/original/open-uri20171224-4-133ccrb?1514082674',
     description: 'Finally, a lip gloss that will never fade. Go ahead, wear it to bed, we love a challenge.<BR>Shine above all the rest with permagloss, by Enigma.',
     product_type: 'lip_gloss',
     tag_list: ['vegan free','glossless','no pig'],
@@ -65,8 +63,11 @@ const init = () => {
     
     /// INTERACTS
     const brandFilter = q('#brandFilter');
+    const brandClear = q('#brandClear');
     const typeFilter = q('#typeFilter');
+    const typeClear = q('#typeClear');
     const categoryFilter = q('#categoryFilter');
+    const categoryClear = q('#categoryClear');
     const openUser = q('#openUser');
     const logOut = q('#logOut');
     const allAny = q('#allAny');
@@ -101,9 +102,9 @@ const init = () => {
 
     let filteredProducts = [];
     let checkedTags = [];
-    let selectionMetrics = {};
     let user = null;
 
+    if(!css) {
     fetch('https://makeup-api.herokuapp.com/api/v1/products.json')
     .then(res => res.json())
     .then(json => {
@@ -240,15 +241,29 @@ const init = () => {
             
         },filterButton);
     });
+    } else {
 
     /// CHECK WITHOUT FETCHING
-    /* for(let i = 0; i < 12; ++i) {
+    for(let i = 0; i < 12; ++i) {
         displayArea.appendChild(buildCell(demoProd,0));
-    } */
+    }
+    for (let i = 0; i < 12; ++i) {
+        allProducts.push(demoProd);
+    }
+    }
 
     /// IMPLEMENT SHOW BUTTONS
     implementShowButton(openFilters,filterDiv,'Show Filters','Close Filters');
     implementShowButton(openSorts,sortDiv,'Show Sorts','Close Sorts');
+
+    /// IMPLEMENT CLEAR SELECTED FILTER BUTTON
+    for(const pair of [[brandFilter,brandClear],[typeFilter,typeClear],[categoryFilter,categoryClear]]) {
+        s(pair)
+        pair[1].addEventListener('click', e => {
+            e.preventDefault();
+            pair[0].selectedIndex = 0;
+        })
+    }
 
     /// SETUP LOGGING IN
     ael('click',e => {
@@ -381,7 +396,7 @@ const init = () => {
         const childrenArray = [...displayArea.children];
         if (minButton.textContent === 'Show') {
             for(const cell of childrenArray) {
-                for(const id of minPrice.ids) {
+                for(const id of selectionMetrics.min.ids) {
                     if (cell.classList.contains(id)) {
                         cell.style.display = 'block';
                         break;
@@ -403,7 +418,7 @@ const init = () => {
         const childrenArray = [...displayArea.children];
         if (maxButton.textContent === 'Show') {
             for(const cell of childrenArray) {
-                for(const id of maxPrice.ids) {
+                for(const id of selectionMetrics.max.ids) {
                     if (cell.classList.contains(id)) {
                         cell.style.display = 'block';
                         break;
@@ -555,8 +570,12 @@ function buildCell(product,id) {
         /// Determine metrics and phrasing
 
         buildComparisonDiv(product.parsedPrice,selectionMetrics,'this selection',highlight);
-        buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.product_type === product.product_type).map(cv => cv.parsedPrice),`all ${filterFormatter(product.product_type)}s`,highlight);
-        buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.brand === product.brand).map(cv => cv.parsedPrice),`all products by ${filterFormatter(product.brand)}`,highlight);
+        if(product.product_type !== null) {
+            buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.product_type === product.product_type).map(cv => cv.parsedPrice),`all ${filterFormatter(product.product_type)}s`,highlight);
+        }
+        if (product.brand !== null) {
+            buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.brand === product.brand).map(cv => cv.parsedPrice),`all products by ${filterFormatter(product.brand)}`,highlight);
+        }
 
         /// Build Clear button
         const clear = buildElement('button','Clear',['clear']);
@@ -779,11 +798,7 @@ function roundToPlace(number,place = 0.01) {
 function fillDisplay(array) {
 
     /// Create Array
-    const prices = [];
-    for (const product of array) {
-        if (product.parsedPrice === null) continue;
-        prices.push(product.parsedPrice * exchangeRates[product.price_sign]);
-    };
+    const prices = array.map(cv => cv.parsedPrice);
     
     /// Generate metrics with array
     selectionMetrics = findMetrics(prices,[roundToPlace]);
@@ -809,7 +824,7 @@ function fillDisplay(array) {
     };
     
     /// SEND COMPLETION MESSAGE
-    if (array.length !== 1) sendTopBar(`Found ${array.length} results!`); else sendTopBar(`Found ${array.length} result!`)
+    if (array.length !== 1) sendTopBar(`Found ${array.length} results!`); else sendTopBar(`Found ${array.length} result!`);
 }
 
 function formatPrice(float) {
@@ -935,6 +950,8 @@ function findMetrics(array,formatters = []) {
 
     /// GENERATE METRICS
     for(const index in array) {
+        if (array[index] === null) continue;
+
         if (array[index] > max.value) {
             max.ids = [];
             max.value = array[index];

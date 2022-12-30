@@ -108,7 +108,7 @@ button,[type=image] {
     
 }
 
-#searchDiv button {
+.panel button {
     margin: 3px auto 3px auto;
     text-align: center;
     display: block;
@@ -262,7 +262,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     color: white;
 }
 
-#searchDiv, #metricsDiv {
+.panel {
     border: 0.125em rgb(191, 45, 118) solid;
     border-radius: 0.4375em;
     background-color: white;
@@ -380,4 +380,17 @@ h1 {
 #priceRange {
     margin: 3px auto 3px auto;
     width: fit-content;
+}
+
+#brandClear, #typeClear, #categoryClear {
+    display: inline-block;
+}
+
+.filter {
+    display: inline-block;
+}
+
+.panel div {
+    margin: auto;
+    width:fit-content;
 }

@@ -1,8 +1,16 @@
+### 66 Changelog ref 66
+- Added if statement that checks to see if ```css``` is true before executing the initial fetch
+    - if it is, it won't execute the fetch and will instead push ```demoProd``` into ```allProducts``` 12 times
+    - This way, I don't have to wait for the fetch to fulfil to check minor adjustments of css properties
+- Added 'Clear' buttons next to the filter dropdowns which reset the select elements' to ```selectedIndex``` property to 0 
+
 ### 65 Changelog ref 65
 - Finished implementing function ```buildComparisonDiv()``` that will create a DOM node that displays the comparison information of the products
     - ```buildComparisonDiv()``` takes a price, a group of prices to compare against or a metrics object, a group name to display in the DOM and a parent node to append the div to
     - ```buildComparisonDiv()``` can optionally take a group metrics object as the second parameter so that a metrics object doesn't need to be generated if one already exists in the global context
 - Metrics objects returned by ```findMetrics()``` now have a property ```.isMetricsObject``` set to true so that it can quickly be determined if a value is or is not a metrics object
+- ```fillDisplay()``` now provides ```findMetrics()``` with an array of products that is mapped to their ```.parsedPrice``` values instead of an array that is constructed by pushing the ```.parsedPrice``` value of each non-null value
+    - Previously, the array provided to ```findMetrics()``` did not include null values, which meant that the list of ids of maximum and minimum values was not based on the same array and so referencing products in the display by these ids could reference the wrong cells
 
 ### 64 Changelog ref 64
 - Fixed bug with ```findValueDeviation()``` that caused the returned object's ```.unit``` key to be NaN due to using the wrong key name

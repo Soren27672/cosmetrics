@@ -38,22 +38,31 @@
         
 
         <div id="body">
-            <div id="searchDiv">
+            <div id="searchDiv" class="panel">
                 <h2>Find Products</h2>
                 <button id="openFilters">Show Filters</button>
                 <div id="filterDiv">
                     <p>Brand</p>
-                    <select id="brandFilter">
-                        <option class="default" value="brand">loading...</option>
-                    </select>
-                    <p>Type</p>
-                    <select id="typeFilter">
-                        <option class="default" value="type">loading...</option>
-                    </select>
+                    <div>
+                        <select id="brandFilter" class="filter">
+                            <option class="default" value="brand">loading...</option>
+                        </select>
+                        <button id="brandClear" class="filterClear">Clear</button>
+                    </div>
+                    <div>
+                        <p>Type</p>
+                        <select id="typeFilter" class="filter">
+                            <option class="default" value="type">loading...</option>
+                        </select>
+                        <button id="typeClear" class="filterClear">Clear</button>
+                    </div>
+                    <div>
                     <p>Category</p>
-                    <select id="categoryFilter">
-                        <option class="default" value="category">loading...</option>
-                    </select>
+                        <select id="categoryFilter" class="filter">
+                            <option class="default" value="category">loading...</option>
+                        </select>
+                        <button id="categoryClear" class="filterClear">Clear</button>
+                    </div>
                     <p>Price Range</p>
                     <div id="priceRange">
                         <p>$</p>
@@ -89,7 +98,7 @@
             
             <div id="displayArea"></div>
 
-            <div id="metricsDiv">
+            <div id="metricsDiv" class="panel">
                 <h2>Metrics</h2>
                 <div id="highlight"></div>
                 <div id="persistent">
