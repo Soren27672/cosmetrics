@@ -18,9 +18,9 @@
             <div id="logInDiv">
                 <form id="logInForm">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username" placeholder="username"><br>
+                    <input type="text" id="username" name="username" placeholder="username">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="password"><br>
+                    <input type="password" id="password" name="password" placeholder="password">
                     <button id="logIn" >Log in</button>
                     <button id="register">Register</button>
                 </form>
@@ -40,59 +40,63 @@
         <div id="body">
             <div id="searchDiv" class="panel">
                 <h2>Find Products</h2>
-                <button id="openFilters">Show Filters</button>
-                <div id="filterDiv">
-                    <p>Brand</p>
-                    <div>
-                        <select id="brandFilter" class="filter">
-                            <option class="default" value="brand">loading...</option>
-                        </select>
-                        <button id="brandClear" class="filterClear">Clear</button>
-                    </div>
-                    <div>
-                        <p>Type</p>
-                        <select id="typeFilter" class="filter">
-                            <option class="default" value="type">loading...</option>
-                        </select>
-                        <button id="typeClear" class="filterClear">Clear</button>
-                    </div>
-                    <div>
-                    <p>Category</p>
-                        <select id="categoryFilter" class="filter">
-                            <option class="default" value="category">loading...</option>
-                        </select>
-                        <button id="categoryClear" class="filterClear">Clear</button>
-                    </div>
-                    <p>Price Range</p>
-                    <div id="priceRange">
-                        <p>$</p>
-                        <input id="filterMin" type="text" placeholder="min">
-                        <p> to $</p>
-                        <input id="filterMax" type="text" placeholder="max">
-                    </div>
-                    <p>Show products that are tagged with <strong id="allAny">all</strong> of the following:</p>
-                    <div id="tagsDiv">
+                <div class="scrollPanel">
+                    <button id="openFilters" class="hasMargin">Show Filters</button>
+                    <div id="filterDiv">
+                        <p>Brand</p>
+                        <div>
+                            <select id="brandFilter" class="filter">
+                                <option class="default" value="brand">loading...</option>
+                            </select>
+                            <button id="brandClear" class="filterClear">Clear</button>
+                        </div>
+                        <div>
+                            <p>Type</p>
+                            <select id="typeFilter" class="filter">
+                                <option class="default" value="type">loading...</option>
+                            </select>
+                            <button id="typeClear" class="filterClear">Clear</button>
+                        </div>
+                        <div>
+                        <p>Category</p>
+                            <select id="categoryFilter" class="filter">
+                                <option class="default" value="category">loading...</option>
+                            </select>
+                            <button id="categoryClear" class="filterClear">Clear</button>
+                        </div>
+                        <p>Price Range</p>
+                        <div id="priceRange">
+                            <p>$</p>
+                            <input id="filterMin" type="text" placeholder="min">
+                            <p> to $</p>
+                            <input id="filterMax" type="text" placeholder="max">
+                        </div>
+                        <p>Show products that are tagged with <strong id="allAny">all</strong> of the following:</p>
+                        <div id="tagsDiv">
 
+                        </div>
+                    </div>
+                    <button id="openSorts" class="hasMargin">Show Sorts</button>
+                    <div id="sortDiv">
+                        <input type="radio" name="sort" id="noneSort" value="noneSort">
+                        <label for="noneSort">None</label><br>
+                        <input type="radio" name="sort" id="lowPriceSort" value="lowPriceSort">
+                        <label for="lowPriceSort">Price low to high</label><br>
+                        <input type="radio" name="sort" id="highPriceSort" value="highPriceSort">
+                        <label for="highPriceSort">Price high to low</label><br>
+                        <input type="radio" name="sort" id="alphaSort" value="alphaSort">
+                        <label for="alphaSort">Alphabetically by name</label><br>
+                        <input type="radio" name="sort" id="revAlphaSort" value="revAlphaSort">
+                        <label for="revAlphaSort">Reverse Alpha by name</label><br>
+                        <input type="radio" name="sort" id="alphaBrandSort" value="alphaBrandSort">
+                        <label for="alphaBrandSort">Alphabetically by brand</label><br>
+                        <input type="radio" name="sort" id="revAlphaBrandSort" value="revAlphaBrandSort">
+                        <label for="revAlphaBrandSort">Reverse Alpha by brand</label>
                     </div>
                 </div>
-                <button id="openSorts">Show Sorts</button>
-                <div id="sortDiv">
-                    <input type="radio" name="sort" id="noneSort" value="noneSort">
-                    <label for="noneSort">None</label><br>
-                    <input type="radio" name="sort" id="lowPriceSort" value="lowPriceSort">
-                    <label for="lowPriceSort">Price low to high</label><br>
-                    <input type="radio" name="sort" id="highPriceSort" value="highPriceSort">
-                    <label for="highPriceSort">Price high to low</label><br>
-                    <input type="radio" name="sort" id="alphaSort" value="alphaSort">
-                    <label for="alphaSort">Alphabetically by name</label><br>
-                    <input type="radio" name="sort" id="revAlphaSort" value="revAlphaSort">
-                    <label for="revAlphaSort">Reverse Alpha by name</label><br>
-                    <input type="radio" name="sort" id="alphaBrandSort" value="alphaBrandSort">
-                    <label for="alphaBrandSort">Alphabetically by brand</label><br>
-                    <input type="radio" name="sort" id="revAlphaBrandSort" value="revAlphaBrandSort">
-                    <label for="revAlphaBrandSort">Reverse Alpha by brand</label>
+                <div id="applyDiv">
+                    <button id="applyConstraints">Apply Contraints</button>
                 </div>
-                <button id="applyConstraints">Apply Contraints</button>
             </div>
 
             
@@ -102,11 +106,11 @@
                 <h2>Metrics</h2>
                 <div id="highlight"></div>
                 <div id="persistent">
-                    <p>Average price of selection: <span id="selectionAvg" class="metric">loading...</span></p>
-                    <p>Lowest price in selection: <span id="selectionMin" class="metric">loading...</span></p>
-                    <button id="minButton">Show</button>
-                    <p>Highest price in selection: <span id="selectionMax" class="metric">loading...</span></p>
-                    <button id="maxButton">Show</button>
+                    <p>Average: <span id="selectionAvg" class="metric">loading...</span></p>
+                    <div><p>Low: <span id="selectionMin" class="metric">loading...</span></p>
+                    <button id="minButton">Show</button></div>
+                    <div><p>High: <span id="selectionMax" class="metric">loading...</span></p>
+                    <button id="maxButton">Show</button></div>
                 </div>
             </div>
         </div>

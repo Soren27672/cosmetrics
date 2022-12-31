@@ -1,3 +1,15 @@
+### 73 Changelog ref 73
+- Updated CSS regarding the userDiv to be a grid
+- Changed color scheme to dark mode
+- Fixed bug that set all cells to favorited upon logging out
+    - ```logOutUser()``` didn't specify the second parameter of ```updateFavorite()``` and so it set all cells to favorited instead of unfavorited
+- Fixed bug with ```findMetrics()``` where it returned undefined if all values in its provided array were null instead of an object with the property ```isMetricsObject``` set to ```false```
+    - Now, if ```groupMetrics``` inside ```buildComparisonDiv()``` is not a valid metrics object (the all provided values were null), it will update the DOM with a "No Data" message
+- Fixed bug where ```formatPrice()``` would not return a properly formatted price when it was passed a value with a 9 in the hundredths place and a value greater than 4 in the thousandths place
+    - ```formatPrice()``` now immediately rounds the value it is passed before checking to see how many zeroes to add
+- Added a resize event listener that calculates how many grid items should display in a row based on the new view width
+    - Divides the width of display area by the width of a cell and floors the result, telling you how many divisions can fit in the grid, then puts that into a ```repeat(calculation, max-content)``` which is assigned to ```displayDiv.style.gridTemplateColumns```
+
 ### 72 Changelog ref 72
 - Moved variable declarations into the global scope
 - Renamed variables according to a more descriptive schema
