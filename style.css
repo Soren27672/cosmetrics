@@ -13,7 +13,7 @@ html, body {
 .prodCell {
     border-radius: 0.4375em;
     width: 192.5px;
-    padding: 0.4375em;
+    padding: 0rem 5px 0rem 5px;
     /* box-shadow: 0.25em 0.25em #13171c; */
     height: inherit;
     background-color: #323A48;
@@ -39,6 +39,8 @@ html, body {
     margin-left: auto;
     margin-right: auto;
     display: block;
+    margin: 1.5rem auto 1.5rem auto;
+    border-radius: 7px;
 }
 
 #allAny:hover {
@@ -78,7 +80,6 @@ select {
     font-weight: bold;
     color: #F88CB0;
     background-color: #2a313c;
-    margin: 3px auto 10px auto;
     display: block;
 }
 
@@ -143,7 +144,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     padding-bottom: 0px;
     margin: 0px;
     visibility: inherit;
-    color: rgb(112, 112, 112);
+    color: #f8f7ff;
     font-weight: normal;
 }
 
@@ -177,15 +178,12 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
 }
 
 .colorsDiv {
-    padding: 1em;
+    padding: 0rem 1rem 0rem 1rem;
+    margin: 0rem;
     display: grid;
     grid-column-gap: 10px;
     background-color: #323A48;
     justify-content: center;
-}
-
-.colorsDiv:not(.colorsDiv+p) {
-    margin-bottom: 1em;
 }
 
 .colorBox {
@@ -205,7 +203,7 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     text-align: center;
     font-style: italic;
     color: rgb(172, 172, 172);
-    margin: 0.25em auto 1em auto;
+    margin: 0.5rem auto 1.5rem auto;
     position: relative;
 }
 
@@ -244,6 +242,10 @@ select:hover:not(.inactive),#allAny:hover:not(.inactive),button:hover:not(.inact
     height: 1rem;
     width: 15ch;
     color:gray;
+}
+
+[type=text] {
+    color: gray;
 }
 
 #logInForm {
@@ -377,9 +379,8 @@ h1 {
 
 #highlight {
     border-bottom: solid 0.125em #fff;
-    padding-bottom: 0.1875em;
-    margin-bottom: 0.4375em;
-    max-height: calc(100vh - 15.3125rem);
+    padding-top: 1.5rem;
+    max-height: calc(100vh - 16.8125rem);
     overflow: scroll;
 }
 
@@ -387,6 +388,7 @@ h1 {
     display: grid;
     align-content: center;
     grid-template-columns: 1fr 1fr;
+    margin: 1.5rem auto 1.5rem auto;
 }
 
 #priceRange p, #priceRange input {
@@ -399,7 +401,7 @@ h1 {
 }
 
 #priceRange {
-    margin: 3px auto 3px auto;
+    margin: 0.1875rem auto 1.5rem auto;
     width: fit-content;
 }
 
@@ -461,10 +463,41 @@ h1 {
 }
 
 #searchDiv .scrollPanel {
-    max-height: calc(100vh - 12.6875rem);
+    max-height: calc(100vh - 11.1875rem);;
     overflow: scroll;
 }
 
 #openFilters, #openSorts, #clear {
     margin: 1.5rem auto 1.5rem auto;
+}
+
+.selectDiv {
+    width: fit-content;
+    margin: 0.1875rem auto 1.5rem auto;
+}
+
+#tagsDiv {
+    margin-top: 0.1875rem;
+}
+
+#sortDiv {
+    margin: 1.5rem 0rem 1.5rem 0rem;
+}
+
+#iconsDiv {
+    border-radius: 0.4375em;
+    background-color: #323A48;
+    width: auto;
+    margin: 0.875rem;
+    color:#F88CB0;
+    padding: 0.4375em;
+}
+
+#iconsDiv p {
+    margin: 0rem;
+    color:#F88CB0;
+}
+
+#loader {
+    border: none;
 }

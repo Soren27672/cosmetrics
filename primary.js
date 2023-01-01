@@ -305,13 +305,6 @@ const init = () => {
                 } else sendTopBar('Unexpected Error, try again');
             } else if ((json.password === logInFRM.password.value)) {
                 logInUser(json.id);
-                logInFRM.username.value = '';
-                logInFRM.password.value = '';
-                logInBTN.classList.add('inactive');
-                registerBTN.classList.add('inactive');
-                greeting.textContent = `Hello, ${user}!`
-                logInDiv.style.display = 'none';
-                userOptionsDiv.style.display = 'block';
                 sendTopBar(`Welcome back, ${user}!`);
             } else if (json.password !== logInFRM.password.value) sendTopBar('Incorrect password'); else sendTopBar('Unexpected Error, try again');
         })
@@ -347,7 +340,7 @@ const init = () => {
                 })
                 .then(res => res.json())
                 .then(json => {
-                    user = json.id;
+                    logInUser(json.id)
                     logInFRM.username.value = '';
                     logInFRM.password.value = '';
                     logInBTN.classList.add('inactive');
@@ -392,7 +385,7 @@ const init = () => {
     let counter = 0;
     const loadingIv = setInterval(() => {
         loader.style.color = `rgb(${(0.5*Math.sin(++counter/2)+0.5)*255},${(0.5*Math.sin(counter/2)+0.5)*255},${(0.5*Math.sin(counter/2)+0.5)*255})`;
-        if (allProducts) {
+        if (allProducts.length) {
             clearInterval(loadingIv);
             loader.style.display = 'none';
             document.querySelectorAll('.default').forEach(cv => cv.textContent = 'select');
@@ -503,6 +496,7 @@ function buildCell(product,id) {
     const brandText = product.brand ? `by ${capitalizeFirsts(product.brand)}` : 'No Brand Provided';
     const brand = buildElement('a',brandText,['prodBrand',`${id}`]);
     brand.href = product.website_link;
+    brand.target = "_blank"
     cell.appendChild(brand);
 
     /// PRICE
@@ -540,34 +534,37 @@ function buildCell(product,id) {
     cell.appendChild(priceDiv);
 
     /// COLORS
-    const colorsDiv = buildElement('div',null,['colorsDiv',`${id}`]);
 
-    let i = 0;
+    if (product.product_colors.length) {
+        const colorsDiv = buildElement('div',null,['colorsDiv',`${id}`]);
 
-    for(;i < 6; ++i) {
-        if (product.product_colors[i]) {
-            colorsDiv.appendChild(buildColorBox(product.product_colors[i],id));
-        } else break;
-    }
+        let i = 0;
 
-    colorsDiv.style.gridTemplateColumns = `repeat(${i}, max-content)`;
-    cell.appendChild(colorsDiv);
-    if (product.product_colors.length > 6) {
-        const more = buildElement('p','More colors');
-
-        const moreColorsDiv = buildElement('div',null,['popOutDiv','moreColorsDiv',`${id}`]);
-
-        const amtOfMoreColors = product.product_colors.length
-        
-        moreColorsDiv.style.gridTemplateColumns = `repeat(${Math.min(amtOfMoreColors - 6,3)},max-content)`;
-        moreColorsDiv.style.left = `${89.25 - (8.5*(Math.min(amtOfMoreColors - 6,3)) + 5*(Math.min(amtOfMoreColors - 6,3) - 1))}px`
-
-        for(let i = 6; i < product.product_colors.length; ++i) {
-            moreColorsDiv.appendChild(buildColorBox(product.product_colors[i],id));
+        for(;i < 6; ++i) {
+            if (product.product_colors[i]) {
+                colorsDiv.appendChild(buildColorBox(product.product_colors[i],id));
+            } else break;
         }
 
-        more.appendChild(moreColorsDiv);
-        cell.appendChild(more);
+        colorsDiv.style.gridTemplateColumns = `repeat(${i}, max-content)`;
+        cell.appendChild(colorsDiv);
+        if (product.product_colors.length > 6) {
+            const more = buildElement('p','More colors');
+
+            const moreColorsDiv = buildElement('div',null,['popOutDiv','moreColorsDiv',`${id}`]);
+
+            const amtOfMoreColors = product.product_colors.length
+            
+            moreColorsDiv.style.gridTemplateColumns = `repeat(${Math.min(amtOfMoreColors - 6,3)},max-content)`;
+            moreColorsDiv.style.left = `${89.25 - (8.5*(Math.min(amtOfMoreColors - 6,3)) + 5*(Math.min(amtOfMoreColors - 6,3) - 1))}px`
+
+            for(let i = 6; i < product.product_colors.length; ++i) {
+                moreColorsDiv.appendChild(buildColorBox(product.product_colors[i],id));
+            }
+
+            more.appendChild(moreColorsDiv);
+            cell.appendChild(more);
+        }
     }
 
     const buttonsDiv = buildElement('div',null,['buttonsDiv',id]);
@@ -763,6 +760,13 @@ function logOutUser() {
 
 function logInUser(username) {
     user = username;
+    logInFRM.username.value = '';
+    logInFRM.password.value = '';
+    logInBTN.classList.add('inactive');
+    registerBTN.classList.add('inactive');
+    greeting.textContent = `Hello, ${user}!`
+    logInDiv.style.display = 'none';
+    userOptionsDiv.style.display = 'block';
     fetch(`http://localhost:3000/users/${encodeURI(user)}`)
     .then(res => res.json())
     .then(json => {
@@ -777,7 +781,6 @@ function logInUser(username) {
             }
         }
     })
-    
 }
 
 function sendTopBar(message,easeSec = 1,duration = 3,refresh = 50) {
@@ -1082,9 +1085,11 @@ function findMetrics(array,formatters = []) {
 function updateFavorite(cell,wasFavorited = true) {
     if (wasFavorited) {
         cell.style.backgroundColor = 'pink';
+        cell.querySelector('.colorsDiv').style.backgroundColor = 'pink';
         cell.querySelector('.favoriteButton').textContent = 'Unfavorite';
     } else {
         cell.style.backgroundColor = '#323A48';
+        cell.querySelector('.colorsDiv').style.backgroundColor = '#323A48';
         cell.querySelector('.favoriteButton').textContent = 'Favorite';
     }
 }

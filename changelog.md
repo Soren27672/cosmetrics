@@ -1,3 +1,6 @@
+### 74 Changelog ref 74
+- Finalized CSS styles
+
 ### 73 Changelog ref 73
 - Updated CSS regarding the userDiv to be a grid
 - Changed color scheme to dark mode

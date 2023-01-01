@@ -31,6 +31,26 @@
     {
       "id": "Hello",
       "password": "World"
+    },
+    {
+      "id": "AlmayGreatestFan",
+      "password": "alway",
+      "favorites": {
+        "24": true,
+        "30": true,
+        "45": true,
+        "83": true,
+        "178": true,
+        "185": true,
+        "231": true,
+        "302": true,
+        "314": true,
+        "328": true,
+        "329": true,
+        "331": true,
+        "448": true,
+        "492": true
+      }
     }
   ]
 }

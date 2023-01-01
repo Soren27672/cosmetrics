@@ -29,13 +29,7 @@
                 <button id="showFavorites">Favorites</button><br>
                 <button id="logOut">Log out</button>
             </div>
-        </div>
-        <div id="appetizers">
-            <h2>Appetizers Go Here</h2>
-        </div>
-        <h2 id="loader">Loading!</h2>
-        
-        
+        </div>     
 
         <div id="body">
             <div id="searchDiv" class="panel">
@@ -44,21 +38,21 @@
                     <button id="openFilters" class="hasMargin">Show Filters</button>
                     <div id="filterDiv">
                         <p>Brand</p>
-                        <div>
+                        <div class="selectDiv">
                             <select id="brandFilter" class="filter">
                                 <option class="default" value="brand">loading...</option>
                             </select>
                             <button id="brandClear" class="filterClear">Clear</button>
                         </div>
-                        <div>
-                            <p>Type</p>
+                        <p>Type</p>
+                        <div class="selectDiv">     
                             <select id="typeFilter" class="filter">
                                 <option class="default" value="type">loading...</option>
                             </select>
                             <button id="typeClear" class="filterClear">Clear</button>
                         </div>
-                        <div>
                         <p>Category</p>
+                        <div class="selectDiv">
                             <select id="categoryFilter" class="filter">
                                 <option class="default" value="category">loading...</option>
                             </select>
@@ -100,7 +94,9 @@
             </div>
 
             
-            <div id="displayDiv"></div>
+            <div id="displayDiv">
+                <h2 id="loader">Loading!</h2>
+            </div>
 
             <div id="metricsDiv" class="panel">
                 <h2>Metrics</h2>
@@ -115,9 +111,12 @@
             </div>
         </div>
 
-        <br>
-        <a target="_blank" href="https://icons8.com/icon/E9q2phkF8I39/lipstick">Lipstick</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
-        <a target="_blank" href="https://icons8.com/icon/98957/user">User</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+        <div id="iconsDiv">
+            <p>Special thanks to Icons8 and Makeup API!</p>
+            <a target="_blank" href="https://icons8.com/icon/E9q2phkF8I39/lipstick">Lipstick</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a><br>
+            <a target="_blank" href="https://icons8.com/icon/98957/user">User</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+            <a href="http://makeup-api.herokuapp.com/">Makeup API</a>
+        </div>
         <script src="./primary.js"></script>
     </body>
 </html>
