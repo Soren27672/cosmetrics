@@ -1,49 +1,68 @@
+
+/// WELCOME!
+
+/// VARIABLE DECLARATIONS
 // Milliseconds between intervals
 let refreshRate = 50;
     
-/// INTERACTS
+// INTERACTABLE DOM Nodes
+// within searchDiv (y-based arrangement)
+const openFiltersBTN = q('#openFilters');
 const brandFilterSCT = q('#brandFilter');
 const brandClearBTN = q('#brandClear');
 const typeFilterSCT = q('#typeFilter');
 const typeClearBTN = q('#typeClear');
 const categoryFilterSCT = q('#categoryFilter');
 const categoryClearBTN = q('#categoryClear');
-const openUserBTN = q('#openUser');
-const logOutBTN = q('#logOut');
-const allAnyBTN = q('#allAny');
-const logInBTN = q('#logIn');
-logInBTN.classList.add('inactive');
-const registerBTN = q('#register');
-registerBTN.classList.add('inactive');
-const applyConstraintsBTN = q('#applyConstraints');
-const openFiltersBTN = q('#openFilters');
-const openSortsBTN = q('#openSorts');
-const minBTN = q('#minButton');
-const maxBTN = q('#maxButton');
 const filterMinTXT = q('#filterMin');
 const filterMaxTXT = q('#filterMax');
-const showFavoritesBTN = q('#showFavorites');
+const allAnyBTN = q('#allAny');
+const openSortsBTN = q('#openSorts');
+const applyConstraintsBTN = q('#applyConstraints');
+
+// within userDiv
+const openUserBTN = q('#openUser');
 const logInFRM = q('#logInForm');
+const logInBTN = q('#logIn');
+const registerBTN = q('#register');
+const showFavoritesBTN = q('#showFavorites');
+const logOutBTN = q('#logOut');
+
+// within metricsDiv
+const minBTN = q('#minButton');
+const maxBTN = q('#maxButton');
+
 
 /// DIVS
-const userDiv = q('#userDiv');
-const logInDiv = q('#logInDiv');
-const userOptionsDiv = q('#userOptionsDiv');
-const tagsDiv = q('#tagsDiv');
-const filterDiv = q('#filterDiv');
-const sortDiv = q('#sortDiv');
-const displayDiv = q('#displayDiv');
-const topBarDiv = q('#topBarDiv');
-const highlightDiv = q('#highlight');
+const topBarDIV = q('#topBarDiv');
+const userDIV = q('#userDiv');
+const logInDIV = q('#logInDiv');
+const userOptionsDIV = q('#userOptionsDiv');
+const filterDIV = q('#filterDiv');
+const tagsDIV = q('#tagsDiv');
+const sortDIV = q('#sortDiv');
+const displayDIV = q('#displayDiv');
+const highlightDIV = q('#highlight');
 
  /// TEXT AND MESSAGES
-const loader = q('#loader');
 const greeting = q('#greeting');
+const loader = q('#loader');
 const selectionAvg = q('#selectionAvg');
 const selectionMin = q('#selectionMin');
 const selectionMax = q('#selectionMax');
 
-let filteredProducts = [];
+/// Variables used in calculation and functionalities
+let user = null;
+let favoriteProducts = {};
+let allProducts = [];
+let selectionMetrics = {};
+const exchangeRates = {
+    '$': 1,
+    '£': 1.21,
+    '€': 1.06,
+    [null]: 1
+}
+let constrainedProducts = [];
 let checkedTags = [];
 
 // For testing CSS updates without fetching to the API
@@ -89,18 +108,6 @@ const demoProd = {
     }]
 }
 
-/// Variables used in calculation and functionalities
-let user = null;
-let favoriteProducts = {};
-let allProducts = [];
-let selectionMetrics = {};
-const exchangeRates = {
-    '$': 1,
-    '£': 1.21,
-    '€': 1.06,
-    [null]: 1
-}
-
 const init = () => {
 
     if(!testingCSS) {
@@ -140,60 +147,90 @@ const init = () => {
         populateDropdown(categoryFilterSCT,filtrations.category.valuesRefined); 
 
         // Generate checkboxes based on the generated filtrations object
+        // (This code could be abstracted, but it is only used once in the program)
         for(const tag in filtrations.tag_list.valuesRefined) {
+            // Create checkbox element
             const box = buildElement('input',false,[],tag);
             box.type = 'checkbox';
             box.name = 'tags';
+            // Set .value to the index of the current tag so that we can reference
+            // the value to find the index of the associated string to filter by
             box.value = tag;
 
+            // Build label
             const label = buildElement('label',filtrations.tag_list.valuesRefined[tag]);
             label.setAttribute('for',tag);
             
-            tagsDiv.appendChild(box);
-            tagsDiv.appendChild(label);
-            tagsDiv.appendChild(buildElement('br'));
+            // Append elements
+            tagsDIV.appendChild(box);
+            tagsDIV.appendChild(label);
+            tagsDIV.appendChild(buildElement('br'));
         }
 
         // Initially fill the display with a couple products for visual appeal
         fillDisplay(allProducts.slice(0,12));
 
-        // DRY UP
+        /// CREATE AND EMBED FILTER FUNCTION IN applyConstraints
         ael('click',e => {
-            filteredProducts = [...allProducts];
-            if (brandFilterSCT.value !== "brand") filteredProducts = filteredProducts.filter(cv => cv.brand === filtrations.brand.valuesRaw[brandFilterSCT.value]);
-            if (typeFilterSCT.value !== "type") filteredProducts = filteredProducts.filter(cv => cv.product_type === filtrations.product_type.valuesRaw[typeFilterSCT.value]);
-            if (categoryFilterSCT.value !== "category") filteredProducts = filteredProducts.filter(cv => cv.category === filtrations.category.valuesRaw[categoryFilterSCT.value]);
+            // Make a copy of allProducts for filtration
+            constrainedProducts = [...allProducts];
+            // If an option other than the default has been selected,
+            if (brandFilterSCT.value !== "brand") {
+                // filter the copied array by whether or not the product's brand equals the brand string
+                // associated with the value attribute of the select element
+                constrainedProducts = constrainedProducts.filter(cv => cv.brand === filtrations.brand.valuesRaw[brandFilterSCT.value]);
+            }
+            // Do the same for type and category
+            if (typeFilterSCT.value !== "type") {
+                constrainedProducts = constrainedProducts.filter(cv => cv.product_type === filtrations.product_type.valuesRaw[typeFilterSCT.value]);
+            }
+            if (categoryFilterSCT.value !== "category") {
+                constrainedProducts = constrainedProducts.filter(cv => cv.category === filtrations.category.valuesRaw[categoryFilterSCT.value]);
+            }
 
+            /// Filter by min/max price
+            // Parse number from the inputted string
             const filterMinValue = parseFloat(filterMinTXT.value);
+            // If the parsed value is a number
             if (!isNaN(filterMinValue)) {
-                filteredProducts = filteredProducts.filter(cv => {
+                // Filter by whether or not the product's parsedPrice is a number greater than the parsed minumum
+                constrainedProducts = constrainedProducts.filter(cv => {
                     if (cv.parsedPrice === null) return false;
                     if (cv.parsedPrice >= filterMinValue) return true;
                     return false;
                 });
             };
 
+            // Do the same for maximum
             const filterMaxValue = parseFloat(filterMaxTXT.value);
             if (!isNaN(filterMaxValue)) {
-                filteredProducts = filteredProducts.filter(cv => {
+                constrainedProducts = constrainedProducts.filter(cv => {
                     if (cv.parsedPrice === null) return false;
                     if (cv.parsedPrice <= filterMaxValue) return true;
                     return false;
                 });
             };
 
-            checkedTags = [...tagsDiv.children]
+            /// Filter by whether or not tags are present
+            // Generate list of all tags checked
+            checkedTags = [...tagsDIV.children]
             .filter(cv => cv.checked === true)
             .map(cv => cv.value);
 
 
-            // ANYALL FUNCTIONALITY
+            // Determine if products should be filtered by whether they have ALL or ANY of the checked tags
+            // If ALL,
             if (allAnyBTN.textContent === "all") {
+                // For every tag in checkedTags, filter products by tag with a similar method as previous,
+                // except check to see if tags_list .includes() the associated tag
+                // (because tags_list is an array, unlike brand/product_type/category which are strings)
                 for(const tag of checkedTags) {
-                    filteredProducts = filteredProducts.filter(cv => cv.tag_list.includes(filtrations.tag_list.valuesRaw[tag]));
+                    constrainedProducts = constrainedProducts.filter(cv => cv.tag_list.includes(filtrations.tag_list.valuesRaw[tag]));
                 };
+                // Otherwise, (if ANY) while considering a product, iterate thru all tags and check if the
+                // product's tags_list .includes() it, and return true if one is found at any point
             } else if (checkedTags.length !== 0) {
-                filteredProducts = filteredProducts.filter(cv => {
+                constrainedProducts = constrainedProducts.filter(cv => {
                     for(const tag of checkedTags) {
                         if (cv.tag_list.includes(filtrations.tag_list.valuesRaw[tag])) return true;
                     };
@@ -201,27 +238,38 @@ const init = () => {
                 });
             };
 
+            /// Sort products based on input
+            // Determine which sort to use based on the radio buttons
             const sort = [...q('[type=radio]',true)].find(cv => cv.checked === true);
 
+            // A switch statement runs appropriate code based on which sort was chosen
             if(sort) {
                 switch (sort.value) {
                     case 'lowPriceSort':
-                        filteredProducts.sort((a,b) => a.parsedPrice - b.parsedPrice);
+                        // When a is greater than b (ie the difference will be positive), put a after b
+                        constrainedProducts.sort((a,b) => a.parsedPrice - b.parsedPrice);
                         break;
                     case 'highPriceSort':
-                        filteredProducts.sort((a,b) => b.parsedPrice - a.parsedPrice);
+                        // When a is lesser than b (ie the difference will be negative), put a before b
+                        constrainedProducts.sort((a,b) => b.parsedPrice - a.parsedPrice);
                         break;
                     case 'alphaSort':
-                        filteredProducts.sort((a,b) => {
+                        constrainedProducts.sort((a,b) => {
+                            // Some strings provided by the API contain their own HTML tags or do not begin
+                            // with a capital letter, which throws off sorting based on unicode values,
+                            // so all strings are cleared of tags and set to uppercase
                             const aName = clearTags(a.name).toUpperCase();
                             const bName = clearTags(b.name).toUpperCase();
+                            // When a is closer the beginning of the alphabet, put a before b
                             if (aName < bName) return -1;
+                            // When a is further from the beginning of the alphabet, put a after b
                             if (aName > bName) return 1;
                             if (aName === bName) return 0;
                         });
                         break;
                     case 'revAlphaSort':
-                        filteredProducts.sort((a,b) => {
+                        // Repeat inverted
+                        constrainedProducts.sort((a,b) => {
                             const aName = clearTags(a.name).toUpperCase();
                             const bName = clearTags(b.name).toUpperCase();
                             if (aName > bName) return -1;
@@ -230,7 +278,8 @@ const init = () => {
                         });
                         break;
                     case 'alphaBrandSort':
-                        filteredProducts.sort((a,b) => {
+                        // Repeat with brand names instead
+                        constrainedProducts.sort((a,b) => {
                             const aBrand = clearTags(a.brand).toUpperCase();
                             const bBrand = clearTags(b.brand).toUpperCase();
                             if (aBrand < bBrand) return -1;
@@ -239,7 +288,8 @@ const init = () => {
                         });
                         break;
                     case 'revAlphaBrandSort':
-                        filteredProducts.sort((a,b) => {
+                        // Repeat brand names inverted
+                        constrainedProducts.sort((a,b) => {
                             const aBrand = clearTags(a.brand).toUpperCase();
                             const bBrand = clearTags(b.brand).toUpperCase();
                             if (aBrand > bBrand) return -1;
@@ -248,11 +298,13 @@ const init = () => {
                         });
                         break;
                     default:
+                        // For values of none and any other strange unintended case
                         break;
                 }
             }
 
-            fillDisplay(filteredProducts);
+            // Fill the display with the filtered and sorted list
+            fillDisplay(constrainedProducts);
             
         },applyConstraintsBTN);
     });
@@ -260,20 +312,24 @@ const init = () => {
 
     /// CHECK WITHOUT FETCHING
     for(let i = 0; i < 12; ++i) {
-        displayDiv.appendChild(buildCell(demoProd,0));
+        // Display 12 demonstration cells
+        displayDIV.appendChild(buildCell(demoProd,0));
     }
     for (let i = 0; i < 12; ++i) {
+        // Push 12 demonstration products into allProducts so some functions may be tested
         allProducts.push(demoProd);
     }
     }
 
     /// IMPLEMENT SHOW BUTTONS
-    implementShowButton(openFiltersBTN,filterDiv,'Show Filters','Close Filters');
-    implementShowButton(openSortsBTN,sortDiv,'Show Sorts','Close Sorts');
+    implementShowButton(openFiltersBTN,filterDIV,'Show Filters','Close Filters');
+    implementShowButton(openSortsBTN,sortDIV,'Show Sorts','Close Sorts');
 
     /// IMPLEMENT CLEAR SELECTED FILTER BUTTON
+    // For each button and select element pair,
     for(const pair of [[brandFilterSCT,brandClearBTN],[typeFilterSCT,typeClearBTN],[categoryFilterSCT,categoryClearBTN]]) {
-        s(pair)
+        // Embed an event into the button that sets the .selectedIndex of the select element
+        // to 0
         pair[1].addEventListener('click', e => {
             e.preventDefault();
             pair[0].selectedIndex = 0;
@@ -283,40 +339,73 @@ const init = () => {
     /// IMPLEMENT SHOW FAVORITES BUTTON
     ael('click',e => {
         e.preventDefault;
+        // Fill the display with allProducts filtered by whether or not favoriteProducts's
+        // value for the product's id property is true
         fillDisplay(allProducts.filter(cv => favoriteProducts[cv.id]));
     },showFavoritesBTN)
 
-    /// SETUP LOGGING IN
+    /// HANDLE INPUTS SUBMITTED WITH THE LOG IN BUTTON
     ael('click',e => {
         e.preventDefault();
+        // If logInBTN is clicked while it has the .inactive class, stop the function with a return
         if (logInBTN.classList.contains('inactive')) return;
+
+        // The goal is to check if the string in the password field matches the password resource
+        // stored at the user resource of the string in the username field
+        // So the code must GET the resource stored at the string in the username field
+
+        // In case errors occur with the request, the code needs access to properties like .ok and .status
+        // to properly respond, so initialize variables to externally store the response's .ok and .status
+        // properties, since they won't be accessible after the response is converted to JSON
         let ok;
         let status;
+        // Call to the mock backend for the resource at the value in the username field
         fetch(`http://localhost:3000/users/${encodeURI(logInFRM.username.value)}`)
         .then(res => {
+            // Externally store .ok and .status
             ok = res.ok;
             status = res.status;
             return res.json();
         })
         .then(json => {
-            if (!ok) {
-                if (status === 404) {
-                    sendTopBar(`Our records show no account registered under ${logInFRM.username.value}`)
-                } else sendTopBar('Unexpected Error, try again');
-            } else if ((json.password === logInFRM.password.value)) {
+            // First, if the response was not ok,
+            
+
+                // But if the response was ok, check if the password value stored in the backend matches
+                // the string in the password field
+            if ((json.password === logInFRM.password.value)) {
+                // if so, log in the user and send a greeting message
                 logInUser(json.id);
                 sendTopBar(`Welcome back, ${user}!`);
-            } else if (json.password !== logInFRM.password.value) sendTopBar('Incorrect password'); else sendTopBar('Unexpected Error, try again');
+            } else if (json.password !== logInFRM.password.value) {
+                // if not, do nothing besides sending and "incorrect password" top bar
+                sendTopBar('Incorrect password');
+            } else {
+                // I don't think there are any other cases, but just in case something unexpected happens,
+                // its still a good idea to send the top bar with an "unexpected error" message
+                // so the user has some awareness of an issue
+                sendTopBar('Unexpected Error, try again');
+            }
         })
         .catch(reason => {
-            s(reason.message);
-            switch (reason.message) {
-                case 'Failed to fetch':
+            
+            // In cases where the request failed, respond to the situation based on the failure message
+                // if the status type was 404 (requesting a resource that doesn't exist), then the
+                // user tried to log in with an account that doesn't exist, so
+                if (status === 404) {
+                    // Send the top bar to explain that there is no record of the provided user
+                    sendTopBar(`Our records show no account registered under ${logInFRM.username.value}`)
+                }
+                else
+                // If the reason.message was 'failed to fetch',
+                if (reason.message === 'Failed to fetch') {
+                    // then the mock backend was unreachable, so send a 'couldn't access message'
                     sendTopBar('Could not access database');
-                break;
-                default:
-                    sendTopBar(reason.message);
-            }
+                } else
+                // Otherwise, there was an unexpected error, and no defined procedure, so let
+                // the user know, and send the error to the console
+                sendTopBar(`Unexpected Error, try again`);
+                console.error(reason.message);
         });
     },logInBTN)
 
@@ -368,6 +457,7 @@ const init = () => {
 
     /// LOGGING OUT
     ael('click',e => {
+        // Simply run the logOutUser() function when a 'click' event fires on logOutBTN
         e.preventDefault();
         logOutUser();
     },logOutBTN)
@@ -375,16 +465,21 @@ const init = () => {
     /// CLOSING USER DIV
     ael('click', e => {
         e.preventDefault();
-        userDiv.style.display = userDiv.style.display === '' ?
+        // Check if the userDIV's display is ''
+        userDIV.style.display = userDIV.style.display === '' ?
+        // If so, set it to 'block
         'block' :
+        // If not, set it to ''
         '';
     },openUserBTN)
 
     // LOADING DIALOG
     // (Color changing)
     let counter = 0;
+    let counterPostCalc = 0;
     const loadingIv = setInterval(() => {
-        loader.style.color = `rgb(${(0.5*Math.sin(++counter/2)+0.5)*255},${(0.5*Math.sin(counter/2)+0.5)*255},${(0.5*Math.sin(counter/2)+0.5)*255})`;
+        counterPostCalc = (0.5*Math.sin(++counter/2)+0.5)*255;
+        loader.style.color = `rgb(${counterPostCalc},${counterPostCalc},${counterPostCalc})`;
         if (allProducts.length) {
             clearInterval(loadingIv);
             loader.style.display = 'none';
@@ -394,13 +489,18 @@ const init = () => {
 
     // SET UP ALL/ANY SWAPPER
     ael('click',e => {
-        allAnyBTN.textContent = allAnyBTN.textContent === 'all' ? 'any' : 'all';
+        // Check if allAnyBTN's textContent is 'all'
+        allAnyBTN.textContent = allAnyBTN.textContent === 'all' ?
+        // if so, set it to any
+        'any' :
+        // if not, set it to all
+        'all';
     },allAnyBTN)
 
     /// SHOW MIN AND MAX BUTTONS
     ael('click',e => {
         e.preventDefault();
-        const childrenArray = [...displayDiv.children];
+        const childrenArray = [...displayDIV.children];
         if (minBTN.textContent === 'Show') {
             for(const cell of childrenArray) {
                 for(const id of selectionMetrics.min.ids) {
@@ -422,7 +522,7 @@ const init = () => {
 
     ael('click',e => {
         e.preventDefault();
-        const childrenArray = [...displayDiv.children];
+        const childrenArray = [...displayDIV.children];
         if (maxBTN.textContent === 'Show') {
             for(const cell of childrenArray) {
                 for(const id of selectionMetrics.max.ids) {
@@ -443,11 +543,11 @@ const init = () => {
     },maxBTN)
 
     /// RESIZE GRID DISPLAY
-    displayDiv.style.gridTemplateColumns = `repeat(${Math.max(1,Math.floor((window.innerWidth - 532) / 207))}, max-content)`;
+    // Run the function initially so that the window doesn't need to be resized for the
+    // calculations to apply
+    adjustGrid(displayDIV,window.innerWidth - 532,207);
 
-    ael('resize', e => {
-        displayDiv.style.gridTemplateColumns = `repeat(${Math.max(1,Math.floor((window.innerWidth - 532) / 207))}, max-content)`;
-    },window);
+    ael('resize', adjustGrid(displayDIV,window.innerWidth - 532,207),window);
 }
 
 document.addEventListener('DOMContentLoaded',init);
@@ -622,35 +722,35 @@ function buildCell(product,id) {
     const compareButton = buildElement('button','Compare',['compareButton',id]);
 
     ael('click',e => {
-        highlightDiv.textContent = '';
+        highlightDIV.textContent = '';
 
-        highlightDiv.appendChild(img.cloneNode(true));
-        highlightDiv.appendChild(name.cloneNode(true));
-        highlightDiv.appendChild(brand.cloneNode(true))
-        highlightDiv.appendChild(priceDiv.cloneNode(true));
-        highlightDiv.appendChild(buildElement('p',clearTags(product.description),['prodDescription']));
+        highlightDIV.appendChild(img.cloneNode(true));
+        highlightDIV.appendChild(name.cloneNode(true));
+        highlightDIV.appendChild(brand.cloneNode(true))
+        highlightDIV.appendChild(priceDiv.cloneNode(true));
+        highlightDIV.appendChild(buildElement('p',clearTags(product.description),['prodDescription']));
 
         /// Determine metrics and phrasing
 
         if(product.parsedPrice !== null) {
-            buildComparisonDiv(product.parsedPrice,selectionMetrics,'this selection',highlightDiv);
+            buildComparisonDiv(product.parsedPrice,selectionMetrics,'this selection',highlightDIV);
             if(product.product_type !== null) {
-                buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.product_type === product.product_type).map(cv => cv.parsedPrice),`all ${filterFormatter(product.product_type)}s`,highlightDiv);
+                buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.product_type === product.product_type).map(cv => cv.parsedPrice),`all ${filterFormatter(product.product_type)}s`,highlightDIV);
             }
             if (product.brand !== null) {
-                buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.brand === product.brand).map(cv => cv.parsedPrice),`all products by ${filterFormatter(product.brand)}`,highlightDiv);
+                buildComparisonDiv(product.parsedPrice,allProducts.filter(cv => cv.brand === product.brand).map(cv => cv.parsedPrice),`all products by ${filterFormatter(product.brand)}`,highlightDIV);
             }
-        } else highlightDiv.appendChild(buildElement('p','Nothing to Compare',['comparisonHeader']));
+        } else highlightDIV.appendChild(buildElement('p','Nothing to Compare',['comparisonHeader']));
 
         /// Build Clear button
         const clear = buildElement('button','Clear',[],'clear');
         ael('click',e => {
             e.preventDefault();
-            highlightDiv.style.display = 'none';
+            highlightDIV.style.display = 'none';
         },clear)
-        highlightDiv.appendChild(clear);
+        highlightDIV.appendChild(clear);
 
-        highlightDiv.style.display = 'block';
+        highlightDIV.style.display = 'block';
 
     },compareButton)
 
@@ -745,8 +845,8 @@ function capitalizeFirsts(string) {
 
 function logOutUser() {
     user = null;
-    logInDiv.style.display = 'block';
-    userOptionsDiv.style.display = 'none';
+    logInDIV.style.display = 'block';
+    userOptionsDIV.style.display = 'none';
     greeting.innerHTML = `No user currently signed in<br>Sign in below!`;
     for (const button of [...q('.favoriteButton',true)]) {
         button.classList.add('inactive');
@@ -765,8 +865,8 @@ function logInUser(username) {
     logInBTN.classList.add('inactive');
     registerBTN.classList.add('inactive');
     greeting.textContent = `Hello, ${user}!`
-    logInDiv.style.display = 'none';
-    userOptionsDiv.style.display = 'block';
+    logInDIV.style.display = 'none';
+    userOptionsDIV.style.display = 'block';
     fetch(`http://localhost:3000/users/${encodeURI(user)}`)
     .then(res => res.json())
     .then(json => {
@@ -787,7 +887,7 @@ function sendTopBar(message,easeSec = 1,duration = 3,refresh = 50) {
     const topBar = buildElement('div',null,['topBarDiv']);
     topBar.style.display = 'block';
     topBar.style.top = '-76px';
-    topBarDiv.appendChild(topBar);
+    topBarDIV.appendChild(topBar);
     
     const p = buildElement('p',message,['topBarMessage']);
     topBar.appendChild(p);
@@ -839,48 +939,48 @@ function buildColorBox(colorObject,id) {
 
     ael('click',e => {
         // Clear Previous
-        highlightDiv.textContent = '';
+        highlightDIV.textContent = '';
 
         // Build color details (Swatch, name, hex value)
         const color = buildElement('div',null,['color',`${id}`]);
         color.style.backgroundColor = colorObject.hex_value;
-        highlightDiv.appendChild(color);
+        highlightDIV.appendChild(color);
 
         const nameFormatted = colorObject.colour_name == null ? 'No Color Name' : colorObject.colour_name;
         const nameEl = buildElement('p',capitalizeFirsts(nameFormatted),['colorName',`${id}`]);
-        highlightDiv.appendChild(nameEl);
+        highlightDIV.appendChild(nameEl);
 
         const hex = buildElement('p',colorObject.hex_value,['colorHex',`${id}`]);
-        highlightDiv.appendChild(hex);
+        highlightDIV.appendChild(hex);
 
         // Show products with this color
         const showProducts = buildElement('button','Show Products with this Color',['showProductsByColor',colorObject.hex_value]);
         ael('click',e => {
             e.preventDefault();
-            filteredProducts = [];
+            constrainedProducts = [];
             
-            filteredProducts = allProducts.filter(cv => {
+            constrainedProducts = allProducts.filter(cv => {
                 for(const color of cv.product_colors) {
                     if (color.hex_value === e.target.classList[1]) return true;
                 }
                 return false;
             });
 
-            fillDisplay(filteredProducts);
+            fillDisplay(constrainedProducts);
 
         },showProducts)
-        highlightDiv.appendChild(showProducts);
+        highlightDIV.appendChild(showProducts);
 
         // Build Clear Button
         const clear = buildElement('button','Clear',['clear']);
         ael('click',e => {
             e.preventDefault();
-            highlightDiv.style.display = 'none';
+            highlightDIV.style.display = 'none';
         },clear)
-        highlightDiv.appendChild(clear);
+        highlightDIV.appendChild(clear);
 
         // Display
-        highlightDiv.style.display = 'block';
+        highlightDIV.style.display = 'block';
 
     },box)
 
@@ -913,11 +1013,11 @@ function fillDisplay(array) {
         };
     
     /// CLEAR DISPLAY AREA
-    displayDiv.innerHTML = '';
+    displayDIV.innerHTML = '';
 
     /// FILL DISPLAY AREA
     for(let i = 0; i < array.length; ++i) {
-        displayDiv.appendChild(buildCell(array[i],i));
+        displayDIV.appendChild(buildCell(array[i],i));
     };
     
     /// SEND COMPLETION MESSAGE
@@ -1092,6 +1192,10 @@ function updateFavorite(cell,wasFavorited = true) {
         cell.querySelector('.colorsDiv').style.backgroundColor = '#323A48';
         cell.querySelector('.favoriteButton').textContent = 'Favorite';
     }
+}
+
+function adjustGrid(element,width,divisionWidth) {
+    element.style.gridTemplateColumns = `repeat(${Math.max(1,Math.floor(width / divisionWidth))}, max-content)`;
 }
 
 // Random # of products feature
