@@ -51,6 +51,15 @@
         "448": true,
         "492": true
       }
+    },
+    {
+      "id": "demo",
+      "password": "demo",
+      "favorites": {
+        "207": true,
+        "246": true,
+        "464": true
+      }
     }
   ]
 }

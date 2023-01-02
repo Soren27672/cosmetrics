@@ -1,3 +1,15 @@
+### 76 Changelog ref 76
+- Created function ```adjustGrid()``` to contain the code that resized the ```displayDiv```
+- Changed ```getFiltrations()``` to ```getFilterObject()```, which now returns an object for the *one* key that it gets passed instead of generating one mother filter object that contained several filter objects, one for each key in the *array* of keys it was passed
+    - Code no longer requires you to chain off of ```filtrations``` to get the desired filter object
+    - Updated code in all areas where ```filtrations``` was previously used
+- Retired the variable ```ok``` in the ```logInBTN``` click event handler becuase it wasn't needed to check for an error, if none of the the 404, wrong password, or correct password conditions were met, then an error should be sent regardless of the response's ```.ok``` property
+- ```findMetrics()``` now finds the max of the selection by spreading the array into a ```Math.max()``` function
+    - Indexes for max values are now found by iterating thru the array and comparing the current value to the max found via ```Math.max()```
+    - the min of the selection is found the same way with one caveat: The array must first be filtered to remove all ```null``` values, since ```Math.max()``` treats ```null``` as 0, and 0 would always be the minimum value
+    - ```findMetrics()``` now immediately checks if all values in the array are ```null``` by checking if the ```Math.max()``` of the array is 0, in which case, it will stop execution and return an object with an ```.isMetricsObject``` property containing false
+
+
 ### 75 Changelog ref 75
 - Continued annotation up to line 553
 
