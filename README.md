@@ -68,3 +68,9 @@ Produces an array of all unique values stored under a single key across several 
 Populates an HTML select element with an array
 
 Rounds a floating point number to a provided decimal place
+
+### Special Thanks
+- To icons8 for their lipstick and user icons
+- https://icons8.com/
+- https://icons8.com/icon/E9q2phkF8I39/lipstick
+- https://icons8.com/icon/98957/user

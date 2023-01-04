@@ -1,3 +1,6 @@
+### 78 Changelog ref 78
+- Updated README.md with credit to icons8
+
 ### 77 Changelog ref 77
 - Created README.md
 
