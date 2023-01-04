@@ -1,3 +1,6 @@
+### 79 Changelog ref 79
+- Pulled exact copy of primary.js from git to prepare for review
+
 ### 78 Changelog ref 78
 - Updated README.md with credit to icons8
 
