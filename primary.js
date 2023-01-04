@@ -427,7 +427,7 @@ const init = () => {
                 })
                 .then(res => res.json())
                 .then(json => {
-                    logInUser(json.id)
+                    logInUser(json.id);
                     logInFRM.username.value = '';
                     logInFRM.password.value = '';
                     logInBTN.classList.add('inactive');
@@ -435,7 +435,7 @@ const init = () => {
                     greeting.textContent = `Hello, ${user}!`
                     sendTopBar(`Registration Success! Welcome to Cosmetrics, ${user}!`);
                 });
-                } else if (res.ok) alert(`The account ${logInFRM.username.value} is already taken.`)
+                } else if (res.ok) sendTopBar(`The account ${logInFRM.username.value} is already taken.`);
             });
     },registerBTN)
 
@@ -870,16 +870,18 @@ function logInUser(username) {
     fetch(`http://localhost:3000/users/${encodeURI(user)}`)
     .then(res => res.json())
     .then(json => {
-        if (json.favorites) favoriteProducts = json.favorites;
-        for (const button of [...q('.favoriteButton',true)]) {
-            button.classList.remove('inactive');
-        }
-        for (const cell of [...q('.prodCell',true)]) {
-            // Both the class and the key are strings, so they eval to equal
-            if (favoriteProducts[cell.classList[2]] !== undefined) {
-                updateFavorite(cell);
+        if (json.favorites) {
+            favoriteProducts = json.favorites;
+            for (const cell of [...q('.prodCell',true)]) {
+                // Both the class and the key are strings, so they eval to equal
+                if (favoriteProducts[cell.classList[2]] !== undefined) {
+                    updateFavorite(cell);
+                }
             }
-        }
+            for (const button of [...q('.favoriteButton',true)]) {
+                button.classList.remove('inactive');
+            }
+        } else favoriteProducts = [];
     })
 }
 

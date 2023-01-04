@@ -1,3 +1,7 @@
+### 80 Changelog ref 80
+- Fixed bug where logging in a user with no favorites would display the previous user's favorites
+- Changed the "account taken" dialogue from an alert to a top bar
+
 ### 79 Changelog ref 79
 - Pulled exact copy of primary.js from git to prepare for review
 
