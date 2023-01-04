@@ -1,3 +1,6 @@
+### 77 Changelog ref 77
+- Created README.md
+
 ### 76 Changelog ref 76
 - Created function ```adjustGrid()``` to contain the code that resized the ```displayDiv```
 - Changed ```getFiltrations()``` to ```getFilterObject()```, which now returns an object for the *one* key that it gets passed instead of generating one mother filter object that contained several filter objects, one for each key in the *array* of keys it was passed
